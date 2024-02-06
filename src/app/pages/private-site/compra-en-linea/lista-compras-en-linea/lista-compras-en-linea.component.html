@@ -1,0 +1,82 @@
+<p-blockUI [blocked]="blockedPanel"> <app-bloqueo></app-bloqueo></p-blockUI>
+<p-panel header="MIS COMPRAS">
+    <p-table #dt styleClass="p-datatable-sm" [value]="items" responsiveLayout="scroll" [rows]="10" [globalFilterFields]="['correlativo','numeroSucursal','fecha','codigoCliente','nombreCliente','descuentoAdicional','total','totalSujetoIva','estadoVenta','diasCredito','tipoVenta','saldo']" [rows]="10" [paginator]="true" [rowsPerPageOptions]="[10,20,30]"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros" [rowHover]="true"
+        dataKey="id">
+        <ng-template pTemplate="caption">
+            <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                <span class="block mt-2 md:mt-0 p-input-icon-left">
+                    <i class="pi pi-search"></i>
+                    <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Filtrar...."
+                        class="w-full sm:w-auto" />
+                </span>
+                <div class="flex">
+                    <button pButton pRipple label="Nuevo" icon="pi pi-plus" class="p-button-success mr-2"  (click)="newItem()"></button>
+                </div>
+            </div>
+        </ng-template>
+
+        <ng-template pTemplate="header">
+            <tr>
+                <th>N°</th>
+                <th pSortableColumn="correlativo">Código Venta<p-sortIcon field="correlativo"></p-sortIcon>
+                </th>
+                <th pSortableColumn="numeroSucursal">Sucursal<p-sortIcon field="numeroSucursal"></p-sortIcon>
+                </th>
+                <th pSortableColumn="fecha">Fecha<p-sortIcon field="fecha"></p-sortIcon>
+                </th>
+                <th pSortableColumn="total">Monto Total<p-sortIcon
+                    field="total"></p-sortIcon>
+                </th>
+                <th pSortableColumn="descuentoadicional">Descuento<p-sortIcon field="descuentoadicional">
+                    </p-sortIcon>
+                </th>
+                <th pSortableColumn="totalSujetoIva">Monto Total Sujeto Iva<p-sortIcon
+                    field="totalSujetoIva"></p-sortIcon>
+            </th>
+            <th pSortableColumn="codigoMetodoPagoOnline">Metodo Pago</th>
+            <th pSortableColumn="estadoVenta">Estado Compra<p-sortIcon field="estadoVenta"></p-sortIcon>  </th>
+            <th>Número Factura</th>
+            <!-- <th>Estado Factura</th> -->
+            <th></th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-i="rowIndex" let-item>
+            <tr>
+                <td><b>{{ i + 1 }}</b></td>
+                <td>{{item.correlativo }}</td>
+                <td>{{item.numeroSucursal }}</td>
+                <td>{{item.fecha  | formatoFechaHora }}</td>
+                <td class="text-right">{{item.total | formatoDecimal }}</td>
+                <td class="text-right">{{item.descuentoAdicional | formatoDecimal}}</td>
+                <td class="text-right">{{item.totalSujetoIva | formatoDecimal}}</td>
+                <td>{{ obtenerMetodoPago(item.codigoMetodoPagoOnline) }}</td>
+                <td>{{item.estadoVenta =='CREDITO POR PAGAR' ? 'PENDIENTE DE PAGO' : (item.estadoVenta =='CREDITO PAGADO' ? 'PAGADO' : item.estadoVenta) }}</td>
+                <td>{{ item.factura ? item.factura.numeroFactura : ''}}</td>
+                <!-- <td>
+                    <p-chip [styleClass]="getClaseFactura(item.facturas)">{{getEstadoFactura(item.facturas)}}</p-chip>
+                </td> -->
+                <td style="width:5rem; min-width:5rem;">
+                    <div class="flex">
+                        <button pButton pRipple pTooltip="Descargar Factura"  tooltipPosition="top"  icon="pi pi-download" class="p-button-rounded p-button-primary mr-2"
+                            (click)="descargarFactura(item)" [disabled]="!tieneFactura(item.factura)"></button>
+                        <!-- <button appendTo="body" pButton pRipple pTooltip="Más opciones"  tooltipPosition="top"   icon="pi pi-cog" class="p-button-rounded p-button-primary mr-2"
+                            (click)="opcionesFactura(menuVenta, $event, item)"></button>
+
+                        <button pButton pRipple pTooltip="Editar venta"  tooltipPosition="top"  icon="pi pi-pencil" class="p-button-rounded p-button-primary mr-2"
+                            (click)="editItem(item)" [disabled]="!esEditable(item.idEstadoVenta)"></button>
+                        <button pButton pRipple pTooltip="Eliminar venta"  tooltipPosition="top"  icon="pi pi-trash" class="p-button-rounded p-button-danger"
+                            (click)="deleteItem(item)" [disabled]="!esEditable(item.idEstadoVenta)"></button> -->
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</p-panel>
+
+<p-menu [showTransitionOptions]="'0ms'" [hideTransitionOptions]="'0ms'" #menuFactura [popup]="true" [model]="itemsMenuFactura"></p-menu>
+<p-menu [showTransitionOptions]="'0ms'" [hideTransitionOptions]="'0ms'" #menuVenta [popup]="true" [model]="itemsMenuVenta"></p-menu>
+
+
+

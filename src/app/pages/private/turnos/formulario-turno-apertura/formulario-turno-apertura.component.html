@@ -1,0 +1,20 @@
+<form [formGroup]="itemForm" (ngSubmit)="onSubmit()" autocomplete="off">
+    <div class="card">
+        <div class="p-fluid p-formgrid grid">
+            <div class="field col-12 md:col-12">
+                <label>Base inicial de apertura de Turno en BS</label>
+                <p-inputNumber formControlName="base" #base locale="en-US" id="base" [maxlength]="17"
+                    [inputStyle]="{'text-align': 'right'}" mode="decimal" [minFractionDigits]="2"
+                    [maxFractionDigits]="2"
+                    (onFocus)="$event.target.select()"
+                    ></p-inputNumber>
+                <small class="p-error block" *ngIf="itemForm.get('base')?.hasError('required')">Base inicial no
+                    válida.</small>
+            </div>
+        </div>
+    </div>
+    <div class="flex justify-content-end flex-wrap">
+        <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-secondary p-button-text" (click)="onClose()"></button>
+        <button pButton pRipple label="Aceptar" icon="pi pi-check" class="p-button-text"  (click)="onSave()" ></button>
+    </div>
+</form>

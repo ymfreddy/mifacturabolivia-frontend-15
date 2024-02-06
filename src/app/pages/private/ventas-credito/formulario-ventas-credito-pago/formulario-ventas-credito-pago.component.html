@@ -1,0 +1,121 @@
+<p-blockUI [blocked]="submited">
+    <app-bloqueo></app-bloqueo>
+</p-blockUI>
+<form [formGroup]="itemForm" (ngSubmit)="onSubmit()" autocomplete="off">
+    <div class="card">
+        <p class="text-negrita">DETALLE VENTA(S)</p>
+        <p-table #dt styleClass="p-datatable-sm" [value]="items" responsiveLayout="scroll" [rows]="10"
+            [paginator]="false" [rowHover]="true" dataKey="id">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>N°</th>
+                    <th>Código Venta</th>
+                    <th>Sucursal</th>
+                    <th>Código Cliente</th>
+                    <th>Cliente</th>
+                    <th>Total</th>
+                    <th >A Cuenta</th>
+                    <th>Saldo</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-i="rowIndex" let-item>
+                <tr>
+                    <td><b>{{ i + 1 }}</b></td>
+                    <td><b>{{item.correlativo }}</b></td>
+                    <td>{{item.numeroSucursal }}</td>
+                    <td>{{item.codigoCliente}}</td>
+                    <td>{{item.nombreCliente}}</td>
+                    <td class="text-right">{{item.totalSujetoIva | formatoDecimal}}</td>
+                    <td class="text-right">{{item.totalSujetoIva - item.saldo | formatoDecimal}}</td>
+                    <td class="text-right">{{item.saldo | formatoDecimal}}</td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="footer">
+                <tr>
+                    <td colspan="7" class="text-right">TOTAL</td>
+                    <td class="text-right">{{getSaldoTotal() | formatoDecimal}}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+        <br>
+        <p class="text-negrita">
+            DETALLE PAGO
+        </p>
+        <div class="p-fluid p-formgrid grid">
+            <div class="field col-12 md:col-3">
+                <label>Codigo Cliente</label>
+                <p-autoComplete formControlName="cliente" #cliente [suggestions]="listaClientesFiltrados"
+                    (completeMethod)="filtrarCliente($event)" [showEmptyMessage]="true" [maxlength]="25"
+                    emptyMessage="No existe" [forceSelection]="true" (onSelect)="seleccionarCliente($event)"
+                    field="codigoCliente" [delay]=500 [showClear]="true" (onClear)="limpiarCliente()"
+                    placeholder="Introduzca el código del cliente" [autofocus]="true">
+                    <ng-template let-item pTemplate="item">
+                        <div class="row">
+                            <div class="text-wrap">
+                                <b>{{ item.codigoCliente }}</b> - {{ item.nombre }}
+                            </div>
+                        </div>
+                    </ng-template>
+                </p-autoComplete>
+                <small class="p-error block" *ngIf="itemForm.get('cliente')?.hasError('required')">
+                    Dato requerido.</small>
+            </div>
+            <div class="field col-12 md:col-9">
+                <label>Cliente</label>
+                <input type="text" formControlName="nombreCliente" pInputText maxlength="200" readonly tabindex="-1" />
+
+            </div>
+
+
+            <div class="field col-12 md:col-3">
+                <label>Tipo Pago</label>
+                <p-dropdown appendTo="body" formControlName="codigoTipoPago" id="codigoTipoPago" [filter]="true"
+                    filterBy="descripcion" [showClear]="true" [options]="listaTipoPago" optionLabel="descripcion"
+                    optionValue="codigo" placeholder="Seleccione una opción">
+                </p-dropdown>
+                <small class="p-error block" *ngIf="itemForm.get('codigoTipoPago')?.hasError('required')">Tipo Pago
+                    inválido.</small>
+            </div>
+
+            <div class="field col-12 md:col-3">
+                <label>Saldo Actual</label>
+                <p-inputNumber formControlName="saldo" locale="en-US" id="saldo" [readonly]="true" tabindex="-1"
+                    [maxlength]="17" [inputStyle]="{'text-align': 'right'}" mode="decimal" [minFractionDigits]="2"
+                    (onFocus)="$event.target.select()" [maxFractionDigits]="2">
+                </p-inputNumber>
+            </div>
+
+            <div class="field col-12 md:col-3">
+                <label>A cuenta</label>
+                <p-inputNumber formControlName="cuenta" #cuenta (onInput)="keyInput($event, 'cuenta')" locale="en-US"
+                    id="cuenta" [maxlength]="17" [inputStyle]="{'text-align': 'right'}" mode="decimal"
+                    [minFractionDigits]="2" (onFocus)="$event.target.select()" [maxFractionDigits]="2">
+                </p-inputNumber>
+                <small class="p-error block" *ngIf="itemForm.get('cuenta')?.hasError('required')">
+                    Dato requerido.</small>
+            </div>
+
+            <div class="field col-12 md:col-3">
+                <label>Saldo Nuevo</label>
+                <p-inputNumber [ngModel]="getSaldoNuevo()" [ngModelOptions]="{standalone: true}" locale="en-US"
+                    id="saldo" [maxlength]="17" [inputStyle]="{'text-align': 'right'}" mode="decimal"
+                    [minFractionDigits]="2" [maxFractionDigits]="2" [readonly]="true" tabindex="-1">
+                </p-inputNumber>
+            </div>
+
+            <div class="field col-12 md:col-12">
+                <label>Descripción</label>
+                <input formControlName="descripcion" #descripcion type="text" pInputText id="descripcion" maxlength="100" />
+                <small class="p-error block" *ngIf="itemForm.get('descripcion')?.hasError('required')">Dato
+                    requerido.</small>
+            </div>
+
+        </div>
+    </div>
+    <div class="flex justify-content-end flex-wrap">
+        <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-secondary p-button-text"
+            (click)="onClose()"></button>
+        <button pButton pRipple label="Aceptar" icon="pi pi-check" class="p-button-text" (click)="onSave()"></button>
+    </div>
+
+</form>

@@ -1,0 +1,54 @@
+<div class="p-fluid p-formgrid grid">
+    <div class="field col-12 md:col-6">
+        <div class="p-inputgroup">
+            <p-dropdown appendTo="body" [(ngModel)]="idUsuarioSeleccionado" id="id" [options]="listaUsuarios"
+                styleClass="w-full" optionLabel="nombreCompleto" optionValue="id" placeholder="Seleccione un asesor">
+            </p-dropdown>
+            <p-button pTooltip="Buscar" label="Buscar" tooltipPosition="top" (click)="search(gmap.getMap())" icon="pi pi-search"
+                styleClass="p-button" tabindex="-1"></p-button>
+            <p-button pTooltip="Acercar" tooltipPosition="top" (click)="zoomIn(gmap.getMap())" icon="pi pi-plus"
+                styleClass="p-button" tabindex="-1"></p-button>
+            <p-button pTooltip="Alejar" tooltipPosition="top" (click)="zoomOut(gmap.getMap())" icon="pi pi-minus"
+                styleClass="p-button" tabindex="-1"></p-button>
+
+        </div>
+    </div>
+    <div class="field col-12 md:col-1">
+    </div>
+    <div class="field col-12 md:col-1">
+    </div>
+    <div class="field col-12 md:col-1">
+    </div>
+</div>
+<br>
+<input #searchPlace pInputText type="text" style="width: 50%" class="my-search-box"
+            placeholder="Buscar por dirección" />
+<p-gmap #gmap [style]="{'width':'100%','height':'620px', 'margin-bottom': '1em'}" [options]="options"
+    [overlays]="marcadores"
+    (onMapClick)="handleMapClick($event)"
+    (onOverlayClick)="handleOverlayClick($event)"
+    (onOverlayDragEnd)="handleDragEnd($event)"></p-gmap>
+
+    <p-dialog showEffect="fade" [(visible)]="dialogVisible" header="New Location"
+    [style]="{width: '300px', heigth:'500px'}">
+    <div class="grid p-fluid" *ngIf="selectedPosition">
+        <div class="col-2"><label for="title">Label</label></div>
+        <div class="col-10"><input type="text" pInputText id="title" [(ngModel)]="markerTitle"></div>
+
+        <div class="col-2"><label for="lat">Lat</label></div>
+        <div class="col-10"><input id="lat" type="text" readonly pInputText [ngModel]="selectedPosition.lat()"></div>
+
+        <div class="col-2"><label for="lng">Lng</label></div>
+        <div class="col-10"><input id="lng" type="text" readonly pInputText [ngModel]="selectedPosition.lng()"></div>
+
+        <div class="col-2"><label for="drg">Drag</label></div>
+        <div class="col-10">
+            <input id="remember-me" type="checkbox" [(ngModel)]="draggable">
+        </div>
+    </div>
+    <ng-template pTemplate="footer">
+        <div>
+            <button type="button" pButton label="Add Marker" icon="pi-plus" (click)="addMarker()"></button>
+        </div>
+    </ng-template>
+</p-dialog>

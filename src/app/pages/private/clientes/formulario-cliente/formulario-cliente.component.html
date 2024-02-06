@@ -1,0 +1,62 @@
+<p-blockUI [blocked]="submited"> <app-bloqueo></app-bloqueo></p-blockUI>
+<form [formGroup]="itemForm" (ngSubmit)="onSubmit()" autocomplete="off">
+    <div class="card">
+        <div class="p-fluid p-formgrid grid">
+            <div class="field col-12 md:col-6">
+                <label>Código Cliente</label>
+                <input formControlName="codigoCliente" type="text" pInputText id="codigoCliente" [readonly]="true"  tabindex="-1" [value]="getCodigoCliente(numeroDocumento.value, complemento.value)"  />
+            </div>
+            <div class="field col-12 md:col-6">
+                <label>Tipo Documento</label>
+                <p-dropdown appendTo="body" formControlName="codigoTipoDocumentoIdentidad" id="codigoTipoDocumentoIdentidad" [autofocus]="true"
+                [options]="listaDocumentos" optionLabel="descripcion" optionValue="codigo"
+                (onChange)="canbioTipoDocumento($event)"
+                placeholder="Seleccione una opción"
+                ></p-dropdown>
+                <small class="p-error block" *ngIf="itemForm.get('codigoTipoDocumentoIdentidad')?.hasError('required')">Dato requerido.</small>
+            </div>
+            <div class="field col-12 md:col-6">
+                <label>Número Documento</label>
+                <input formControlName="numeroDocumento" type="text" pInputText id="numeroDocumento" maxlength="20" #numeroDocumento
+                oninput="this.value = this.value.trim().toUpperCase()" onfocus="this.select();"
+                />
+                <small class="p-error block" *ngIf="itemForm.get('numeroDocumento')?.hasError('required')">Dato requerido.</small>
+            </div>
+            <div class="field col-12 md:col-6">
+                <label>Complemento (Solo para CI duplicados)</label>
+                <input formControlName="complemento" type="text" pInputText id="complemento" maxlength="4" #complemento oninput="this.value = this.value.trim().toUpperCase()" onfocus="this.select();"
+                />
+            </div>
+            <div class="field col-12 md:col-6">
+                <label>Nombre</label>
+                <input formControlName="nombre" type="text" pInputText id="nombre" maxlength="255" oninput="this.value = this.value.toUpperCase()" onfocus="this.select();"/>
+                <small class="p-error block" *ngIf="itemForm.get('nombre')?.hasError('required')">Dato requerido.</small>
+            </div>
+            <div class="field col-12 md:col-6">
+                <label>Email</label>
+                <input formControlName="email" type="text" pInputText id="email" maxlength="50" onfocus="this.select();" />
+                <small class="p-error block" *ngIf="itemForm.get('email')?.hasError('email')">Email no válido.</small>
+            </div>
+            <div class="field col-12 md:col-6">
+                <label>Dirección</label>
+                <input formControlName="direccion" type="text" pInputText id="direccion" maxlength="255" oninput="this.value = this.value.toUpperCase()" onfocus="this.select();" />
+            </div>
+            <div class="field col-12 md:col-6">
+                <label>Celular</label>
+                <input formControlName="telefono" type="text" pInputText id="telefono" maxlength="8" onfocus="this.select();"
+                pKeyFilter="int"/>
+            </div>
+            <div class="field col-12 md:col-6">
+                Sin Residencia
+                <div class="field">
+                    <input id="remember-me" type="checkbox" formControlName="sinResidencia">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="flex justify-content-end flex-wrap">
+        <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-secondary p-button-text"
+            (click)="onClose()"></button>
+        <button pButton pRipple label="Aceptar" icon="pi pi-check" class="p-button-text" (click)="onSave()"></button>
+    </div>
+</form>

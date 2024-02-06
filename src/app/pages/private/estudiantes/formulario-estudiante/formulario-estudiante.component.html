@@ -1,0 +1,59 @@
+<p-blockUI [blocked]="submited"> <app-bloqueo></app-bloqueo></p-blockUI>
+<form [formGroup]="itemForm" (ngSubmit)="onSubmit()" autocomplete="off">
+    <div class="card">
+        <div class="p-fluid p-formgrid grid">
+            <div class="field col-12 md:col-4">
+                <label>Código Estudiante</label>
+                <input formControlName="codigoEstudiante" type="text" pInputText id="codigoEstudiante" autofocus maxlength="25" oninput="this.value = this.value.trim().toUpperCase()" onfocus="this.select();" />
+                <small class="p-error block" *ngIf="itemForm.get('codigoEstudiante')?.hasError('required')">Dato requerido.</small>
+            </div>
+            <div class="field col-12 md:col-8">
+                <label>Nombres</label>
+                <input formControlName="nombres" type="text" pInputText id="nombres" maxlength="150" uppercase onfocus="this.select();"/>
+                <small class="p-error block" *ngIf="itemForm.get('nombres')?.hasError('required')">Dato requerido.</small>
+            </div>
+            <div class="field col-12 md:col-4">
+                <label>Apellido Paterno</label>
+                <input formControlName="apellidoPaterno" type="text" pInputText id="apellidoPaterno" maxlength="50" uppercase onfocus="this.select();"/>
+            </div>
+            <div class="field col-12 md:col-4">
+                <label>Apellido Paterno</label>
+                <input formControlName="apellidoMaterno" type="text" pInputText id="apellidoMaterno" maxlength="50" uppercase onfocus="this.select();"/>
+            </div>
+            <div class="field col-12 md:col-4">
+                <label>N° Documento</label>
+                <input formControlName="numeroDocumento" type="text" pInputText id="numeroDocumento" maxlength="25" uppercase onfocus="this.select();" />
+                <small class="p-error block" *ngIf="itemForm.get('numeroDocumento')?.hasError('required')">Dato requerido.</small>
+            </div>
+            <div class="field col-12 md:col-4">
+                <label>Curso</label>
+                <input formControlName="curso" type="text" pInputText id="curso" maxlength="50" uppercase onfocus="this.select();"/>
+            </div>
+
+            <div class="field col-12 md:col-4">
+                <label>Grado</label>
+                <p-dropdown appendTo="body" formControlName="idGrado" id="idGrado" appendTo="body"
+                    [options]="listaGrados" optionLabel="nombre" optionValue="id"
+                    [filter]="true" filterBy="nombre"
+                    placeholder="Seleccione una opción"></p-dropdown>
+                <small class="p-error block" *ngIf="itemForm.get('idGrado')?.hasError('required')">Dato
+                    requerido.</small>
+            </div>
+
+            <div class="field col-12 md:col-4">
+                <label>Turno</label>
+                <p-dropdown appendTo="body" formControlName="idTurno" id="idTurno" appendTo="body"
+                    [options]="listaTurnos" optionLabel="nombre" optionValue="id"
+                    [filter]="true" filterBy="nombre"
+                    placeholder="Seleccione una opción"></p-dropdown>
+                <small class="p-error block" *ngIf="itemForm.get('idTurno')?.hasError('required')">Dato
+                    requerido.</small>
+            </div>
+        </div>
+    </div>
+    <div class="flex justify-content-end flex-wrap">
+        <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-secondary p-button-text"
+            (click)="onClose()"></button>
+        <button pButton pRipple label="Aceptar" icon="pi pi-check" class="p-button-text" (click)="onSave()"></button>
+    </div>
+</form>

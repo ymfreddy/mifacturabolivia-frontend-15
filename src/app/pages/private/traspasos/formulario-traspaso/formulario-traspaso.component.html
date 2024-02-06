@@ -1,0 +1,185 @@
+<p-blockUI [blocked]="submited">
+    <app-bloqueo></app-bloqueo>
+</p-blockUI>
+<form [formGroup]="itemForm" (ngSubmit)="onSubmit()" autocomplete="off">
+    <div class="card">
+        <div class="p-fluid p-formgrid grid">
+            <div class="field col-12 md:col-3">
+                <label>CODIGO TRASPASO</label>
+                <input type="text" formControlName="correlativo" pInputText  readonly="true"  tabindex="-1" />
+            </div>
+            <div class="field col-12 md:col-3">
+                <label>FECHA PEDIDO</label>
+                <input pInputText type="text" formControlName="fechaSolicitud" readonly="true"  tabindex="-1" />
+            </div>
+            <div class="field col-12 md:col-6">
+                <label>MOTIVO</label>
+                <input pInputText type="text" formControlName="descripcion" maxlength="50" autofocus/>
+                <small class="p-error block" *ngIf="itemForm.get('descripcion')?.hasError('required')">
+                    Dato requerido.</small>
+            </div>
+        </div>
+        <div class="p-fluid p-formgrid grid">
+            <div class="field col-12 md:col-6">
+                <label>Sucursal Origen</label>
+                <p-dropdown appendTo="body" formControlName="idSucursalOrigen" id="idSucursalOrigen"
+                    [options]="listaSucursales" optionLabel="direccion" optionValue="id"
+                    placeholder="Seleccione una opción" (onChange)="canbioSucursal($event)"></p-dropdown>
+                <small class="p-error block" *ngIf="itemForm.get('idSucursalOrigen')?.hasError('required')">
+                    Dato requerido.</small>
+            </div>
+            <div class="field col-12 md:col-6">
+                <label>Sucursal Destino</label>
+                <p-dropdown appendTo="body" formControlName="idSucursalDestino" id="idSucursalDestino"
+                    [options]="listaSucursales" optionLabel="direccion" optionValue="id"
+                    placeholder="Seleccione una opción"></p-dropdown>
+                <small class="p-error block" *ngIf="itemForm.get('idSucursalDestino')?.hasError('required')">
+                    Dato requerido.</small>
+            </div>
+            <div class="field col-12 md:col-2" *ngIf="!this.item?.id">
+                <p-button label="Productos" icon="pi pi-plus" class="p-button-success mr-2"
+                    (onClick)="dialogoProductosAbrir()"></p-button>
+            </div>
+        </div>
+        <p-table #dt styleClass="p-datatable-sm" [value]="detalle" responsiveLayout="scroll" [rows]="10"
+            [paginator]="false" [rowHover]="true" dataKey="id">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>N°</th>
+                    <th style="text-align:center">codigo stock</th>
+                    <th style="text-align:center">Cod. Producto</th>
+                    <th style="text-align:center">Producto</th>
+                    <th style="text-align:center">precio compra</th>
+                    <th style="text-align:center">precio venta</th>
+                    <th style="text-align:center">Cantidad</th>
+                    <th style="text-align:center" *ngIf="!this.item?.id">Operación</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-i="rowIndex" let-item>
+                <tr>
+                    <td><b>{{ i + 1 }}</b></td>
+                    <td>{{item.codigoStock}}</td>
+                    <td>{{item.codigoProducto}}</td>
+                    <td>{{item.producto}}</td>
+                    <td pEditableColumn class="text-right" [pEditableColumn]="item"
+                        [pEditableColumnField]="'precioCompra'">
+                        <p-cellEditor>
+                            <ng-template pTemplate="input">
+                                <span class="p-fluid">
+                                    <p-inputNumber [(ngModel)]="item.precioCompra" [ngModelOptions]="{standalone: true}"
+                                        locale="en-US" [maxlength]="15" [inputStyle]="{'text-align': 'right'}"
+                                        mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2"
+                                        (onFocus)="$event.target.select()">
+                                    </p-inputNumber>
+                                </span>
+                            </ng-template>
+                            <ng-template pTemplate="output">
+                                {{item.precioCompra}}
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+                    <td pEditableColumn class="text-right" [pEditableColumn]="item"
+                    [pEditableColumnField]="'precioVenta'">
+                    <p-cellEditor>
+                        <ng-template pTemplate="input">
+                            <span class="p-fluid">
+                                <p-inputNumber [(ngModel)]="item.precioVenta" [ngModelOptions]="{standalone: true}"
+                                    locale="en-US" [maxlength]="15" [inputStyle]="{'text-align': 'right'}"
+                                    mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2"
+                                    (onFocus)="$event.target.select()">
+                                </p-inputNumber>
+                            </span>
+                        </ng-template>
+                        <ng-template pTemplate="output">
+                            {{item.precioVenta}}
+                        </ng-template>
+                        </p-cellEditor>
+                    </td>
+                    <td pEditableColumn class="text-right" [pEditableColumn]="item"
+                        [pEditableColumnField]="'cantidad'">
+                        <p-cellEditor>
+                            <ng-template pTemplate="input">
+                                <span class="p-fluid">
+                                    <p-inputNumber [(ngModel)]="item.cantidad" [ngModelOptions]="{standalone: true}"
+                                        locale="en-US" [maxlength]="5" [inputStyle]="{'text-align': 'right'}"
+                                        mode="decimal" [minFractionDigits]="0" [maxFractionDigits]="0"
+                                        [step]="0" (onFocus)="$event.target.select()">
+                                    </p-inputNumber>
+                                </span>
+                            </ng-template>
+                            <ng-template pTemplate="output">
+                                {{item.cantidad}}
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+                    <td *ngIf="!this.item?.id" style="width:5rem; min-width:5rem;">
+                        <div class="flex">
+                            <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
+                                (click)="deleteItem(item)"></button>
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+    <div class="flex justify-content-end flex-wrap">
+        <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-secondary p-button-text"
+            (click)="onClose()"></button>
+        <button pButton pRipple label="Aceptar" icon="pi pi-check" class="p-button-text" (click)="onSave()"></button>
+    </div>
+
+</form>
+
+<p-dialog header="Productos con Inventario" [(visible)]="verProductos" [modal]="true" [style]="{width: '80vw'}" [maximizable]="true" [draggable]="false" [resizable]="true"
+style="height: auto !important;"
+>
+    <!-- <div>
+        <label>Sucursal: </label>{{sucursalOrigen}}
+    </div> -->
+    <p-table #dt2 [value]="listaProductos" selectionMode="multiple" [(selection)]="listaProductosSeleccionados"
+    [globalFilterFields]="['codigoProducto','producto','codigoStock']" [rows]="10" [paginator]="true" [rowsPerPageOptions]="[10,20,30]"
+    [rowHover]="true"
+    styleClass="mt-5" dataKey="codigoProducto">
+    <ng-template pTemplate="caption">
+        <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+            <span class="block mt-2 md:mt-0 p-input-icon-left">
+                <i class="pi pi-search"></i>
+                <input pInputText type="text" (input)="onGlobalFilter(dt2, $event)" placeholder="Filtrar...."
+                    class="w-full sm:w-auto" />
+            </span>
+            <div class="flex">
+
+            </div>
+        </div>
+    </ng-template>
+
+        <ng-template pTemplate="header">
+            <tr>
+                <th>codigo stock</th>
+                <th>categoria</th>
+                <th>codigo producto</th>
+                <th>producto</th>
+                <!-- <th>imagen</th> -->
+                <th>precio compra</th>
+                <th>precio venta</th>
+                <th>saldo</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-product let-rowIndex="rowIndex">
+            <tr [pSelectableRow]="product" [pSelectableRowIndex]="rowIndex">
+                <td>{{product.codigoStock}}</td>
+                <td>{{product.categoria}}</td>
+                <td>{{product.codigoProducto}}</td>
+                <td>{{product.producto}}</td>
+                <!-- <td><img [src]="product.imagenRuta  ? product.imagenRuta : 'assets/layout/images/sin-imagen.png'" [alt]="product.imagenNombre" width="50" class="shadow-4" /></td> -->
+                <td>{{product.precioCompra}}</td>
+                <td>{{product.precioVenta}}</td>
+                <td class="text-right"><b>{{product.saldo | formatoDecimal}}</b></td>
+            </tr>
+        </ng-template>
+    </p-table>
+    <ng-template pTemplate="footer">
+        <p-button icon="pi pi-check" (click)="dialogoProductosCerrar()" label="Aceptar" styleClass="p-button-text">
+        </p-button>
+    </ng-template>
+</p-dialog>

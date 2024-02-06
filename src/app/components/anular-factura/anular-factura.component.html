@@ -1,0 +1,28 @@
+<p-blockUI [blocked]="submited"><app-bloqueo></app-bloqueo></p-blockUI>
+<form [formGroup]="itemForm" (ngSubmit)="onSubmit()" autocomplete="off">
+    <div class="card p-fluid">
+        <div class="field">
+            Se anulara la siguiente factura
+        </div>
+        <div class="field" style="overflow-wrap: break-word;">
+            Cuf: {{item?.cuf}}
+        </div>
+        <div class="field">
+            N° Factura: {{item?.numeroFactura}}
+        </div>
+    <br>
+        <div class="field">
+            <label>Motivo Anulación</label>
+            <p-dropdown appendTo="body" formControlName="codigoMotivo" id="codigoMotivo"
+                [options]="listaMotivos" optionLabel="descripcion" optionValue="codigo" placeholder="Seleccione una opción">
+            </p-dropdown>
+            <small class="p-error block" *ngIf="itemForm.get('codigoMotivo')?.hasError('required')">Motivo inválido.</small>
+        </div>
+    </div>
+    <div class="flex justify-content-end flex-wrap">
+        <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-secondary p-button-text"
+            (click)="onClose()"></button>
+        <button pButton pRipple label="Aceptar" icon="pi pi-check" class="p-button-text" (click)="onSave()"
+            ></button>
+    </div>
+</form>

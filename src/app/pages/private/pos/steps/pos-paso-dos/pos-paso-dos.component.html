@@ -1,0 +1,153 @@
+<p-blockUI [blocked]="submited">
+    <app-bloqueo  class="bloqueo-pantalla"></app-bloqueo>
+</p-blockUI>
+
+<p-card>
+    <form [formGroup]="itemForm" (ngSubmit)="onSubmit()" autocomplete="off">
+        <div class="p-fluid p-formgrid grid">
+            <div class="field col-12 md:col-12">
+                <div class="p-fluid p-formgrid grid">
+                    <div class="field col-12 md:col-2">
+                        <label>Codigo Cliente</label>
+                        <input formControlName="codigoCliente" type="text" pInputText id="codigoCliente" maxlength="35"
+                            tabindex="-1" />
+                    </div>
+                    <div class="field col-12 md:col-6">
+                        <label>Cliente</label>
+                        <input formControlName="nombreCliente" type="text" pInputText id="nombreCliente" maxlength="200"
+                            tabindex="-1" />
+                    </div>
+                    <div class="field col-12 md:col-2">
+                        <label>Email Cliente</label>
+                        <input formControlName="emailCliente" type="text" pInputText id="emailCliente" maxlength="50"
+                          tabindex="-1"/>
+                    </div>
+                    <div class="field col-12 md:col-2">
+                        <label>CODIGO VENTA</label>
+                        <input type="text" formControlName="correlativo" pInputText />
+                    </div>
+
+                    <!-- <div class="field col-12 md:col-6">
+                        <label>Tipo Pago</label>
+                        <p-dropdown appendTo="body" formControlName="codigoTipoPago" id="codigoTipoPago" [filter]="true"
+                            filterBy="descripcion" [showClear]="true" [options]="listaTipoPago" optionLabel="descripcion"
+                            (onChange)="canbioTipoPago($event)"
+                            optionValue="codigo" placeholder="Seleccione una opción">
+                            <ng-template let-i pTemplate="item">
+                                <div class="text-wrap">
+                                    <div>{{i.descripcion}}</div>
+                                </div>
+                            </ng-template>
+                        </p-dropdown>
+                        <small class="p-error block" *ngIf="itemForm.get('codigoTipoPago')?.hasError('required')">Tipo Pago
+                            inválido.</small>
+                    </div>
+
+                    <div class="field col-12 md:col-3">
+                        <label>N° de la tarjeta</label>
+                        <p-inputMask formControlName="numeroTarjeta" pTooltip="Introduzca los primeros y ultimos 4 numeros de la tarjeta" tooltipPosition="top" mask="9999-0000-0000-9999" placeholder="XXXX-0000-0000-XXXX"></p-inputMask>
+                    </div> -->
+
+                </div>
+            </div>
+            <!--<div class="field col-12 md:col-2">
+                <div class="p-fluid p-formgrid grid">
+                     <div class="field col-12 md:col-12" *ngIf="ventaConGift">
+                        <label>TOTAL VENTA</label>
+                        <p-inputNumber formControlName="totalVenta" locale="en-US"
+                            id="total" [maxlength]="17" [inputStyle]="{'text-align': 'right'}" mode="decimal"
+                            [minFractionDigits]="2" [maxFractionDigits]="2" [readonly]="true" tabindex="-1">
+                        </p-inputNumber>
+                    </div>
+                    <div class="field col-12 md:col-12" *ngIf="ventaConGift">
+                        <label>MONTO GIFT-CARD</label>
+                        <p-inputNumber formControlName="gift" #gift locale="en-US" id="gift"
+                            (onInput)="keyInput($event, 'gift')" [maxlength]="17"
+                            [inputStyle]="{'text-align': 'right'}" mode="decimal" [minFractionDigits]="2"
+                            [maxFractionDigits]="2"></p-inputNumber>
+                    </div>
+                    <div class="field col-12 md:col-12">
+                        <label>IMPORTE FINAL</label>
+                        <p-inputNumber [ngModel]="getImporte()" [ngModelOptions]="{standalone: true}" locale="en-US"
+                            id="total" [maxlength]="17" [inputStyle]="{'text-align': 'right'}" mode="decimal"
+                            [minFractionDigits]="2" [maxFractionDigits]="2" [readonly]="true" tabindex="-1">
+                        </p-inputNumber>
+                    </div>
+                </div>
+            </div>-->
+        </div>
+
+
+        <div class="p-fluid p-formgrid grid">
+            <div class="field col-12 md:col-3">
+                <label>Factura</label>
+                <p-dropdown appendTo="body" formControlName="codigoAsociacion" id="codigoAsociacion"
+                    [options]="listaAsociacion" optionLabel="documentoSector" optionValue="codigoAsociacion"
+                    placeholder="SIN FACTURA"  [showClear]="true" >
+                    <ng-template let-item pTemplate="item">
+                       {{item.documentoSector}}
+                    </ng-template>
+                    <ng-template let-item pTemplate="selectedItem">
+                       {{item.documentoSector}}
+                    </ng-template>
+                </p-dropdown>
+                <small class="p-error block" *ngIf="itemForm.get('codigoAsociacion')?.hasError('required')">Sector
+                    inválido.</small>
+
+            </div>
+            <div class="field col-12 md:col-5">
+                <label>Tipo Pago</label>
+                <p-selectButton [options]="listaTipoPago" formControlName="codigoTipoPago" optionLabel="label" optionValue="value" styleClass="w-full"
+                optionIcon="icon" (onChange)="canbioTipoPago($event)" ></p-selectButton>
+            </div>
+            <div class="field col-12 md:col-4">
+                <label>Num. tarjeta</label>
+                 <p-inputMask formControlName="numeroTarjeta" pTooltip="Introduzca los primeros y ultimos 4 numeros de la tarjeta" tooltipPosition="top" mask="9999-0000-0000-9999" placeholder="XXXX-0000-0000-XXXX"></p-inputMask>
+             </div>
+            <div class="field col-12 md:col-6">
+
+            </div>
+             <div class="field col-12 md:col-6">
+                <div class="field grid">
+                    <label for="total" class="col-12 mb-2 md:col-4 md:mb-0">Importe total</label>
+                    <div class="col-12 md:col-8">
+                        <p-inputNumber [ngModel]="getImporte()" [ngModelOptions]="{standalone: true}" locale="en-US"
+                        id="total" [maxlength]="17" [inputStyle]="{'text-align': 'right'}" mode="decimal"
+                        [minFractionDigits]="2" [maxFractionDigits]="2" [readonly]="true">
+                        </p-inputNumber>
+                    </div>
+                </div>
+                <div class="field grid">
+                    <label for="pago" class="col-12 mb-2 md:col-4 md:mb-0">Monto Pagado</label>
+                    <div class="col-12 md:col-8">
+                        <p-inputNumber formControlName="montoPagado" #montoPagado locale="en-US"
+                id="montoPagado" (onInput)="keyInput($event, 'montoPagado')" [maxlength]="17"
+                [inputStyle]="{'text-align': 'right'}" mode="decimal" [minFractionDigits]="2"
+                [maxFractionDigits]="2"
+                (onFocus)="$event.target.select()"
+                ></p-inputNumber>
+                    </div>
+                </div>
+                <div class="field grid">
+                    <label for="Cambio" class="col-12 mb-2 md:col-4 md:mb-0">Cambio</label>
+                    <div class="col-12 md:col-8">
+                        <p-inputNumber [ngModel]="getCambio()" [ngModelOptions]="{standalone: true}" locale="en-US"
+                        id="cambio" [maxlength]="17" [inputStyle]="{'text-align': 'right'}" mode="decimal"
+                        [minFractionDigits]="2" [maxFractionDigits]="2" [readonly]="true">
+                        </p-inputNumber>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <p-divider type="dashed"></p-divider>
+        <div class="flex justify-content-between flex-wrap card-container purple-container">
+            <div class="flex align-items-center justify-content-center m-2">
+                <button pButton label="Atras" (click)="prevPage()" icon="pi pi-angle-left"></button> &nbsp;
+            </div>
+            <div class="flex align-items-center justify-content-center m-2">
+                <button pButton label="Finalizar" (click)="complete()" icon="pi pi-check" styleClass="p-button-success" iconPos="right"></button>
+            </div>
+        </div>
+    </form>
+</p-card>

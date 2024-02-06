@@ -1,0 +1,151 @@
+<p-blockUI [blocked]="blockedPanel"><app-bloqueo></app-bloqueo></p-blockUI>
+
+<p-panel header="ASOCIACIONES" [toggleable]="true">
+    <div class="p-fluid p-formgrid grid">
+        <div class="field col-12 md:col-4">
+            <p-dropdown appendTo="body" [(ngModel)]="nitEmpresa" [ngModelOptions]="{standalone: true}" id="nitEmpresa"
+                [autofocus]="true" [options]="listaEmpresas" optionLabel="nombre" optionValue="nit"
+                (onChange)="cambioEmpresa($event)" placeholder="Seleccione una empresa"></p-dropdown>
+        </div>
+        <div class="field col-12 md:col-2">
+            <button pButton pRipple label="Cambio Emision Global" icon="pi pi-directions" class="p-button-primary mr-2"
+                        (click)="cambioTipoEmisionGlobal()"></button>
+        </div>
+    </div>
+    <p-table #dt styleClass="p-datatable-sm" [value]="items" responsiveLayout="scroll"
+        [globalFilterFields]="['codigoAsociacion','idEmpresa','nit','nombreSistema','modalidad','ambiente','estadoAsociacion','nombreEmpresa']"
+        [paginator]="false" [rowHover]="true" dataKey="id" selectionMode="single" (onRowSelect)="onRowSelect($event)"
+        [tableStyle]="{'min-width': '50rem'}">
+        <ng-template pTemplate="caption">
+            <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                <span class="block mt-2 md:mt-0 p-input-icon-left">
+                    <i class="pi pi-search"></i>
+                    <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Filtrar...."
+                        class="w-full sm:w-auto" />
+                </span>
+                <button pButton pRipple label="Nuevo" icon="pi pi-plus" class="p-button-success mr-2"
+                    (click)="newItem()"></button>
+            </div>
+        </ng-template>
+
+        <ng-template pTemplate="header">
+            <tr>
+                <th>N°</th>
+                <th pSortableColumn="codigoAsociacion">Código Asociacion<p-sortIcon
+                        field="codigoAsociacion"></p-sortIcon></th>
+                <th pSortableColumn="idSistema">Id Sistema<p-sortIcon field="idSistema"></p-sortIcon></th>
+                <th pSortableColumn="nit">Nit<p-sortIcon field="nit"></p-sortIcon></th>
+                <th pSortableColumn="nombreEmpresa">Nombre Empresa<p-sortIcon field="nombreEmpresa"></p-sortIcon></th>
+                <th pSortableColumn="nombreSistema">Nombre Sistema<p-sortIcon field="nombreSistema"></p-sortIcon></th>
+                <th pSortableColumn="modalidad">Modalidad<p-sortIcon field="modalidad"></p-sortIcon></th>
+                <th pSortableColumn="ambiente">Ambiente<p-sortIcon field="ambiente"></p-sortIcon></th>
+                <th pSortableColumn="publicKey">Llave publica<p-sortIcon field="publicKey"></p-sortIcon></th>
+                <th pSortableColumn="privateKey">Llave privada<p-sortIcon field="privateKey"></p-sortIcon></th>
+                <th pSortableColumn="estadoAsociacion">Estado Asociacion<p-sortIcon
+                        field="estadoAsociacion"></p-sortIcon></th>
+                <th pSortableColumn="conexionAutomatica">Conexion Automatica<p-sortIcon
+                        field="conexionAutomatica"></p-sortIcon></th>
+                <th>Operación</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-i="rowIndex" let-item>
+            <tr [pSelectableRow]="item">
+                <td><b>{{ i + 1 }}</b></td>
+                <td>{{item.codigoAsociacion}}</td>
+                <td>{{item.idSistema}}</td>
+                <td>{{item.nit}}</td>
+                <td>{{item.nombreEmpresa}}</td>
+                <td>{{item.nombreSistema}}</td>
+                <td>{{item.modalidad ? (item.modalidad==1 ? 'ELECTRONICA': 'COMPUTARIZADA'):''}}</td>
+                <td>{{item.ambiente ? (item.ambiente==1 ? 'PRODUCCION': 'PILOTO'):''}}</td>
+                <td>{{item.publicKey }}</td>
+                <td>{{item.privateKey }}</td>
+                <td>{{item.estadoAsociacion}}</td>
+                <td>{{item.conexionAutomatica ? 'SI':'NO'}}</td>
+                <td style="width:5rem; min-width:5rem;">
+                    <div class="flex">
+                        <button appendTo="body" pButton pRipple pTooltip="Opciones de Asociacion" tooltipPosition="top"
+                            icon="pi pi-cog" class="p-button-rounded p-button-primary mr-2"
+                            (click)="opcionesAsociacion(menu, $event, item)"></button>
+                        <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2"
+                            (click)="editItem(item)"></button>
+                        <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
+                            (click)="deleteItem(item)"></button>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</p-panel>
+
+<br>
+<p-panel header="SUCURSALES-PUNTOS-CUISES-CUFDS" [toggleable]="true">
+    <p-table #dt2 styleClass="p-datatable-sm" [value]="listaDatosFacturacion" responsiveLayout="scroll"
+        [globalFilterFields]="['sucursal','puntoVenta','nombre','cuis','cufd']" [paginator]="false" [rowHover]="true" dataKey="id">
+        <ng-template pTemplate="caption">
+            <div class="flex flex-column md:flex-row md:justify-content-end md:align-items-end">
+                <span class="block mt-2 md:mt-0 p-input-icon-left">
+                    <i class="pi pi-search"></i>
+                    <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Filtrar...."
+                        class="w-full sm:w-auto" />
+                </span>
+            </div>
+        </ng-template>
+
+        <ng-template pTemplate="header">
+            <tr>
+                <th>N°</th>
+                <th pSortableColumn="nit">Nit<p-sortIcon field="nit"></p-sortIcon></th>
+                <th pSortableColumn="sucursal">Sucursal<p-sortIcon field="sucursal"></p-sortIcon></th>
+                <th pSortableColumn="puntoVenta">Punto Venta<p-sortIcon field="puntoVenta"></p-sortIcon></th>
+                <th pSortableColumn="sincronizado">Sincronizado<p-sortIcon field="sincronizado"></p-sortIcon></th>
+                <th pSortableColumn="cuis">Cuis<p-sortIcon field="cuis"></p-sortIcon></th>
+                <th pSortableColumn="fechaVigenciaCuis">Vigencia Cuis<p-sortIcon field="fechaVigenciaCuis"></p-sortIcon></th>
+                <!-- <th pSortableColumn="datosFacturacion.codigoAsociacion">Código Asociacion<p-sortIcon field="datosFacturacion.codigoAsociacion"></p-sortIcon></th>
+                    <th pSortableColumn="datosFacturacion.nombreSistema">Nombre Sistema<p-sortIcon field="datosFacturacion.nombreSistema"></p-sortIcon></th>
+                    <th pSortableColumn="datosFacturacion.modalidad">Modalidad<p-sortIcon field="datosFacturacion.modalidad"></p-sortIcon></th>
+                    <th pSortableColumn="datosFacturacion.ambiente">Ambiente<p-sortIcon  field="datosFacturacion.ambiente"></p-sortIcon></th>-->
+                    <th pSortableColumn="cufd">Cufd<p-sortIcon field="cufd"></p-sortIcon> </th>
+                    <th pSortableColumn="fechaVigenciaCufd">Vigencia Cufd<p-sortIcon field="fechaVigenciaCufd"></p-sortIcon></th>
+                    <th pSortableColumn="tipoEmision">TipoEmision<p-sortIcon field="tipoEmision"></p-sortIcon></th>
+                <th>Operación</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-i="rowIndex" let-item>
+            <tr>
+                <td><b>{{ i + 1 }}</b></td>
+                <td>{{item.nit}}</td>
+                <td>{{item.sucursal}}</td>
+                <td>{{item.puntoVenta}}</td>
+                <td>{{item.sincronizado ? 'SI': 'NO'}}</td>
+                <td>{{item.cuis }}</td>
+                <td>{{item.fechaVigenciaCuis | formatoFechaHora }}</td>
+                <!-- <td>{{item.datosFacturacion?.modalidad ? (item.datosFacturacion?.modalidad==1 ? 'ELECTRONICA': 'COMPUTARIZADA'):''}}</td>
+                    <td>{{item.datosFacturacion?.ambiente ? (item.datosFacturacion?.ambiente==1 ? 'PROD': 'PILOTO'):''}}</td> -->
+                    <td>{{item.cufd | slice:0:15 }}</td>
+                    <td>{{item.fechaVigenciaCufd | formatoFechaHora }}</td>
+                    <td class="text-negrita">{{item.tipoEmision}}</td>
+                <td style="width:5rem; min-width:5rem;">
+                    <div class="flex">
+                        <button appendTo="body" pButton pRipple pTooltip="Opciones facturación" tooltipPosition="top"
+                            icon="pi pi-cog" class="p-button-rounded p-button-primary mr-2"
+                            (click)="opcionesDatosFacturacion(menu2, $event, item)"></button>
+                        <button pButton pRipple pTooltip="Generar Cufd" tooltipPosition="top" icon="pi pi-bolt"
+                            class="p-button-rounded p-button-primary mr-2" (click)="optFacGetCufd(item)"></button>
+                        <button pButton pRipple pTooltip="Cambiar Tipo Emisión" tooltipPosition="top"
+                            icon="pi pi-directions" class="p-button-rounded p-button-primary mr-2"
+                            (click)="optFacChangeTipoEmision(item)"></button>
+                        <button pButton pRipple pTooltip="Enviar Masivos" tooltipPosition="top"
+                            icon="pi pi-cloud-upload" class="p-button-rounded p-button-primary mr-2"
+                            (click)="optFacSendMasivos(item)"></button>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</p-panel>
+
+<p-menu [showTransitionOptions]="'0ms'" [hideTransitionOptions]="'0ms'" #menu [popup]="true"
+    [model]="itemsMenu"></p-menu>
+<p-menu [showTransitionOptions]="'0ms'" [hideTransitionOptions]="'0ms'" #menu2 [popup]="true"
+    [model]="itemsMenuDatosFacturacion"></p-menu>

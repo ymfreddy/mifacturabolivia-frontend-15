@@ -1,0 +1,127 @@
+<p-blockUI [blocked]="submited">
+    <app-bloqueo  class="bloqueo-pantalla"></app-bloqueo>
+</p-blockUI>
+
+<p-card>
+    <ng-template pTemplate="title">
+        Paso 2
+    </ng-template>
+    <ng-template pTemplate="subtitle">
+        Seleccione el cliente y la forma de pago de la factura {{item!.asociacion.documentoSector}}
+    </ng-template>
+
+    <form [formGroup]="itemForm" (ngSubmit)="onSubmit()" autocomplete="off">
+        <div class="p-fluid p-formgrid grid">
+            <div class="field col-12 md:col-3">
+                <label>Código o Nombre Cliente</label>
+                <p-autoComplete formControlName="cliente" #cliente [suggestions]="listaClientesFiltrados"
+                    (completeMethod)="filtrarCliente($event)" [showEmptyMessage]="true" [maxlength]="25"
+                    emptyMessage="No existe" [forceSelection]="true" (onSelect)="seleccionarCliente($event)"
+                    field="codigoCliente" [delay]=500 [showClear]="true" (onClear)="limpiarCliente()"
+                    placeholder="Introduzca el código del cliente" [autofocus]="true">
+                    <ng-template let-item pTemplate="item">
+                        <div class="row">
+                            <div class="text-wrap">
+                                <b>{{ item.codigoCliente }}</b> - {{ item.nombre }}
+                            </div>
+                        </div>
+                    </ng-template>
+                </p-autoComplete>
+                <small class="p-error block" *ngIf="itemForm.get('cliente')?.hasError('required')">
+                    Dato requerido.</small>
+            </div>
+            <div class="field col-12 md:col-6">
+                <label>Cliente</label>
+                <div class="p-inputgroup">
+                    <input type="text" formControlName="nombreCliente" pInputText maxlength="200" readonly
+                        tabindex="-1" />
+
+                </div>
+            </div>
+            <div class="field col-12 md:col-3">
+                <label>Email Cliente</label>
+                <div class="p-inputgroup">
+                    <input formControlName="emailCliente" type="text" pInputText id="emailCliente"
+                        maxlength="50" readonly tabindex="-1" />
+                    <p-button pTooltip="Crear cliente" tooltipPosition="top" (onClick)="adicionarNuevoCliente()"
+                        icon="pi pi-user-plus" styleClass="p-button" tabindex="-1"></p-button>
+                    <p-button pTooltip="Actualizar cliente" tooltipPosition="top"
+                        (onClick)="actualizarCliente()" icon="pi pi-user-edit" styleClass="p-button"
+                        tabindex="-1"></p-button>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-fluid p-formgrid grid">
+            <div class="field col-12 md:col-6">
+                <label>Tipo Pago</label>
+                <p-dropdown appendTo="body" formControlName="codigoMetodoPago" id="codigoMetodoPago" [filter]="true"
+                    filterBy="descripcion" [showClear]="true" [options]="listaTipoPago" optionLabel="descripcion"
+                    (onChange)="canbioTipoPago($event)"
+                    optionValue="codigo" placeholder="Seleccione una opción">
+                </p-dropdown>
+                <small class="p-error block" *ngIf="itemForm.get('codigoMetodoPago')?.hasError('required')">Tipo Pago
+                    inválido.</small>
+            </div>
+            <div class="field col-12 md:col-3">
+                <label>N° de la tarjeta</label>
+                <p-inputMask formControlName="numeroTarjeta" pTooltip="Introduzca los primeros y ultimos 4 numeros de la tarjeta" tooltipPosition="top" mask="9999-0000-0000-9999" placeholder="XXXX-0000-0000-XXXX"></p-inputMask>
+
+            </div>
+            <div class="field col-12 md:col-3">
+                <div class="p-fluid p-formgrid grid">
+                    <div class="field col-12 md:col-12">
+                        <div class="field" *ngIf="facturaConGift">
+                            <label>MONTO TOTAL</label>
+                            <p-inputNumber formControlName="montoTotal" locale="en-US"
+                                id="total" [maxlength]="17" [inputStyle]="{'text-align': 'right'}" mode="decimal"
+                                [minFractionDigits]="2" [maxFractionDigits]="2" [readonly]="true" tabindex="-1">
+                            </p-inputNumber>
+                        </div>
+                        <div class="field" *ngIf="facturaConGift">
+                            <label>MONTO GIFT-CARD</label>
+                            <p-inputNumber formControlName="montoGiftCard" #montoGiftCard locale="en-US" id="montoGiftCard"
+                                (onInput)="keyInput($event, 'montoGiftCard')" [maxlength]="17"
+                                [inputStyle]="{'text-align': 'right'}" mode="decimal" [minFractionDigits]="2"
+                                [maxFractionDigits]="2"></p-inputNumber>
+                        </div>
+                        <div class="field">
+                            <label>MONTO FINAL SUJETO A IVA</label>
+                            <p-inputNumber [ngModel]="getMontoFinalSujetoIva()" [ngModelOptions]="{standalone: true}" locale="en-US"
+                                id="total" [maxlength]="17" [inputStyle]="{'text-align': 'right'}" mode="decimal"
+                                [minFractionDigits]="2" [maxFractionDigits]="2" [readonly]="true" tabindex="-1">
+                            </p-inputNumber>
+                        </div>
+                        <div class="field">
+                            CONTINGENCIA : <input id="remember-me" type="checkbox" [(ngModel)]="facturaConContigencia" [ngModelOptions]="{standalone: true}">
+                        </div>
+                        <div class="field" *ngIf="facturaConContigencia">
+                            <label>CAFC</label>
+                            <input formControlName="cafc" type="text" pInputText id="cafc" maxlength="50" oninput="this.value = this.value.toUpperCase()"/>
+                        </div>
+                        <div class="field" *ngIf="facturaConContigencia">
+                            <label>NUMERO FACTURA</label>
+                            <p-inputNumber formControlName="numeroFactura" locale="en-US" id="numeroFactura" [maxlength]="17"
+                            [inputStyle]="{'text-align': 'right'}" mode="decimal" [minFractionDigits]="0"
+                            [maxFractionDigits]="0"></p-inputNumber>
+                        </div>
+                        <div class="field" *ngIf="facturaConContigencia">
+                            <label>FECHA FACTURA</label>
+                            <p-calendar appendTo="body" formControlName="fechaEmision" dateFormat="dd/mm/yy" [showTime]="true"
+                            hourFormat="24"></p-calendar>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <p-divider type="dashed"></p-divider>
+        <div class="flex justify-content-between flex-wrap card-container purple-container">
+            <div class="flex align-items-center justify-content-center m-2">
+                <button pButton label="Atras" (click)="prevPage()" icon="pi pi-angle-left"></button> &nbsp;
+            </div>
+            <div class="flex align-items-center justify-content-center m-2">
+                <button pButton label="Finalizar" (click)="complete()" icon="pi pi-check" styleClass="p-button-success" iconPos="right"></button>
+            </div>
+        </div>
+    </form>
+</p-card>

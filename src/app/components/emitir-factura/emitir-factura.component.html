@@ -1,0 +1,31 @@
+<p-blockUI [blocked]="submited"><app-bloqueo></app-bloqueo></p-blockUI>
+<form [formGroup]="itemForm" (ngSubmit)="onSubmit()" autocomplete="off">
+    <div class="card p-fluid">
+        <div class="field">
+                <label>Factura</label>
+                <p-dropdown appendTo="body" formControlName="codigoAsociacion" id="codigoAsociacion"
+                    [options]="listaAsociacion" optionLabel="documentoSector" optionValue="codigoAsociacion"
+                    placeholder="SIN FACTURA">
+                    <ng-template let-item pTemplate="item">
+                        {{item.modalidad}} - {{item.documentoSector}}
+                    </ng-template>
+                    <ng-template let-item pTemplate="selectedItem">
+                        {{item.modalidad}} - {{item.documentoSector}}
+                    </ng-template>
+                </p-dropdown>
+                <small class="p-error block" *ngIf="itemForm.get('codigoAsociacion')?.hasError('required')">Sector
+                    inválido.</small>
+        </div>
+        <br>
+        <div class="field">
+            Esta seguro de emitir la factura de la venta {{item.correlativo}}?
+        </div>
+
+    </div>
+    <div class="flex justify-content-end flex-wrap">
+        <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-secondary p-button-text"
+            (click)="onClose()"></button>
+        <button pButton pRipple label="Aceptar" icon="pi pi-check" class="p-button-text" (click)="onSave()"
+            ></button>
+    </div>
+</form>

@@ -1,0 +1,27 @@
+.p-flex-wrap {
+    flex-wrap: wrap;
+    padding: 5px 0px 0px 5px;
+  }
+
+  .card-body {
+    flex: 0 1 auto;
+    padding: 0rem 1rem;
+  }
+
+h1, h2, h3, h4, h5, h6 {
+    margin: 0.5rem 0 0.5rem 0;
+    font-family: inherit;
+    font-weight: 500;
+    line-height: 1.2;
+    color: inherit;
+}
+
+:host ::ng-deep {
+    .card-modify {
+        border: 1px solid;
+        border-color: darkolivegreen;
+        border-radius: 12px;
+        align-items: center;
+    }
+}
+

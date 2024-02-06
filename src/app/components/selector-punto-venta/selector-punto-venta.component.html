@@ -1,0 +1,32 @@
+<form [formGroup]="itemForm" (ngSubmit)="onSubmit()" autocomplete="off">
+    <div class="card">
+        <div class="p-fluid p-formgrid grid">
+            <div class="field col-12 md:col-12">
+                <label>Sucursal</label>
+                <p-dropdown appendTo="body" formControlName="idSucursal" id="idSucursal" [options]="listaSucursales"
+                    optionLabel="direccion"  optionValue="id" placeholder="Seleccione una opción"
+                    (onChange)="canbioSucursal($event)">
+                <ng-template let-suc pTemplate="item">
+                    <div class="text-wrap">
+                        <div>{{suc.numero}} - {{suc.direccion}}</div>
+                    </div>
+                </ng-template>
+                </p-dropdown>
+                <small class="p-error block" *ngIf="itemForm.get('idSucursal')?.hasError('required')">Sucursal inválida.</small>
+            </div>
+            <div class="field col-12 md:col-12">
+                <label>Punto de Venta</label>
+                <p-dropdown appendTo="body" formControlName="idPuntoVenta" id="idPuntoVenta" [options]="listaPuntoVenta"
+                    optionLabel="nombre" optionValue="id" placeholder="Seleccione una opción">
+                <ng-template let-pt pTemplate="item">
+                        {{pt.numeroPuntoVenta}} - {{pt.nombre}}
+                </ng-template>
+                </p-dropdown>
+                <small class="p-error block" *ngIf="itemForm.get('idPuntoVenta')?.hasError('required')">Punto de Venta inválido.</small>
+            </div>
+        </div>
+    </div>
+    <div class="flex justify-content-end flex-wrap">
+        <button pButton pRipple label="Aceptar" icon="pi pi-check" class="p-button-text" [disabled]="!itemForm.valid" ></button>
+    </div>
+</form>

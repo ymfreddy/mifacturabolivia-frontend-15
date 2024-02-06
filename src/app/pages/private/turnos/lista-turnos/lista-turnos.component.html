@@ -1,0 +1,123 @@
+<p-blockUI [blocked]="blockedPanel"> <app-bloqueo></app-bloqueo></p-blockUI>
+<p-panel header="BUSQUEDA" [toggleable]="true">
+    <form [formGroup]="criteriosBusquedaForm" (ngSubmit)="onSubmit()" autocomplete="off">
+            <!-- <p><b>Criterios de busqueda</b></p> -->
+            <div class="p-fluid p-formgrid grid" *ngIf="esSuperAdm()">
+                <div class="field col-12 md:col-4">
+                    <label>Empresa:</label>
+                    <p-dropdown appendTo="body" [(ngModel)]="idEmpresa" [ngModelOptions]="{standalone: true}"  id="idEmpresa" [autofocus]="true"
+                    [options]="listaEmpresas" optionLabel="nombre" optionValue="id" (onChange)="cambioEmpresa($event)"
+                    placeholder="Seleccione una empresa"
+                    ></p-dropdown>
+                </div>
+            </div>
+            <div class="p-fluid p-formgrid grid">
+                <div class="field col-12 md:col-2">
+                    <label htmlFor="name2">Fecha Inicio</label>
+                    <p-calendar formControlName="fechaInicio" inputId="fechaInicio" [showIcon]="true" dateFormat="dd/mm/yy"></p-calendar>
+                    <small class="p-error block" *ngIf="criteriosBusquedaForm.get('fechaInicio')?.hasError('required')">
+                        Fecha inválida.</small>
+                </div>
+                <div class="field col-12 md:col-2">
+                    <label htmlFor="name2">Fecha Fin</label>
+                    <p-calendar formControlName="fechaFin" inputId="fechaFin" [showIcon]="true"  dateFormat="dd/mm/yy"></p-calendar>
+                    <small class="p-error block" *ngIf="criteriosBusquedaForm.get('fechaFin')?.hasError('required')">
+                        Fecha inválida.</small>
+                </div>
+                <div class="field col-12 md:col-6">
+                    <label>Sucursal</label>
+                        <p-dropdown appendTo="body" formControlName="idSucursal" id="idSucursal"
+                            [options]="listaSucursales" optionLabel="direccion" optionValue="id"  [showClear]="true" placeholder="TODOS">
+                            <ng-template let-item pTemplate="item">
+                                <div class="text-wrap">
+                                    <div>{{item.numero}} - {{item.direccion}}</div>
+                                </div>
+                            </ng-template>
+                        </p-dropdown>
+                </div>
+                <div class="field col-12 md:col-2">
+                    <label>Estado Turno</label>
+                        <p-dropdown appendTo="body" formControlName="idEstadoTurno" id="idEstadoTurno"
+                            [options]="listaEstadosTurno" optionLabel="nombre" optionValue="id"  [showClear]="true" placeholder="TODOS"></p-dropdown>
+                </div>
+            </div>
+            <p-divider type="dashed"></p-divider>
+            <div class="flex justify-content-end flex-wrap">
+                <button pButton pRipple label="Buscar" icon="pi pi-search" class="p-button mr-2"></button>
+            </div>
+    </form>
+
+</p-panel>
+<p-panel header="TURNOS" [toggleable]="true">
+    <p-table #dt styleClass="p-datatable-sm" [value]="items" responsiveLayout="scroll" [rows]="10" [globalFilterFields]="['usuario','numeroSucursal','numeroPuntoVenta','estadoTurno','base','montoTotalCaja','montoTotalActual','montoTotalDiferencia',
+    'observaciones']" [rows]="10" [paginator]="true" [rowsPerPageOptions]="[10,20,30]"
+    [showCurrentPageReport]="true"
+    currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros" [rowHover]="true"
+    dataKey="id">
+    <ng-template pTemplate="caption">
+        <!--<div class="flex flex-column md:flex-row md:justify-content-end md:align-items-end">-->
+        <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+            <span class="block mt-2 md:mt-0 p-input-icon-left">
+                <i class="pi pi-search"></i>
+                <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Filtrar...."
+                    class="w-full sm:w-auto" />
+            </span>
+            <button pButton pRipple label="Abrir" icon="pi pi-plus" class="p-button-success mr-2"
+                (click)="open()"></button>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="header">
+        <tr>
+            <th>N°</th>
+            <th pSortableColumn="numeroSucursal">Sucursal<p-sortIcon field="numeroSucursal"></p-sortIcon>
+            </th>
+            <th pSortableColumn="numeroPuntoVenta">Punto Venta<p-sortIcon field="numeroPuntoVenta"></p-sortIcon>
+            </th>
+            <th pSortableColumn="usuario">Usuario<p-sortIcon field="usuario"></p-sortIcon>
+            </th>
+            <th pSortableColumn="estadoTurno">Estado Turno<p-sortIcon field="estadoTurno"></p-sortIcon>
+            </th>
+            <th pSortableColumn="base">Base<p-sortIcon field="base"></p-sortIcon>
+            </th>
+            <th pSortableColumn="montoTotalCaja">Monto Total Caja<p-sortIcon field="montototalcaja"></p-sortIcon>
+            </th>
+            <th pSortableColumn="montoTotalActual">Monto Total Actual<p-sortIcon field="montototalactual">
+                </p-sortIcon>
+            </th>
+            <th pSortableColumn="montoTotalDiferencia">Monto Total Diferencia<p-sortIcon
+                    field="montoTotalDiferencia"></p-sortIcon>
+            </th>
+            <th pSortableColumn="fechaApertura">Fecha Apertura<p-sortIcon field="fechaApertura"></p-sortIcon>
+            </th>
+            <th pSortableColumn="fechaCierre">Fecha Cierre<p-sortIcon field="fechaCierre"></p-sortIcon>
+            </th>
+            <th pSortableColumn="observaciones">Observaciones<p-sortIcon field="observaciones"></p-sortIcon>
+            </th>
+            <th>Operación</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-i="rowIndex" let-item>
+        <tr>
+            <td><b>{{ i + 1 }}</b></td>
+            <td>{{item.numeroSucursal}}</td>
+            <td>{{item.numeroPuntoVenta}}</td>
+            <td>{{item.usuario}}</td>
+            <td>{{item.estadoTurno}}</td>
+            <td class="text-right">{{item.base | formatoDecimal}}</td>
+            <td class="text-right">{{item.montoTotalCaja | formatoDecimal}}</td>
+            <td class="text-right">{{item.montoTotalActual | formatoDecimal}}</td>
+            <td class="text-right">{{item.montoTotalDiferencia | formatoDecimal}}</td>
+            <td>{{item.fechaApertura | formatoFechaHora }}</td>
+            <td>{{item.fechaCierre | formatoFechaHora }}</td>
+            <td>{{item.observaciones}}</td>
+            <td style="width:5rem; min-width:5rem;">
+                <div class="flex">
+                    <button pButton pRipple icon="pi pi-money-bill" class="p-button-rounded p-button mr-2"
+                        (click)="closeItem(item)" [disabled]="item.idEstadoTurno!=32"></button>
+                </div>
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+</p-panel>

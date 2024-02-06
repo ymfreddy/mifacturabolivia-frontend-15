@@ -1,0 +1,178 @@
+<p-blockUI [blocked]="submited">
+    <app-bloqueo></app-bloqueo>
+</p-blockUI>
+<div class="card">
+    <form [formGroup]="itemForm" (ngSubmit)="onSubmit()" autocomplete="off">
+           <div class="p-fluid p-formgrid grid">
+            <div class="field col-12 md:col-9">
+
+                <p-divider align="left">
+                    <div class="inline-flex align-items-center">
+                        <i class="pi pi-user mr-2"></i>
+                        <b>Datos Facturación</b>
+                    </div>
+                </p-divider>
+                <div class="p-fluid p-formgrid grid">
+                    <div class="field col-12 md:col-3">
+                        <label>Tipo Documento</label>
+                        <p-dropdown appendTo="body" formControlName="codigoTipoDocumentoIdentidad" id="codigoTipoDocumentoIdentidad" [autofocus]="true"
+                        [options]="listaDocumentos" optionLabel="descripcion" optionValue="codigo"
+                        (onChange)="canbioTipoDocumento($event)"
+                        placeholder="Seleccione una opción"
+                        ></p-dropdown>
+                        <small class="p-error block" *ngIf="itemForm.get('codigoTipoDocumentoIdentidad')?.hasError('required')">Dato requerido.</small>
+                    </div>
+                    <div class="field col-12 md:col-3">
+                        <label>Número Documento</label>
+                        <input formControlName="numeroDocumento" type="text" pInputText id="numeroDocumento" maxlength="20" #numeroDocumento
+                        oninput="this.value = this.value.trim().toUpperCase()" onfocus="this.select();"
+                        />
+                        <small class="p-error block" *ngIf="itemForm.get('numeroDocumento')?.hasError('required')">Dato requerido.</small>
+                    </div>
+                    <div class="field col-12 md:col-1">
+                        <label>Comp.</label>
+                        <input formControlName="complemento" type="text" pInputText id="complemento" maxlength="4" #complemento oninput="this.value = this.value.trim().toUpperCase()" onfocus="this.select();"
+                        />
+                    </div>
+                    <div class="field col-12 md:col-5">
+                        <label>Nombre</label>
+                        <input formControlName="nombre" type="text" pInputText id="nombre" maxlength="255" oninput="this.value = this.value.toUpperCase()" onfocus="this.select();"/>
+                        <small class="p-error block" *ngIf="itemForm.get('nombre')?.hasError('required')">Dato requerido.</small>
+                    </div>
+
+                </div>
+
+
+                <br>
+                <p-divider align="left">
+                    <div class="inline-flex align-items-center">
+                        <i class="pi pi-wallet mr-2"></i>
+                        <b>Metodo de Pago</b>
+                    </div>
+                </p-divider>
+
+                <div class="p-fluid p-formgrid grid">
+                    <div class="field col-12 md:col-2">
+                    </div>
+                    <div class="field col-12 md:col-8">
+                        <label>Seleccione un Metodo de Pago</label>
+                        <p-selectButton [options]="listaTipoPago" formControlName="codigoTipoPago" optionLabel="label" optionValue="value" styleClass="w-full"
+                        optionIcon="icon" ></p-selectButton>
+                    </div>
+                    <div class="field col-12 md:col-2">
+                    </div>
+                    <div *ngIf="esPagoDesposito()" class="field col-12 md:col-8 col-offset-2">
+                        Puedes realizar tu pago mediante transferencia bancaria al numero de cuenta que se te enviara al momento de finalizar el proceso de compra.
+                        <br>También podrás encontrarlo en el correo que te llegará, donde se encuentran los datos de tu pedido.
+                        <br>Una vez realizado tu pago debes enviar los datos de tu transacción al whatsapp +59172368246 de la empresa
+                        <br><b>*Recuerda que tienes solo 6 horas para realizar el pago</b>
+                    </div>
+                    <div *ngIf="esPagoPosterior()" class="field col-12 md:col-8 col-offset-2">
+                        Puedes realizar tu pago en cualquiera de nuestras tiendas Dismac usando como referencia el número del pedido que recibirás al momento de finalizar el proceso de compra.
+                        <br>También podrás encontrarlo en el correo que te llegará, donde se encuentran los datos de tu pedido.
+                        <br>Una vez realizado tu pago recibirás un correo con la factura adjunta
+                        <br><b>*Recuerda que tienes solo 6 horas para realizar el pago</b>
+                    </div>
+                    <div *ngIf="esPagoQr()" class="field col-12 md:col-8 col-offset-2">
+                        Desde la aplicación de tu banco escanea el Código QR que recibirás al momento de finalizar el proceso de compra.
+                        <br>
+                        También podrás encontrarlo en el correo que te llegará, donde se encuentran los datos de tu pedido.
+                        <br>
+                        Por normativa, el QR debe ser escaneado desde la aplicación de la cuenta bancaria de la persona o empresa a facturar.
+                        <br>
+                        Una vez realizado tu pago recibirás un correo con la factura adjunta.
+                        <br><b>*Recuerda que tienes solo 6 horas para realizar el pago</b>
+                    </div>
+                </div>
+                <!-- <div *ngIf="esPedido()" class="grid">
+                    <div class="col-4 col-offset-4">
+                        <button pButton label="Confirmar y Generar Qr" icon="pi pi-check" iconPos="left" (click)="confirmarCompra()"></button>
+                    </div>
+                </div>
+                <div *ngIf="!esPedido()" class="grid">
+                    <div class="col-4 col-offset-4">
+                        <app-pago-qr [compra]="item"></app-pago-qr>
+                    </div>
+                </div> -->
+            </div>
+
+            <!--<p-divider layout="vertical" ></p-divider>-->
+            <div class="field col-12 md:col-3">
+
+                    <div class="p-fluid p-formgrid grid">
+                    <div class="field col-12 md:col-12">
+                        <label for="">Resumen Compra</label>
+                    </div>
+                    <div class="field col-12 md:col-12">
+                        <!-- <p-divider></p-divider> -->
+
+                        <p-scrollPanel [style]="{width: '100%', height: '380px'}">
+                            <p-table #dt styleClass="p-datatable-sm" [value]="detalle" responsiveLayout="scroll" [rows]="10"
+                            [paginator]="false" [rowHover]="true" dataKey="id"
+                            [(contextMenuSelection)]="detalleSeleccionado"
+                            >
+                            <ng-template pTemplate="body" let-i="rowIndex" let-item>
+                                <tr [pContextMenuRow]="item">
+                                    <td>
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="output">
+                                                <label >{{item.producto }}</label><br/>
+                                            </ng-template>
+                                        </p-cellEditor>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="p-inputgroup" style="align-items: center">
+                                            <label style="width: 30px;" ><b>
+                                                {{item.cantidad }}
+                                            </b></label>
+                                        </div>
+                                    </td>
+                                    <td class="text-right">{{item.total | formatoDecimal}}</td>
+                                </tr>
+                            </ng-template>
+                            </p-table>
+                        </p-scrollPanel>
+                    </div>
+                    <div class="field col-12 md:col-12">
+                        <div class="field grid">
+                            <label for="total" class="col-12 mb-2 md:col-4 md:mb-0">Total</label>
+                            <div class="col-12 md:col-8">
+                                <p-inputNumber [ngModel]="getTotalSujetoIva()" [ngModelOptions]="{standalone: true}" locale="en-US"
+                                id="total" [maxlength]="17" [inputStyle]="{'text-align': 'right'}" mode="decimal"
+                                [minFractionDigits]="2" [maxFractionDigits]="2" [readonly]="true">
+                                </p-inputNumber>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field col-12 md:col-6">
+                        <button pButton label="Atras" icon="pi pi-angle-left" iconPos="left" (click)="prevPage()"></button>
+                    </div>
+                    <div class="field col-12 md:col-6">
+                        <button pButton label="Finalizar" icon="pi pi-check" iconPos="left" (click)="onSave()"></button>
+                    </div>
+
+                    </div>
+
+            </div>
+        </div>
+    </form>
+</div>
+
+
+<p-dialog header="Compra Finalizada" [(visible)]="mostrarVentaFinalizada" [modal]="true" [style]="{width: '50vw'}"
+    [draggable]="false" [resizable]="false" (onHide)="redireccionar()">
+    <div class="text-center">
+        <h4>N° de Compra generada</h4>
+        <br>
+           <h3><b>{{correlativo}}</b></h3>
+        <p>
+            Por favor revise su email para verificar los datos del pago
+        </p>
+        <div *ngIf="qr" class="field">
+           <p-image [src]="qr" alt="Image" width="350"></p-image>
+        </div>
+    </div>
+        <ng-template pTemplate="footer">
+        <p-button icon="pi pi-check" (click)="redireccionar()" label="Ok" styleClass="p-button-text"></p-button>
+        </ng-template>
+</p-dialog>

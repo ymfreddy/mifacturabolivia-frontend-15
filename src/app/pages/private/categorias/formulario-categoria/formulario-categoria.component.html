@@ -1,0 +1,31 @@
+<p-blockUI [blocked]="submited"><app-bloqueo></app-bloqueo></p-blockUI>
+<form [formGroup]="itemForm" (ngSubmit)="onSubmit()" autocomplete="off">
+    <div class="card p-fluid">
+        <div class="field">
+            <label >Nombre</label>
+            <input formControlName="nombre" type="text" pInputText id="nombre" autofocus maxlength="50" oninput="this.value = this.value.toUpperCase()" onfocus="this.select();"/>
+            <small class="p-error block" *ngIf="itemForm.get('nombre')?.hasError('required')">Dato requerido.</small>
+        </div>
+        <div class="field">
+            <label >Nombre Imagen</label>
+            <input pInputText type="text" formControlName="imagenNombre" />
+        </div>
+        <div class="field" *ngIf="itemForm.controls['imagenRuta'].value !== ''">
+            <img [src]="itemForm.value.imagenRuta" width="150" class="mt-0 mx-auto mb-5 block shadow-2">
+        </div>
+        <div class="field">
+            <p-fileUpload #imageUpload mode="basic" name="myfile" accept="image/*"
+                invalidFileSizeMessageSummary="{0}: Tamaño del archivo inválido, "
+                invalidFileSizeMessageDetail="El tamaño máximo debe ser {0}."
+                invalidFileTypeMessageSummary="{0}: Tipo del archivo inválido, " [maxFileSize]=1000000
+                [customUpload]="true" (uploadHandler)="cargarImagen($event, imageUpload)" [auto]="true"
+                chooseLabel=" Subir ">
+            </p-fileUpload>
+        </div>
+    </div>
+    <div class="flex justify-content-end flex-wrap">
+        <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-secondary p-button-text" (click)="onClose()"></button>
+        <button pButton pRipple label="Aceptar" icon="pi pi-check" class="p-button-text" (click)="onSave()"></button>
+    </div>
+
+</form>

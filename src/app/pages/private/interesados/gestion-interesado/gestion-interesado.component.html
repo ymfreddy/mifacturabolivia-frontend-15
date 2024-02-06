@@ -1,0 +1,102 @@
+<p-blockUI [blocked]="submited"> <app-bloqueo></app-bloqueo></p-blockUI>
+<p-card>
+    <ng-template pTemplate="title">
+        Médico/Cliente
+    </ng-template>
+    <form [formGroup]="itemForm" (ngSubmit)="onSubmit()" autocomplete="off">
+        <div class="p-fluid p-formgrid grid">
+            <div class="field col-12 md:col-2">
+                <label>N° Documento</label>
+                <input formControlName="numeroDocumento" [pKeyFilter]="blockSpace" type="text" pInputText id="numeroDocumento" maxlength="25"
+                    #numeroDocumento [autofocus]="true" uppercase onfocus="this.select();" />
+                <small class="p-error block" *ngIf="itemForm.get('numeroDocumento')?.hasError('required')">Dato
+                    requerido.</small>
+            </div>
+            <div class="field col-12 md:col-4">
+                <label>Nombre</label>
+                <input formControlName="nombre" type="text" pInputText id="nombre" maxlength="150" uppercase
+                    onfocus="this.select();" />
+                <small class="p-error block" *ngIf="itemForm.get('nombre')?.hasError('required')">Dato
+                    requerido.</small>
+            </div>
+            <div class="field col-12 md:col-2">
+                <label>Especialidad</label>
+                <p-dropdown appendTo="body" formControlName="idEspecialidad" id="idEspecialidad" appendTo="body"
+                    [options]="listaEspecialidades" optionLabel="nombre" optionValue="id"
+                    placeholder="Seleccione una opción"></p-dropdown>
+                <small class="p-error block" *ngIf="itemForm.get('idEspecialidad')?.hasError('required')">Dato
+                    requerido.</small>
+            </div>
+            <div class="field col-12 md:col-2">
+                <label>Telefono</label>
+                <input formControlName="telefono" type="text" pInputText id="telefono" maxlength="25" uppercase
+                    onfocus="this.select();" />
+            </div>
+            <div class="field col-12 md:col-2">
+                <label>Visitador</label>
+                <p-dropdown appendTo="body" formControlName="idUsuario" id="idUsuario" [options]="listaUsuarios"
+                    optionLabel="nombreCompleto" optionValue="id" [showClear]="true" placeholder="NINGUNO">
+                </p-dropdown>
+            </div>
+            <div class="field col-12 md:col-12">
+                <!-- <p-divider></p-divider> -->
+                <label>Direcciones</label>
+            </div>
+        </div>
+
+        <p-table #dt styleClass="p-datatable-sm" [value]="direcciones" responsiveLayout="scroll" [rows]="10"
+            [paginator]="false" [rowHover]="true" dataKey="direccion">
+            <ng-template pTemplate="caption">
+                <div class="flex flex-column md:flex-row md:justify-content-end md:align-items-center">
+                    <p-button (onClick)="addItem()" label="Dirección" icon="pi pi-plus" styleClass="p-button-success" tabindex="-1" ></p-button>
+                </div>
+            </ng-template>
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>N°</th>
+                    <th style="text-align:center; width:10%">zona</th>
+                    <th style="text-align:center; width:10%">direccion</th>
+                    <th style="text-align:center; width:20%">tipo puesto</th>
+                    <th style="text-align:center; width:20%">puesto trabajo</th>
+                    <th style="text-align:center; width:10%">dias</th>
+                    <th style="text-align:center; width:10%">turno</th>
+                    <th style="text-align:center; width:20%">horarios</th>
+                    <th style="text-align:center; width:5%">Operación</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-i="rowIndex" let-item>
+                <tr>
+                    <td><b>{{ i + 1 }}</b></td>
+                    <td>{{item.zona}}</td>
+                    <td>{{item.direccion}}</td>
+                    <td>{{item.tipoPuestoTrabajo}}</td>
+                    <td>{{item.puestoTrabajo}}</td>
+                    <td>{{item.dias}}</td>
+                    <td>{{item.turnos}}</td>
+                    <td>{{item.horarios}}</td>
+                    <td style="width:5rem; min-width:5rem;">
+                        <div class="flex">
+                            <button pButton icon="pi pi-pencil" class="p-button-rounded p-button-primary"
+                                (click)="editItem(item)"></button>
+                            <button pButton icon="pi pi-trash" class="p-button-rounded p-button-warning"
+                                (click)="deleteItem(item)"></button>
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+
+
+        <p-divider type="dashed"></p-divider>
+        <div class="flex justify-content-between flex-wrap card-container purple-container">
+            <div class="flex align-items-center justify-content-center m-2">
+                <button pButton label="Médicos" (click)="prevPage()" icon="pi pi-angle-left"
+                    class="p-button-secondary"></button> &nbsp;
+            </div>
+            <div class="flex align-items-center justify-content-center m-2">
+                <button pButton label="Guardar" icon="pi pi-check" iconPos="right" (click)="onSave()"></button>
+            </div>
+        </div>
+    </form>
+
+</p-card>

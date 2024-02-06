@@ -1,0 +1,145 @@
+<p-blockUI [blocked]="submited"><app-bloqueo></app-bloqueo></p-blockUI>
+<form [formGroup]="itemForm" (ngSubmit)="onSubmit()" autocomplete="off">
+    <div class="card">
+        <div class="p-fluid p-formgrid grid">
+            <div class="field col-12 md:col-4">
+                <div class="card p-fluid">
+                    <div class="field grid">
+                        <img [src]="itemForm.value.imagenRuta  ? itemForm.value.imagenRuta : 'assets/layout/images/sin-imagen.png'"
+                            width="100%" class="mt-0 mx-auto mb-5 block">
+                    </div>
+                    <div class="field grid">
+                        <p-fileUpload #imageUpload mode="basic" name="myfile" accept="image/*"
+                            invalidFileSizeMessageSummary="{0}: Tamaño del archivo inválido, "
+                            invalidFileSizeMessageDetail="El tamaño máximo debe ser {0}."
+                            invalidFileTypeMessageSummary="{0}: Tipo del archivo inválido, " [maxFileSize]=1000000
+                            [customUpload]="true" (uploadHandler)="cargarImagen($event, imageUpload)" [auto]="true"
+                            chooseLabel=" Subir ">
+                        </p-fileUpload>
+                    </div>
+
+                </div>
+            </div>
+            <div class="field col-12 md:col-8">
+                <div class="p-fluid p-formgrid grid">
+                    <div class="field col-12 md:col-3">
+                        <label>Código Producto</label>
+                        <input formControlName="codigoProducto" type="text" pInputText id="codigoProducto" autofocus maxlength="50" oninput="this.value = this.value.trim().toUpperCase()" onfocus="this.select();" />
+                        <small class="p-error block" *ngIf="itemForm.get('codigoProducto')?.hasError('required')">Dato requerido.</small>
+                    </div>
+                    <div class="field col-12 md:col-9">
+                        <label>Nombre</label>
+                        <input formControlName="nombre" type="text" pInputText id="nombre" maxlength="500" oninput="this.value = this.value.toUpperCase()" onfocus="this.select();"/>
+                        <small class="p-error block" *ngIf="itemForm.get('nombre')?.hasError('required')">Dato requerido..</small>
+                    </div>
+
+                    <div class="field col-12 md:col-12">
+                        <label>Descripción</label>
+                        <input formControlName="descripcion" type="text" pInputText id="descripcion"  maxlength="500" oninput="this.value = this.value.toUpperCase()" onfocus="this.select();"/>
+                    </div>
+
+                    <div class="field col-12 md:col-6">
+                        <label>Categoria</label>
+                        <p-dropdown appendTo="body" formControlName="idCategoria" id="idCategoria"
+                            [options]="listaCategorias" optionLabel="nombre" optionValue="id" [filter]="true"
+                            filterBy="nombre" [showClear]="true" placeholder="Seleccione una opción">
+                            <ng-template let-cat pTemplate="item">
+                                    <img src="{{cat.imagenRuta}}" width="25" />
+                                    {{cat.nombre}}
+                            </ng-template>
+                        </p-dropdown>
+                        <small class="p-error block" *ngIf="itemForm.get('idCategoria')?.hasError('required')">Dato requerido.</small>
+                    </div>
+
+                    <div class="field col-12 md:col-6">
+                        <label>Tipo Unidad</label>
+                        <p-dropdown appendTo="body" formControlName="codigoTipoUnidad" id="codigoTipoUnidad"
+                            [filter]="true" filterBy="descripcion" [showClear]="true" [options]="listaTiposUnidad"
+                            optionLabel="descripcion" optionValue="codigo" placeholder="Seleccione una opción">
+                        </p-dropdown>
+                        <small class="p-error block" *ngIf="itemForm.get('codigoTipoUnidad')?.hasError('required')">Dato requerido.</small>
+                    </div>
+
+                    <div class="field col-12 md:col-3">
+                        <label>Tipo Producto</label>
+                        <p-dropdown appendTo="body" formControlName="idTipoProducto" id="idTipoProducto"
+                            [options]="listaTiposProducto" optionLabel="nombre" optionValue="id"  placeholder="Seleccione una opción"
+                            (onChange)="canbioTipoProducto($event)"
+                            ></p-dropdown>
+                        <small class="p-error block" *ngIf="itemForm.get('idTipoProducto')?.hasError('required')">Dato requerido.</small>
+                    </div>
+
+                    <div class="field col-12 md:col-3">
+                        <label>Cant. Min. Alerta</label>
+                        <p-inputNumber formControlName="cantidadMinimaAlerta" locale="en-US" id="cantidadMinimaAlerta" [maxlength]="3"
+                            [inputStyle]="{'text-align': 'right'}" mode="decimal" [minFractionDigits]="0"
+                            [maxFractionDigits]="0"></p-inputNumber>
+                        <small class="p-error block" *ngIf="itemForm.get('cantidadMinimaAlerta')?.hasError('required')">Dato requerido.</small>
+                    </div>
+
+                    <div class="field col-12 md:col-3">
+                        <label>Costo BS</label>
+                        <p-inputNumber formControlName="costo" locale="en-US" id="costo" [maxlength]="15"
+                            [inputStyle]="{'text-align': 'right'}" mode="decimal" [minFractionDigits]="2"
+                            [maxFractionDigits]="2"></p-inputNumber>
+                        <small class="p-error block" *ngIf="itemForm.get('costo')?.hasError('required')">Dato requerido.</small>
+                    </div>
+
+                    <div class="field col-12 md:col-3">
+                        <label>Precio BS</label>
+                        <p-inputNumber formControlName="precio" locale="en-US" id="precio" [maxlength]="15"
+                            [inputStyle]="{'text-align': 'right'}" mode="decimal" [minFractionDigits]="2"
+                            [maxFractionDigits]="2"></p-inputNumber>
+                        <small class="p-error block" *ngIf="itemForm.get('precio')?.hasError('required')">Dato requerido.</small>
+                    </div>
+
+                    <div class="field col-12 md:col-6">
+                        <label>Actividad</label>
+                        <p-dropdown appendTo="body" formControlName="codigoActividad" id="codigoActividad"
+                            [options]="listaActividades" optionLabel="descripcion" optionValue="codigoCaeb"
+                            (onChange)="cambioActividad($event)" [showClear]="true"
+                            placeholder="Seleccione una opción">
+                            <ng-template let-i pTemplate="item">
+                                <div class="text-wrap">
+                                    <div>{{i.codigoCaeb}} - {{i.descripcion}}</div>
+                                </div>
+                            </ng-template>
+                        </p-dropdown>
+                        <small class="p-error block"
+                            *ngIf="itemForm.get('codigoActividad')?.hasError('required')">Actividad inválida.</small>
+                    </div>
+
+                    <div class="field col-12 md:col-6">
+                        <label>Tipo Producto SIN</label>
+                        <p-dropdown appendTo="body" formControlName="codigoProductoSin" id="codigoProductoSin"
+                            [options]="listaTiposProductoSinSeleccionado" optionLabel="descripcion" optionValue="codigoProducto"
+                            placeholder="Seleccione una opción">
+                            <ng-template let-i pTemplate="item">
+                                <div class="text-wrap">
+                                    <div>{{i.codigoProducto}} - {{i.descripcion}}</div>
+                                </div>
+                            </ng-template>
+                        </p-dropdown>
+                        <small class="p-error block"
+                            *ngIf="itemForm.get('codigoProductoSin')?.hasError('required')">Producto Sin
+                            inválido.</small>
+                    </div>
+
+                    <div class="field col-12 md:col-6" *ngIf="verTipoHabitacion()">
+                        <label>Tipo Habitación</label>
+                        <p-dropdown appendTo="body" formControlName="codigoTipoHabitacion" id="codigoTipoHabitacion"
+                            [filter]="true" filterBy="descripcion" [showClear]="true" [options]="listaTiposHabitacion"
+                            optionLabel="descripcion" optionValue="codigo" placeholder="Seleccione una opción">
+                        </p-dropdown>
+                        <!-- <small class="p-error block" *ngIf="itemForm.get('codigoTipoHabitacion')?.hasError('required')">Dato requerido.</small> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="flex justify-content-end flex-wrap">
+        <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-secondary p-button-text"
+            (click)="onClose()"></button>
+        <button pButton pRipple label="Aceptar" icon="pi pi-check" class="p-button-text" (click)="onSave()"></button>
+    </div>
+</form>

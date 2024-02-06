@@ -1,0 +1,74 @@
+
+<div class="card p-fluid">
+    <div *ngIf="item">
+        <p><b>
+            Sucursal: {{item.numeroSucursal}}
+            <br>
+            Categoria: {{item.categoria}}
+            <br>
+            Codigo Producto: {{item.codigoProducto}}
+            <br>
+            Producto: {{item.producto}}
+            </b>
+        </p>
+    </div>
+    <p-table #dt2  [value]="lista"
+    sortField="codigoStock" sortMode="single" dataKey="codigoStock" rowGroupMode="subheader" groupRowsBy="codigoStock"
+    >
+    <ng-template pTemplate="header">
+        <tr>
+            <th >Stock
+            </th>
+            <th >Tipo Historial
+            </th>
+            <th >Codigo Salida
+            </th>
+            <th >Descripcion
+            </th>
+            <th >Entrada
+            </th>
+            <th >Salida
+            </th>
+            <th >Saldo
+            </th>
+            <th >Precio Compra/Entrada
+            </th>
+            <th >Precio Venta
+            </th>
+            <th >Precio Vendido/Salida
+            </th>
+            <th >Fecha
+            </th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="groupheader" let-item let-rowIndex="rowIndex" let-expanded="expanded">
+        <tr>
+            <td colspan="12">
+                <button type="button" pButton pRipple [pRowToggler]="item" class="p-button-text p-button-rounded p-button-plain mr-2" [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
+                <span class="font-bold ml-2">Stock: {{item.codigoStock}}</span>
+            </td>
+        </tr>
+    </ng-template>
+    <!-- <ng-template pTemplate="groupfooter" let-customer>
+        <tr class="p-rowgroup-footer">
+            <td colspan="4" style="text-align: right">Saldo Total</td>
+            <td>{{calculateCustomerTotal(customer.representative.name)}}</td>
+        </tr>
+    </ng-template> -->
+    <ng-template pTemplate="rowexpansion" let-item>
+        <tr>
+            <td>{{item.codigoStock}}</td>
+            <td>{{item.tipoHistorial}}</td>
+            <td>{{item.codigoSalida}}</td>
+            <td>{{item.descripcion}}</td>
+            <td class="text-right">{{item.entrada | formatoDecimal}}</td>
+            <td class="text-right">{{item.salida | formatoDecimal}}</td>
+            <td class="text-right"><b>{{item.saldo | formatoDecimal}}</b></td>
+            <td class="text-right">{{item.precioCompra | formatoDecimal}}</td>
+            <td class="text-right">{{item.precioVenta | formatoDecimal}}</td>
+            <td class="text-right">{{item.precioVendido | formatoDecimal}}</td>
+            <td>{{item.fecha}} {{item.hora}}</td>
+        </tr>
+    </ng-template>
+    </p-table>
+</div>

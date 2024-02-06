@@ -1,0 +1,76 @@
+<p-panel header="EMPRESAS" [toggleable]="true">
+    <p-table #dt styleClass="p-datatable-sm" [value]="items" responsiveLayout="scroll"
+        [globalFilterFields]="['nit','nombre','representanteLegal']" [paginator]="false" [rowHover]="true"
+        dataKey="id">
+        <ng-template pTemplate="caption">
+            <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                <span class="block mt-2 md:mt-0 p-input-icon-left">
+                    <i class="pi pi-search"></i>
+                    <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Filtrar...." class="w-full sm:w-auto" />
+                </span>
+                <div class="flex">
+                    <button pButton pRipple label="QR" icon="pi pi-qrcode" class="p-button-success mr-2"
+                    (click)="showQr()"></button>
+                    <button pButton pRipple label="Nuevo" icon="pi pi-plus" class="p-button-success mr-2"
+                    (click)="newItem()"></button>
+                </div>
+            </div>
+        </ng-template>
+
+        <ng-template pTemplate="header">
+            <tr>
+                <th>N°</th>
+                <th pSortableColumn="id">Id<p-sortIcon field="id"></p-sortIcon></th>
+                <th pSortableColumn="nit">Nit<p-sortIcon field="nit"></p-sortIcon></th>
+                <th pSortableColumn="sigla">Sigla<p-sortIcon field="sigla"></p-sortIcon></th>
+                <th pSortableColumn="nombre">Nombre<p-sortIcon field="nombre"></p-sortIcon></th>
+                <th pSortableColumn="facturaRollo">Factura Rollo<p-sortIcon field="facturaRollo"></p-sortIcon></th>
+                <th pSortableColumn="copiaImpresion">Factura Copia<p-sortIcon field="copiaImpresion"></p-sortIcon></th>
+                <th pSortableColumn="envioEmail">Factura Email<p-sortIcon field="envioEmail"></p-sortIcon></th>
+                <th pSortableColumn="envioEmailCopia">Factura Email copia<p-sortIcon field="envioEmailCopia"></p-sortIcon></th>
+                <th pSortableColumn="restaurante">restaurante<p-sortIcon field="restaurante"></p-sortIcon></th>
+                <th pSortableColumn="impresionDirecta">Imp Directa<p-sortIcon field="impresionDirecta"></p-sortIcon></th>
+                <th>Operación</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-i="rowIndex" let-item>
+            <tr>
+                <td><b>{{ i + 1 }}</b></td>
+                <td>{{item.id}}</td>
+                <td>{{item.nit}}</td>
+                <td>{{item.sigla}}</td>
+                <td>{{item.nombre}}</td>
+                <td>{{item.facturaRollo  ? 'SI':'NO'}}</td>
+                <td>{{item.copiaImpresion  ? 'SI':'NO'}}</td>
+                <td>{{item.envioEmail  ? 'SI':'NO'}}</td>
+                <td>{{item.envioEmailCopia  ? 'SI':'NO'}}</td>
+                <td>{{item.restaurante  ? 'SI':'NO'}}</td>
+                <td>{{item.impresionDirecta  ? 'SI':'NO'}}</td>
+                 <td style="width:5rem; min-width:5rem;">
+                    <div class="flex">
+                        <p-fileUpload
+                        class="p-button-rounded p-button-success mr-2"
+                        #imageUpload mode="basic" name="myfile" accept="image/*"
+                        invalidFileSizeMessageSummary="{0}: Tamaño del archivo inválido, "
+                        invalidFileSizeMessageDetail="El tamaño máximo debe ser {0}."
+                        invalidFileTypeMessageSummary="{0}: Tipo del archivo inválido, " [maxFileSize]=500000
+                        [customUpload]="true" (uploadHandler)="cargarImagen($event, imageUpload, item)" [auto]="true"
+                        icon="pi p-fileUpload"
+                        chooseLabel="Logo"
+                        >
+                        </p-fileUpload>
+                        <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2"
+                            (click)="editItem(item)"></button>
+                        <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
+                            (click)="deleteItem(item)"></button>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</p-panel>
+
+
+<p-dialog header="QR conexión" [(visible)]="display">
+    <p-image [src]="qrUrl" alt="Image" width="500"></p-image>
+</p-dialog>

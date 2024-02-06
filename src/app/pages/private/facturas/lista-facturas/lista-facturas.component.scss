@@ -1,0 +1,37 @@
+:host ::ng-deep .tabview-custom { i, span { vertical-align: middle; } span { margin: 0 .5rem; }
+} :host ::ng-deep .p-button { margin-right: .25rem;
+} :host ::ng-deep .p-tabview p { line-height: 1.5; margin: 0;
+}
+
+.outofstock {
+    font-weight: 700;
+    color: #FF5252;
+    text-decoration: line-through;
+}
+
+.lowstock {
+    font-weight: 700;
+    color: #FFA726;
+}
+
+.instock {
+    font-weight: 700;
+    color: #66BB6A;
+}
+
+:host ::ng-deep .row-anulada {
+    background-color: rgba(90, 94, 94, 0.342) !important;
+}
+
+:host ::ng-deep .row-rechazada {
+    background-color: rgba(202, 43, 15, 0.26) !important;
+}
+
+:host ::ng-deep .row-pendiente {
+    background-color: rgba(85, 163, 236, 0.226) !important;
+}
+
+:host ::ng-deep .row-no-enviado {
+    background-color: rgba(240, 141, 12, 0.281) !important;
+}
+

@@ -1,0 +1,20 @@
+{
+    "/adm/api/v1/*": {
+      "target": "http://localhost:8001",
+      "secure": false,
+          "logLevel": "debug",
+          "changeOrigin": true
+    },
+    "/sfe/api/v1/*": {
+      "target": "http://localhost:8002",
+      "secure": false,
+          "logLevel": "debug",
+          "changeOrigin": true
+    },
+    "/utils/api/v1/*": {
+      "target": "http://localhost:8003",
+      "secure": false,
+          "logLevel": "debug",
+          "changeOrigin": true
+    }
+  }

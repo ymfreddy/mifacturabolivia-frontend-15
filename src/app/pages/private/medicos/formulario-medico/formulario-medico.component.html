@@ -1,0 +1,42 @@
+<p-blockUI [blocked]="submited"> <app-bloqueo></app-bloqueo></p-blockUI>
+<form [formGroup]="itemForm" (ngSubmit)="onSubmit()" autocomplete="off">
+    <div class="card">
+        <div class="p-fluid p-formgrid grid">
+            <div class="field col-12 md:col-3">
+                <label>Nit/Documento</label>
+                <div class="p-inputgroup">
+                    <input formControlName="nitDocumento" type="text" pInputText id="nitDocumento" maxlength="25" #nitDocumento
+                    pKeyFilter="int" onfocus="this.select();"
+                    />
+                    <p-button pTooltip="Verificar nit" tooltipPosition="top" (onClick)="verificarNit()"
+                                icon="pi pi-check" styleClass="p-button" tabindex="-1"></p-button>
+                </div>
+
+                <small class="p-error block" *ngIf="itemForm.get('nitDocumento')?.hasError('required')">Dato requerido.</small>
+            </div>
+            <div class="field col-12 md:col-3">
+                <label>Matricula</label>
+                <input formControlName="matricula" type="text" pInputText id="matricula" maxlength="30" uppercase onfocus="this.select();" />
+            </div>
+            <div class="field col-12 md:col-6">
+                <label>Especialidad</label>
+                <p-dropdown appendTo="body" formControlName="idEspecialidad" id="idEspecialidad" appendTo="body"
+                    [options]="listaEspecialidades" optionLabel="nombre" optionValue="id"
+                    [filter]="true" filterBy="nombre"
+                    placeholder="Seleccione una opción"></p-dropdown>
+                <small class="p-error block" *ngIf="itemForm.get('idEspecialidad')?.hasError('required')">Dato
+                    requerido.</small>
+            </div>
+            <div class="field col-12 md:col-12">
+                <label>Nombre</label>
+                <input formControlName="nombre" type="text" pInputText id="nombre" maxlength="150" uppercase onfocus="this.select();"/>
+                <small class="p-error block" *ngIf="itemForm.get('nombre')?.hasError('required')">Dato requerido.</small>
+            </div>
+        </div>
+    </div>
+    <div class="flex justify-content-end flex-wrap">
+        <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-secondary p-button-text"
+            (click)="onClose()"></button>
+        <button pButton pRipple label="Aceptar" icon="pi pi-check" class="p-button-text" (click)="onSave()"></button>
+    </div>
+</form>

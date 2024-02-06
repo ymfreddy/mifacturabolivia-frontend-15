@@ -1,0 +1,60 @@
+<p-panel header="SUCURSALES" [toggleable]="true">
+    <div class="p-fluid p-formgrid grid">
+        <div class="field col-12 md:col-4">
+            <label>Empresa:</label>
+            <p-dropdown appendTo="body" [(ngModel)]="idEmpresa" [ngModelOptions]="{standalone: true}"  id="idEmpresa" [autofocus]="true"
+            [options]="listaEmpresas" optionLabel="nombre" optionValue="id" (onChange)="cambioEmpresa($event)"
+            placeholder="Seleccione una empresa"
+            ></p-dropdown>
+        </div>
+    </div>
+
+    <p-table #dt styleClass="p-datatable-sm" [value]="items" responsiveLayout="scroll" [rows]="10"
+        [globalFilterFields]="['nit','numero','direccion','telefono','ciudad']" [rows]="10" [paginator]="true" [rowsPerPageOptions]="[10,20,30]"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros" [rowHover]="true"
+        dataKey="id">
+        <ng-template pTemplate="caption">
+            <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                <span class="block mt-2 md:mt-0 p-input-icon-left">
+                    <i class="pi pi-search"></i>
+                    <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Filtrar...." class="w-full sm:w-auto" />
+                </span>
+                <button pButton pRipple label="Nuevo" icon="pi pi-plus" class="p-button-success mr-2"
+                (click)="newItem()"></button>
+            </div>
+        </ng-template>
+
+        <ng-template pTemplate="header">
+            <tr>
+                <th>N°</th>
+                <th pSortableColumn="nit">Empresa<p-sortIcon field="nit"></p-sortIcon></th>
+                <th pSortableColumn="numero">Número Sucursal<p-sortIcon field="numero"></p-sortIcon></th>
+                <th pSortableColumn="casaMatriz">Casa Matriz<p-sortIcon field="casaMatriz"></p-sortIcon></th>
+                <th pSortableColumn="direccion">Dirección<p-sortIcon field="direccion"></p-sortIcon></th>
+                <th pSortableColumn="telefono">Telefono<p-sortIcon field="telefono"></p-sortIcon></th>
+                <th pSortableColumn="ciudad">Ciudad<p-sortIcon field="ciudad"></p-sortIcon></th>
+                <th>Operación</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-i="rowIndex" let-item>
+            <tr>
+                <td><b>{{ i + 1 }}</b></td>
+                <td>{{item.nit}}</td>
+                <td>{{item.numero}}</td>
+                <td>{{item.casaMatriz ? 'SI':'NO'}}</td>
+                <td>{{item.direccion}}</td>
+                <td>{{item.telefono}}</td>
+                <td>{{item.ciudad}}</td>
+                 <td style="width:5rem; min-width:5rem;">
+                    <div class="flex">
+                        <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-primary mr-2"
+                            (click)="editItem(item)"></button>
+                        <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger"
+                            (click)="deleteItem(item)"></button>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</p-panel>

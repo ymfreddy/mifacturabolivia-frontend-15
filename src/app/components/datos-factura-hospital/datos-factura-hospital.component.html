@@ -1,0 +1,69 @@
+<p-blockUI [blocked]="submited"><app-bloqueo></app-bloqueo></p-blockUI>
+<form [formGroup]="itemForm" (ngSubmit)="onSubmit()" autocomplete="off">
+    <div class="card">
+        <div class="p-fluid p-formgrid grid">
+            <div class="field col-12 md:col-4">
+                <label>Especialidad</label>
+                <p-dropdown appendTo="body" formControlName="especialidad" id="especialidad" appendTo="body"
+                    [options]="listaEspecialidades" optionLabel="nombre" optionValue="nombre" [autofocus]="true"
+                    [filter]="true" filterBy="nombre"
+                    placeholder="Seleccione una opción"></p-dropdown>
+                <small class="p-error block" *ngIf="itemForm.get('especialidad')?.hasError('required')">Dato
+                    requerido.</small>
+            </div>
+            <div class="field col-12 md:col-6">
+                <label>Especialidad Detalle</label>
+                <input formControlName="especialidadDetalle" type="text" pInputText id="especialidadDetalle"
+                    maxlength="500" uppercase onfocus="this.select();" />
+                <small class="p-error block" *ngIf="itemForm.get('especialidadDetalle')?.hasError('required')">Dato
+                    requerido.</small>
+            </div>
+            <div class="field col-12 md:col-2">
+                <label>Nro Consultorio/Quirofano</label>
+                <input formControlName="nroQuirofanoSalaOperaciones" type="text" pInputText
+                    id="nroQuirofanoSalaOperaciones" maxlength="10" pKeyFilter="int" uppercase
+                    onfocus="this.select();" />
+                <small class="p-error block"
+                    *ngIf="itemForm.get('nroQuirofanoSalaOperaciones')?.hasError('required')">Dato
+                    requerido.</small>
+            </div>
+
+            <div class="field col-12 md:col-4">
+                <label>Nit Médico</label>
+                <p-autoComplete formControlName="medico" appendTo="body" #medico [suggestions]="listaMedicosFiltrados"
+                    (completeMethod)="filtrarMedico($event)" [showEmptyMessage]="true" [maxlength]="25"
+                    emptyMessage="No existe" [forceSelection]="true" (onSelect)="seleccionarMedico($event)"
+                    field="nitDocumento" [delay]=500 [showClear]="true" (onClear)="limpiarMedico()"
+                    placeholder="Introduzca el nit/nombre del médico" [autofocus]="true">
+                    <ng-template let-item pTemplate="item">
+                        <div class="row">
+                            <div class="text-wrap">
+                                <b>{{ item.nitDocumento }}</b> - {{ item.nombre }} <br> {{ item.especialidad }}
+                            </div>
+                        </div>
+                    </ng-template>
+                </p-autoComplete>
+                <small class="p-error block" *ngIf="itemForm.get('medico')?.hasError('required')">
+                    Dato requerido.</small>
+            </div>
+            <div class="field col-12 md:col-6">
+                <label>Medico</label>
+                <div class="p-inputgroup">
+                    <input type="text" formControlName="nombreApellidoMedico" pInputText maxlength="200" readonly tabindex="-1" />
+                </div>
+            </div>
+            <div class="field col-12 md:col-2">
+                <label>Nro Factura Médico</label>
+                <input formControlName="nroFacturaMedico" type="text" pInputText id="nroFacturaMedico" maxlength="10"
+                    uppercase pKeyFilter="int" onfocus="this.select();" />
+                <small class="p-error block" *ngIf="itemForm.get('nroFacturaMedico')?.hasError('required')">Dato
+                    requerido.</small>
+            </div>
+        </div>
+    </div>
+    <div class="flex justify-content-end flex-wrap">
+        <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-secondary p-button-text"
+            (click)="onClose()"></button>
+        <button pButton pRipple label="Aceptar" icon="pi pi-check" class="p-button-text" (click)="onSave()"></button>
+    </div>
+</form>

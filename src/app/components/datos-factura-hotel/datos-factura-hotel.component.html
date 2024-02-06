@@ -1,0 +1,59 @@
+<p-blockUI [blocked]="submited"><app-bloqueo></app-bloqueo></p-blockUI>
+<form [formGroup]="itemForm" (ngSubmit)="onSubmit()" autocomplete="off">
+    <div class="card">
+        <div class="p-fluid p-formgrid grid">
+            <div class="field col-12 md:col-4">
+                <label>Pais</label>
+                <p-dropdown appendTo="body" formControlName="codigoPais" id="codigoPais" appendTo="body"
+                    [options]="listaPais" optionLabel="descripcion" optionValue="codigo" [autofocus]="true"
+                    [filter]="true" filterBy="descripcion"
+                    placeholder="Seleccione una opción"></p-dropdown>
+            </div>
+            <div class="field col-12 md:col-2">
+                <label>N° Documento</label>
+                    <input type="text" #documento formControlName="documentoIdentificacion" pInputText maxlength="35" tabindex="-1"
+                    [pKeyFilter]="blockSpace" uppercase onfocus="this.select();"
+                    />
+            </div>
+            <div class="field col-12 md:col-6">
+                <label>Nombre Huesped</label>
+                <div class="p-inputgroup">
+                    <input formControlName="nombreHuesped" type="text" pInputText id="nombreHuesped"
+                    maxlength="150" uppercase onfocus="this.select();" />
+                    <p-button icon="pi pi-arrow-down" (onClick)="adicionarHuesped()" pTooltip="Adicionar Huesped"
+                                tooltipPosition="top"  styleClass="p-button" tabindex="-1"></p-button>
+                </div>
+
+            </div>
+        </div>
+
+        <p-table [value]="listaHuespedes" styleClass="mt-5" dataKey="idHuesped">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Pais</th>
+                    <th>N° Documento</th>
+                    <th>Nombre</th>
+                    <th>Operación</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
+                <tr [pSelectableRow]="item" [pSelectableRowIndex]="rowIndex">
+                    <td>{{descripcionPais(item.codigoPais)}}</td>
+                    <td>{{item.documentoIdentificacion}}</td>
+                    <td>{{item.nombreHuesped}}</td>
+                    <td style="width:5rem; min-width:5rem;">
+                        <div class="flex">
+                            <button pButton icon="pi pi-trash" class="p-button-rounded p-button-warning"
+                                (click)="deleteHuesped(item)"></button>
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+    <div class="flex justify-content-end flex-wrap">
+        <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-secondary p-button-text"
+            (click)="onClose()"></button>
+        <button pButton pRipple label="Aceptar" icon="pi pi-check" class="p-button-text" (click)="onSave()"></button>
+    </div>
+</form>

@@ -1,0 +1,148 @@
+<p-blockUI [blocked]="blockedPanel"> <app-bloqueo></app-bloqueo></p-blockUI>
+<p-panel header="BUSQUEDA" [toggleable]="true">
+    <form [formGroup]="criteriosBusquedaForm" (ngSubmit)="onSubmit()" autocomplete="off">
+        <!-- <p><b>Criterios de busqueda</b></p> -->
+        <div class="p-fluid p-formgrid grid">
+            <div class="field col-12 md:col-2">
+                <label htmlFor="name2">Fecha Inicio</label>
+                <p-calendar formControlName="fechaInicio" inputId="fechaInicio" [showIcon]="true"
+                    dateFormat="dd/mm/yy"></p-calendar>
+                <small class="p-error block" *ngIf="criteriosBusquedaForm.get('fechaInicio')?.hasError('required')">
+                    Fecha inválida.</small>
+            </div>
+            <div class="field col-12 md:col-2">
+                <label htmlFor="name2">Fecha Fin</label>
+                <p-calendar formControlName="fechaFin" inputId="fechaFin" [showIcon]="true"
+                    dateFormat="dd/mm/yy"></p-calendar>
+                <small class="p-error block" *ngIf="criteriosBusquedaForm.get('fechaFin')?.hasError('required')">
+                    Fecha inválida.</small>
+            </div>
+            <div class="field col-12 md:col-3">
+                <label>Usuario</label>
+                <p-dropdown appendTo="body" formControlName="idUsuario" id="idUsuario" [options]="listaUsuarios"
+                    optionLabel="nombreCompleto" optionValue="id" [showClear]="true" placeholder="TODOS">
+                </p-dropdown>
+            </div>
+            <div class="field col-12 md:col-3">
+                <label>Médico</label>
+                <p-dropdown appendTo="body" formControlName="idInteresado" id="idInteresado"
+                    [options]="listaInteresados" optionLabel="nombreCompleto" optionValue="id" [showClear]="true"
+                    placeholder="TODOS">
+                </p-dropdown>
+            </div>
+            <div class="field col-12 md:col-2">
+                <label>Estado Visita</label>
+                <p-dropdown appendTo="body" formControlName="idEstadoVisita" id="idEstadoVisita"
+                    [options]="listaEstadosVisita" optionLabel="nombre" optionValue="id" [showClear]="true"
+                    placeholder="TODOS"></p-dropdown>
+            </div>
+        </div>
+        <p-divider type="dashed"></p-divider>
+        <div class="flex justify-content-end flex-wrap">
+            <button pButton pRipple label="Buscar" icon="pi pi-search" class="p-button mr-2"></button>
+        </div>
+
+    </form>
+</p-panel>
+<p-panel header="VISITAS" [toggleable]="true">
+
+
+
+
+
+
+    <p-tabView (onChange)="handleChange($event)">
+        <p-tabPanel header="Lista Visitas" leftIcon="pi pi-id-card">
+            <p-table #dt styleClass="p-datatable-sm" [value]="items" [rows]="10" [globalFilterFields]="['fecha',
+                'correlativo','usuario','interesado','zona','direccion','estadoVisita','motivoCancelacion','inicioVisita','finVisita',
+                'duracionVisita']" [rows]="10" [paginator]="true" [rowsPerPageOptions]="[10,20,30]"
+                [showCurrentPageReport]="true" responsiveLayout="stack"
+                currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros" [rowHover]="true"
+                dataKey="id">
+                <ng-template pTemplate="caption">
+                    <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                        <span class="block mt-2 md:mt-0 p-input-icon-left">
+                            <i class="pi pi-search"></i>
+                            <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Filtrar...."
+                                class="w-full sm:w-auto" />
+                        </span>
+                        <div class="flex">
+                            <button pButton pRipple label="Nuevo" icon="pi pi-plus" class="p-button-success mr-2"
+                                (click)="newItem()"></button>
+                        </div>
+                    </div>
+                </ng-template>
+
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>N°</th>
+                        <th pSortableColumn="fecha">Código Visita<p-sortIcon field="correlativo"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="fecha">Fecha<p-sortIcon field="fecha"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="usuario">Usuario<p-sortIcon field="usuario"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="interesado">Medico<p-sortIcon field="interesado"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="zona">Zona<p-sortIcon field="zona"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="direccion">Dirección<p-sortIcon field="direccion"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="inicioVisita">Inicio Visita<p-sortIcon field="inicioVisita"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="finVisita">Fin Visita<p-sortIcon field="finVisita"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="duracionVisita">Duración (minutos)<p-sortIcon
+                                field="duracionVisita"></p-sortIcon>
+                        </th>
+                        <!--<th pSortableColumn="motivoCancelacion">Motivo Cancelación<p-sortIcon field="motivoCancelacion"></p-sortIcon></th>-->
+                        <th pSortableColumn="estadoVisita">Estado Visita<p-sortIcon field="estadoVisita"></p-sortIcon>
+                        </th>
+                        <th>Operación</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-i="rowIndex" let-item>
+                    <tr>
+                        <td><span class="p-column-title text-negrita">N°</span><b>{{ i + 1 }}</b></td>
+                        <td><span class="p-column-title text-negrita">Código Visita</span>{{item.correlativo }}</td>
+                        <td><span class="p-column-title text-negrita">Fecha</span>{{item.fecha | formatoFechaHora:false}}</td>
+                        <td><span class="p-column-title text-negrita">Usuario</span>{{item.usuario }}</td>
+                        <td><span class="p-column-title text-negrita">Medico</span>{{item.interesado }}</td>
+                        <td><span class="p-column-title text-negrita">Zona</span>{{item.zona}}</td>
+                        <td><span class="p-column-title text-negrita">Dirección</span>{{item.direccion}}</td>
+                        <td><span class="p-column-title text-negrita">Inicio Visita</span>{{item.inicioVisita |
+                            formatoFechaHora }}</td>
+                        <td><span class="p-column-title text-negrita">Fin Visita</span>{{item.finVisita |
+                            formatoFechaHora }}</td>
+                        <td><span class="p-column-title text-negrita">Duración (minutos)</span>{{item.duracionVisita}}
+                        </td>
+                        <td><span class="p-column-title text-negrita">Estado Visita</span>
+                            <p-chip [styleClass]="getClaseEstado(item.idEstadoVisita)">{{item.estadoVisita}}</p-chip>
+                        </td>
+                        <!--<td><span class="p-column-title text-negrita">Motivo Cancelación</span>{{item.motivoCancelacion}}</td>-->
+                        <td style="width:5rem; min-width:5rem;">
+                            <div class="flex">
+                                <button appendTo="body" pButton pRipple pTooltip="Más opciones" tooltipPosition="top"
+                                    icon="pi pi-cog" class="p-button-rounded p-button-primary mr-2"
+                                    (click)="opcionesVisita(menuVisita, $event, item)"></button>
+                                <button pButton pRipple pTooltip="Eliminar visita" tooltipPosition="top"
+                                    icon="pi pi-trash" class="p-button-rounded p-button-danger"
+                                    (click)="deleteItem(item)" [disabled]="!esEditable(item.idEstadoVisita)"></button>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </p-tabPanel>
+        <p-tabPanel header="Ubicación Visitas" leftIcon="pi pi-map">
+            <app-geolocalizacion [lectura]="true"></app-geolocalizacion>
+        </p-tabPanel>
+
+    </p-tabView>
+
+
+
+</p-panel>
+
+<p-menu [showTransitionOptions]="'0ms'" [hideTransitionOptions]="'0ms'" #menuVisita [popup]="true"
+    [model]="itemsMenuVisita"></p-menu>

@@ -1,0 +1,28 @@
+<div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+    <span class="block mt-2 md:mt-0 p-input-icon-left">
+    </span>
+    <button pButton pRipple label="Nuevo" icon="pi pi-plus" class="p-button-success mr-2"
+        (click)="nuevo()"></button>
+</div>
+
+<div *ngFor="let grupo of grupos; let j = index" >
+    <p-divider align="left" type="dashed">
+      <b>{{grupo.lugar}}</b>
+    </p-divider>
+    <div class="flex justify-content-center flex-wrap">
+      <div class="mr-2" style="height: 100px; width: 110px"  *ngFor="let mesa of grupo.mesas; let i = index" >
+      <div class="card" >
+        <div class="card-body">
+          <h5 class="card-title">{{ mesa.numero }}</h5>
+        </div>
+        <div class="formgroup-inline">
+          <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-primary mr-2"
+                            (click)="editar(mesa)"></button>
+                        <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger"
+                            (click)="eliminar(mesa)"></button>
+        </div>
+      </div>
+      </div>
+    </div>
+    <br>
+  </div>

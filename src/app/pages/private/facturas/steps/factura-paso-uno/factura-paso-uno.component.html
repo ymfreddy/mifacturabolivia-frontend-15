@@ -1,0 +1,324 @@
+<p-blockUI [blocked]="submited">
+    <app-bloqueo></app-bloqueo>
+</p-blockUI>
+
+<p-contextMenu #cm [model]="itemsMenu"></p-contextMenu>
+
+<p-card>
+    <ng-template pTemplate="title">
+        Paso 1
+    </ng-template>
+    <ng-template pTemplate="subtitle">
+        Elija los items de la factura {{item!.asociacion.documentoSector}}
+    </ng-template>
+    <form [formGroup]="itemForm" (ngSubmit)="onSubmit()" autocomplete="off">
+        <div class="p-fluid p-formgrid grid">
+            <div class="field col-12 md:col-10">
+                <div class="p-fluid p-formgrid grid">
+                    <div class="field col-12 md:col-12">
+                        <label>Producto/Servicio</label>
+                        <div class="p-inputgroup">
+                            <p-autoComplete formControlName="producto" #producto styleClass="w-full"
+                                [suggestions]="listaProductosFiltrados" (completeMethod)="filtrarProducto($event)"
+                                [showEmptyMessage]="true" emptyMessage="No existe" [forceSelection]="true"
+                                [minLength]="1" [maxlength]="50" (onSelect)="seleccionarProducto($event)" field="nombre"
+                                placeholder="Introduzca el código o nombre del producto/servicio" [delay]=750 [autofocus]="true">
+                                <ng-template let-item pTemplate="item">
+                                    <div class="p-fluid p-formgrid grid text-wrap">
+                                        <div class="field col-12 md:col-2">
+                                            <div class="text-center">
+                                                <img [src]="item.imagenRuta  ? item.imagenRuta : 'assets/layout/images/sin-imagen.png'" [alt]="item.imagenNombre" width="50" class="shadow-4" />
+                                            </div>
+                                        </div>
+                                        <div class="field col-12 md:col-10">
+                                            <div class="field">
+                                                <b>{{ item.codigoProducto }}</b> - {{ item.nombre }}
+                                            </div>
+                                            <div class="field">
+                                                <b>Precio Bs.</b> {{ item.precio | formatoDecimal}}
+                                            </div>
+                                            <div class="field" *ngIf="item.idTipoProducto==12">
+                                                <span >Saldo: {{item.saldo}} </span>
+                                            </div>
+                                            <div class="field" *ngIf="item.descuento && item.descuento.descuentoEstablecido>0">
+                                                <b>Descuento : {{ item.descuento.descuentoEstablecido }} </b> <b>{{esDescuentoPorcentaje(item.descuento.idTipoDescuento) ?' %':' BS'}}</b>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- <div class="row">
+                                        <div class="text-wrap">
+                                            <b>{{ item.codigoProducto }}</b> - {{ item.nombre }}<br />
+                                            <div
+                                                class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                                                <span><b>Precio Bs. {{ item.precio | formatoDecimal}}</b></span>
+                                                <span *ngIf="item.idTipoProducto==12">Saldo: {{item.saldo}} </span>
+                                            </div>
+                                        </div>
+                                    </div> -->
+                                </ng-template>
+                            </p-autoComplete>
+                            <p-button label="+" (onClick)="adicionarNuevoProducto()" pTooltip="Crear producto"
+                                tooltipPosition="top" icon="pi pi-box"  styleClass="p-button" tabindex="-1"></p-button>
+                        </div>
+                    </div>
+                    <div class="field col-12 md:col-12" *ngIf="esFacturaHospital()">
+                        <label>Modalidad Servicio</label>
+                        <input type="text" formControlName="modalidadServicio" pInputText maxlength="100" uppercase
+                        onfocus="this.select();" />
+                    </div>
+                    <div class="field col-12 md:col-8" *ngIf="esFacturaEducativo()">
+                        <label>Nombre Estudiante</label>
+                        <div class="p-inputgroup">
+                            <p-autoComplete formControlName="estudiante" #estudiante styleClass="w-full" [suggestions]="listaEstudiantesFiltrados"
+                            (completeMethod)="filtrarEstudiante($event)" [showEmptyMessage]="true" [maxlength]="150"
+                            emptyMessage="No existe" [forceSelection]="true" (onSelect)="seleccionarEstudiante($event)"
+                            field="nombreCompleto" [delay]=500 [showClear]="true" (onClear)="limpiarEstudiante()"
+                            placeholder="Introduzca el nombre del estudiante" [autofocus]="true">
+                            <ng-template let-item pTemplate="item">
+                                <div class="row">
+                                    <div class="text-wrap">
+                                        <b>{{ item.codigoEstudiante }} - {{ item.nombreCompleto }}</b>
+                                        <br>
+                                        {{ item.curso }} - {{item.grado}}
+                                    </div>
+                                </div>
+                            </ng-template>
+                        </p-autoComplete>
+                        <p-button pTooltip="Crear Estudiante" tooltipPosition="top" (onClick)="adicionarNuevoEstudiante()"
+                            icon="pi pi-user-plus" styleClass="p-button" tabindex="-1"></p-button>
+                        <p-button pTooltip="Actualizar Estudiante" tooltipPosition="top"
+                            (onClick)="actualizarEstudiante()" icon="pi pi-user-edit" styleClass="p-button"
+                            tabindex="-1"></p-button>
+                        </div>
+
+                    </div>
+
+                    <div class="field col-12 md:col-4" *ngIf="esFacturaEducativo()">
+                        <label>Periodo Facturado</label>
+                        <input type="text" formControlName="periodoFacturado" pInputText maxlength="50" placeholder="Ej. 01/2024,02/2024" uppercase onfocus="this.select();" />
+                        <!-- <p-calendar formControlName="periodoFacturado" view="month" dateFormat="mm/yy" [readonlyInput]="true" inputId="periodoFacturado"></p-calendar> -->
+                    </div>
+                    <div class="field col-12 md:col-12" *ngIf="esFacturaAlquiler()">
+                        <label>Periodo Facturado</label>
+                        <input type="text" formControlName="periodoFacturado" pInputText maxlength="50" placeholder="Ej. 01/2024,02/2024" uppercase onfocus="this.select();" />
+                        <!-- <p-calendar formControlName="periodoFacturado" view="month" dateFormat="mm/yy" [readonlyInput]="true" inputId="periodoFacturado"></p-calendar> -->
+                    </div>
+                    <div class="field col-12 md:col-12">
+                        <p-divider></p-divider>
+                    </div>
+                </div>
+                <p-table #dt styleClass="p-datatable-sm" [value]="detalle" responsiveLayout="scroll" [rows]="10"
+                    [paginator]="false" [rowHover]="true" dataKey="id" (onEditComplete)="onEditComplete($event)"
+                    [contextMenu]="cm"
+                    [(contextMenuSelection)]="detalleSeleccionado"
+                    >
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>N°</th>
+                            <th style="text-align:center; width:10%">Código</th>
+                            <th style="text-align:center; width:30%">Producto/Servicio</th>
+                            <th *ngIf="esConDescripcionAdicional()" style="text-align:center; width:20%">Desc. Adicional</th>
+                            <th style="text-align:center; width:10%">Cantidad</th>
+                            <th style="text-align:center; width:10%">Precio</th>
+                            <th style="text-align:center; width:10%">Monto</th>
+                            <th style="text-align:center; width:10%">Descuento</th>
+                            <th style="text-align:center; width:10%">Sub Total</th>
+                            <th style="text-align:center; width:5%"></th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-i="rowIndex" let-item>
+                        <tr [pContextMenuRow]="item">
+                            <td><b>{{ i + 1 }}</b></td>
+                            <td>{{item.codigoProducto}}</td>
+                            <td>
+                                <p-cellEditor>
+                                    <ng-template pTemplate="output">
+                                        <label class="text-negrita">{{item.producto }}</label><br/>
+                                        <div *ngIf="esFacturaHospital()" (click)="editItemHospital(item)">
+                                            <label class="text-negrita">Especialidad: </label>{{item.especialidad }} <br/>
+                                            <label class="text-negrita">Especialidad Detalle: </label> {{item.especialidadDetalle }} <br/>
+                                            <label class="text-negrita">N° Sala/Quirofano: </label>{{item.nroQuirofanoSalaOperaciones }} <br/>
+                                            <label class="text-negrita">Especialidad Medico: </label>{{item.especialidadMedico }} <br/>
+                                            <label class="text-negrita">Nombre Medico: </label>{{item.nombreApellidoMedico }} <br/>
+                                            <label class="text-negrita">Nit Medico: </label> {{item.nitDocumentoMedico }} <br/>
+                                            <label class="text-negrita">N° Matricula Medico: </label> {{item.nroMatriculaMedico }} <br/>
+                                            <label class="text-negrita">N° Factura Medico: </label>  {{item.nroFacturaMedico }}
+                                        </div>
+                                        <div *ngIf="tieneDetalleHuespedes(item)" (click)="editItemHotelTurismo(item)">
+                                            <label class="text-negrita">Detalle Huespedes: <br/></label>
+                                            <div [innerHTML]="formatoDetalleHuespedes(item.detalleHuespedes)"></div>
+                                            <!-- {{formatoDetalleHuespedes(item.detalleHuespedes) }} -->
+                                        </div>
+                                    </ng-template>
+                                </p-cellEditor>
+                            </td>
+
+                            <td *ngIf="esConDescripcionAdicional()"  pEditableColumn [pEditableColumn]="item" [pEditableColumnField]="'descripcionAdicional'">
+                                <p-cellEditor>
+                                    <ng-template pTemplate="input">
+                                           <textarea [(ngModel)]="item.descripcionAdicional" [ngModelOptions]="{standalone: true}" style="width: 100% !important; height: 100px;"
+                                            pInputTextarea  [maxlength]="200" onfocus="this.select();">
+                                           </textarea>
+                                    </ng-template>
+                                    <ng-template pTemplate="output">
+                                        {{item.descripcionAdicional}}
+                                    </ng-template>
+                                </p-cellEditor>
+                            </td>
+
+                            <td pEditableColumn class="text-right" [pEditableColumn]="item"
+                                [pEditableColumnField]="'cantidad'">
+                                <p-cellEditor>
+                                    <ng-template pTemplate="input">
+                                        <span class="p-fluid">
+                                            <p-inputNumber [(ngModel)]="item.cantidad"
+                                                [ngModelOptions]="{standalone: true}" locale="en-US" [maxlength]="10"
+                                                [inputStyle]="{'text-align': 'right'}" mode="decimal"
+                                                [minFractionDigits]="2" [maxFractionDigits]="2" [step]="0"
+                                                (onFocus)="$event.target.select()">
+                                            </p-inputNumber>
+                                        </span>
+                                    </ng-template>
+                                    <ng-template pTemplate="output">
+                                        {{item.cantidad }}
+                                    </ng-template>
+                                </p-cellEditor>
+                            </td>
+
+                            <td pEditableColumn class="text-right" [pEditableColumn]="item"
+                                [pEditableColumnField]="'precioUnitario'">
+                                <p-cellEditor>
+                                    <ng-template pTemplate="input">
+                                        <span class="p-fluid">
+                                            <p-inputNumber [(ngModel)]="item.precioUnitario"
+                                                [ngModelOptions]="{standalone: true}" locale="en-US" [maxlength]="10"
+                                                [inputStyle]="{'text-align': 'right'}" mode="decimal"
+                                                [minFractionDigits]="2" [maxFractionDigits]="2" [step]="0"
+                                                (onFocus)="$event.target.select()"></p-inputNumber>
+                                        </span>
+                                    </ng-template>
+                                    <ng-template pTemplate="output">
+                                        {{item.precioUnitario | formatoDecimal}}
+                                    </ng-template>
+                                </p-cellEditor>
+                            </td>
+                            <td class="text-right">{{item.monto | formatoDecimal}}</td>
+
+                            <td pEditableColumn class="text-right" [pEditableColumn]="item"
+                                [pEditableColumnField]="'descuento'">
+                                <p-cellEditor>
+                                    <ng-template pTemplate="input">
+                                        <span class="p-fluid">
+                                            <p-inputNumber [(ngModel)]="item.montoDescuento"
+                                                [ngModelOptions]="{standalone: true}" locale="en-US" [maxlength]="10"
+                                                [inputStyle]="{'text-align': 'right'}" mode="decimal" [readonly]="!esDescuentoTotal(item.idTipoDescuento)"
+                                                [minFractionDigits]="2" [maxFractionDigits]="2" [step]="0"
+                                                (onFocus)="$event.target.select()"></p-inputNumber>
+                                        </span>
+                                    </ng-template>
+                                    <ng-template pTemplate="output">
+                                        {{item.montoDescuento | formatoDecimal}}
+                                    </ng-template>
+                                </p-cellEditor>
+                            </td>
+
+                            <td class="text-right">{{item.subTotal | formatoDecimal}}</td>
+                            <td style="width:5rem; min-width:2rem;">
+                                <div class="flex">
+                                    <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
+                                        (click)="deleteItem(item)"></button>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="footer">
+                        <tr>
+                            <td *ngIf="!esConDescripcionAdicional()" colspan="5" class="text-right">TOTALES</td>
+                            <td *ngIf="esConDescripcionAdicional()" colspan="6" class="text-right">TOTALES</td>
+                            <td class="text-right">{{getDetalleMonto() | formatoDecimal}}</td>
+                            <td class="text-right">{{getDetalleDescuento() | formatoDecimal}}</td>
+                            <td class="text-right">{{getDetalleSubTotal() | formatoDecimal}}</td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+                <br><br>
+                <div class="p-fluid p-formgrid grid" *ngIf="esFacturaHotel() || esFacturaTurismo()">
+                    <div class="field col-12 md:col-2" >
+                        <label>Cant. Huespedes</label>
+                        <input formControlName="cantidadHuespedes" type="text" pInputText id="cantidadHuespedes" maxlength="3"
+                        pKeyFilter="int" onfocus="this.select();" />
+                    </div>
+                    <div class="field col-12 md:col-2" >
+                        <label>Cant. Habitaciones</label>
+                        <input formControlName="cantidadHabitaciones" type="text" pInputText id="cantidadHabitaciones" maxlength="3"
+                        pKeyFilter="int" onfocus="this.select();" />
+                    </div>
+                    <div class="field col-12 md:col-2" >
+                        <label>Cant. Mayores</label>
+                        <input formControlName="cantidadMayores" type="text" pInputText id="cantidadMayores" maxlength="3"
+                        pKeyFilter="int" onfocus="this.select();" />
+                    </div>
+                    <div class="field col-12 md:col-2" >
+                        <label>Cant. Menores</label>
+                        <input formControlName="cantidadMenores" type="text" pInputText id="cantidadMenores" maxlength="3"
+                        pKeyFilter="int" onfocus="this.select();" />
+                    </div>
+                    <div class="field col-12 md:col-2" >
+                        <label>Fecha Ingreso</label>
+                        <p-calendar appendTo="body" formControlName="fechaIngresoHospedaje" dateFormat="dd/mm/yy" [showTime]="true"
+                            hourFormat="24"></p-calendar>
+                    </div>
+                </div>
+
+            </div>
+
+            <!--<p-divider layout="vertical" ></p-divider>-->
+            <div class="field col-12 md:col-2">
+                <div class="field">
+                    <label>FECHA</label>
+                    <input pInputText type="text" formControlName="fecha" readonly="true" />
+                </div>
+                <div class="field">
+                    <label for="firstname1">SUMATORIA SUB TOTAL</label>
+                    <p-inputNumber [ngModel]="getDetalleSubTotal()" [ngModelOptions]="{standalone: true}" locale="en-US"
+                        id="total" [maxlength]="17" [inputStyle]="{'text-align': 'right'}" mode="decimal"
+                        [minFractionDigits]="2" [maxFractionDigits]="2" [readonly]="true" suffix=" BS.">
+                    </p-inputNumber>
+                </div>
+                <div class="field">
+                    <label for="lastname1">DESCUENTO ADICIONAL</label>
+                    <p-inputNumber formControlName="descuentoAdicional" #descuentoAdicional locale="en-US"
+                        id="descuentoAdicional" (onInput)="keyInput($event, 'descuentoAdicional')" [maxlength]="17"
+                        [inputStyle]="{'text-align': 'right'}" mode="decimal" [minFractionDigits]="2"
+                        [maxFractionDigits]="2" (onFocus)="$event.target.select()" suffix=" BS."></p-inputNumber>
+                    <small class="p-error block" *ngIf="itemForm.get('descuentoAdicional')?.hasError('required')">
+                        Dato requerido.</small>
+                </div>
+
+                <div class="field">
+                    <label for="firstname1">TOTAL</label>
+                    <p-inputNumber [ngModel]="getMontoTotal()" [ngModelOptions]="{standalone: true}" locale="en-US"
+                        id="total" [maxlength]="17" [inputStyle]="{'text-align': 'right'}" mode="decimal"
+                        [minFractionDigits]="2" [maxFractionDigits]="2" [readonly]="true" suffix=" BS.">
+                    </p-inputNumber>
+                </div>
+                <div class="field">
+                    <label for="lastname1">TOTAL SUJETO A IVA</label>
+                    <p-inputNumber [ngModel]="getMontoTotalSujetoIva()" [ngModelOptions]="{standalone: true}" locale="en-US"
+                        id="total" [maxlength]="17" [inputStyle]="{'text-align': 'right'}" mode="decimal"
+                        [minFractionDigits]="2" [maxFractionDigits]="2" [readonly]="true" suffix=" BS.">
+                    </p-inputNumber>
+                </div>
+            </div>
+        </div>
+        <p-divider type="dashed"></p-divider>
+        <div class="flex justify-content-between flex-wrap card-container purple-container">
+            <div class="flex align-items-center justify-content-center m-2">
+                <button pButton label="Facturas" (click)="prevPage()" icon="pi pi-angle-left"></button> &nbsp;
+            </div>
+            <div class="flex align-items-center justify-content-center m-2">
+                <button pButton label="Siguiente" icon="pi pi-angle-right" iconPos="right" (click)="onSave()"></button>
+            </div>
+        </div>
+    </form>
+</p-card>

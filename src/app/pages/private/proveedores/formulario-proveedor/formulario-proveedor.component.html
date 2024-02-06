@@ -1,0 +1,50 @@
+<p-blockUI [blocked]="submited"><app-bloqueo></app-bloqueo></p-blockUI>
+<form [formGroup]="itemForm" (ngSubmit)="onSubmit()" autocomplete="off">
+    <div class="card">
+        <div class="p-fluid p-formgrid grid">
+            <div class="field col-12 md:col-6">
+                <label>Nombre</label>
+                <input formControlName="nombre" type="text" pInputText id="nombre" autofocus maxlength="255" oninput="this.value = this.value.toUpperCase()" onfocus="this.select();"/>
+                <small class="p-error block" *ngIf="itemForm.get('nombre')?.hasError('required')">Dato requerido.</small>
+            </div>
+            <div class="field col-12 md:col-6">
+                <label>Nit</label>
+                <p-inputNumber formControlName="nit" id="nit" inputId="nit" [useGrouping]="false" [maxlength]="12"></p-inputNumber>
+                <small class="p-error block" *ngIf="itemForm.get('nit')?.hasError('required')">Dato requerido.</small>
+            </div>
+
+            <div class="field col-12 md:col-6">
+                <label>Dirección</label>
+                <input formControlName="direccion" type="text" pInputText id="direccion" maxlength="255" oninput="this.value = this.value.toUpperCase()" onfocus="this.select();"/>
+            </div>
+            <div class="field col-12 md:col-6">
+                <label>Telefono</label>
+                <input formControlName="telefono" type="text" pInputText id="telefono" maxlength="15" oninput="this.value = this.value.toUpperCase()" onfocus="this.select();"/>
+            </div>
+
+            <div class="field col-12 md:col-6">
+                <label>Email</label>
+                <input formControlName="email" type="text" pInputText id="email" maxlength="30" onfocus="this.select();"/>
+            </div>
+            <div class="field col-12 md:col-6">
+                <label>Contacto</label>
+                <input formControlName="contacto" type="text" pInputText id="contacto" maxlength="50" oninput="this.value = this.value.toUpperCase()"  onfocus="this.select();"/>
+            </div>
+
+            <div class="field col-12 md:col-6">
+                <label>Ciudad</label>
+                <input formControlName="ciudad" type="text" pInputText id="ciudad" maxlength="50" oninput="this.value = this.value.toUpperCase()"  onfocus="this.select();"/>
+            </div>
+            <div class="field col-12 md:col-6">
+                <label>Pais</label>
+                <input formControlName="pais" type="text" pInputText id="pais" maxlength="50" oninput="this.value = this.value.toUpperCase()"  onfocus="this.select();"/>
+            </div>
+        </div>
+    </div>
+    <div class="flex justify-content-end flex-wrap">
+        <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-secondary p-button-text"
+            (click)="onClose()"></button>
+        <button pButton pRipple label="Aceptar" icon="pi pi-check" class="p-button-text" (click)="onSave()"
+            ></button>
+    </div>
+</form>

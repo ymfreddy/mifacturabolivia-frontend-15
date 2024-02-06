@@ -1,0 +1,102 @@
+<p-blockUI [blocked]="submited"> <app-bloqueo></app-bloqueo></p-blockUI>
+<form [formGroup]="itemForm" (ngSubmit)="onSubmit()" autocomplete="off">
+    <div class="card">
+        <div class="p-fluid p-formgrid grid">
+            <div class="field col-12 md:col-2">
+                <label>Stock</label>
+                <p-dropdown appendTo="body" formControlName="codigoStock" id="codigoStock"
+                    [options]="listaStock" optionLabel="codigoStock" optionValue="codigoStock" placeholder="Seleccione una opción"
+                    (onChange)="canbioStockEvento($event)">
+                    <ng-template let-cat pTemplate="item">
+                            {{cat.codigoStock}}
+                    </ng-template>
+                </p-dropdown>
+                <small class="p-error block" *ngIf="itemForm.get('codigoStock')?.hasError('required')">Dato requerido.</small>
+            </div>
+
+            <div class="field col-12 md:col-2">
+                <label>Codigo Producto</label>
+                <input formControlName="codigoProducto" type="text" pInputText id="codigoProducto" #codigoProducto [readonly]="true" tabindex="-1"/>
+            </div>
+            <div class="field col-12 md:col-6">
+                <label>Producto</label>
+                <input formControlName="producto" type="text" pInputText id="producto" #producto [readonly]="true"  tabindex="-1"/>
+            </div>
+
+            <div class="field col-12 md:col-2">
+                <label>Saldo Actual</label>
+                <input formControlName="saldo" type="text" class="text-right text-negrita" pInputText id="saldo" [readonly]="true"  tabindex="-1"/>
+            </div>
+
+            <div class="field col-12 md:col-2">
+                <label>Cantidad</label>
+                    <p-inputNumber formControlName="cantidad" #cantidad locale="en-US" id="cantidad" [maxlength]="10"
+                        (onInput)="keyInput($event, 'cantidad')"
+                        [inputStyle]="{'text-align': 'right'}" mode="decimal" [minFractionDigits]="0"
+                        (onFocus)="$event.target.select()"
+                        [maxFractionDigits]="0"></p-inputNumber>
+                    <small class="p-error block" *ngIf="itemForm.get('cantidad')?.hasError('required')">Cantidad no
+                        válida.</small>
+
+            </div>
+
+
+            <div class="field col-12 md:col-2">
+                <label>Tipo</label>
+                    <p-toggleButton formControlName="aumentar" (onChange)="handleChange($event)"
+                    [style]="{'width': '100%'}" onLabel="Aumentar" offLabel="Disminuir"
+                   ></p-toggleButton>
+            </div>
+
+            <div class="field col-12 md:col-2">
+                <label>Saldo Nuevo</label>
+                <input
+                [ngModel]="getNuevoSaldo()" [ngModelOptions]="{standalone: true}"
+                type="text"  class="text-right text-negrita" pInputText id="saldoNuevo" [readonly]="true"  tabindex="-1"/>
+            </div>
+
+            <div class="field col-12 md:col-2">
+                <label>Precio Compra</label>
+                    <p-inputNumber formControlName="precioCompra" locale="en-US" id="precioCompra" [maxlength]="10"
+                        (onInput)="keyInput($event, 'precioCompra')"
+                        [inputStyle]="{'text-align': 'right'}" mode="decimal" [minFractionDigits]="2"
+                        (onFocus)="$event.target.select()"
+                        [maxFractionDigits]="2"></p-inputNumber>
+                    <small class="p-error block" *ngIf="itemForm.get('precioCompra')?.hasError('required')">Precio no
+                        válido.</small>
+
+            </div>
+
+            <div class="field col-12 md:col-2">
+                <label>Precio Venta</label>
+                    <p-inputNumber formControlName="precioVenta" locale="en-US" id="precioVenta" [maxlength]="10"
+                        (onInput)="keyInput($event, 'precioVenta')"
+                        [inputStyle]="{'text-align': 'right'}" mode="decimal" [minFractionDigits]="2"
+                        (onFocus)="$event.target.select()"
+                        [maxFractionDigits]="2"></p-inputNumber>
+                    <small class="p-error block" *ngIf="itemForm.get('precioVenta')?.hasError('required')">Precio no
+                        válido.</small>
+
+            </div>
+
+            <div class="field col-12 md:col-2">
+                <label>Precio Salida/Vendido</label>
+                    <p-inputNumber formControlName="precioVendido" locale="en-US" id="precioVendido" [maxlength]="10"
+                        (onInput)="keyInput($event, 'precioVendido')"
+                        [inputStyle]="{'text-align': 'right'}" mode="decimal" [minFractionDigits]="2"
+                        (onFocus)="$event.target.select()"
+                        [maxFractionDigits]="2"></p-inputNumber>
+            </div>
+            <div class="field col-12 md:col-12">
+                <label>Descripción</label>
+                <input formControlName="descripcion" type="text" pInputText id="descripcion" maxlength="200" />
+                <small class="p-error block" *ngIf="itemForm.get('descripcion')?.hasError('required')">Observación inválida.</small>
+            </div>
+        </div>
+    </div>
+    <div class="flex justify-content-end flex-wrap">
+        <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-secondary p-button-text"
+            (click)="onClose()"></button>
+        <button pButton pRipple label="Aceptar" icon="pi pi-check" class="p-button-text" (click)="onSave()"></button>
+    </div>
+</form>

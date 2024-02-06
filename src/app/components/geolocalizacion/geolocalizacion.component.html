@@ -1,0 +1,23 @@
+<input #searchPlace pInputText type="text" style="width: 50%"  placeholder="Buscar por dirección" />
+<p-gmap #gmap [style]="{'width':'100%','height':'450px', 'margin-bottom': '1em'}" [options]="opcion"
+    [overlays]="marcadores" (onMapClick)="eventoClic($event)" (onOverlayClick)="eventoClicMarcador($event)"
+    (onOverlayDragEnd)="eventoMover($event)"></p-gmap>
+
+<p-dialog showEffect="fade" [(visible)]="dialogVisible" header="Establecer Posición"
+    [style]="{width: '300px', heigth:'500px'}">
+    <div class="grid p-fluid" *ngIf="selectedPosition">
+        <div class="col-2"><label for="title">nombre</label></div>
+        <div class="col-10"><input type="text" pInputText id="title" [(ngModel)]="nombreMarcador"></div>
+
+        <div class="col-2"><label for="lat">Lat</label></div>
+        <div class="col-10"><input id="lat" type="text" readonly pInputText [ngModel]="selectedPosition.lat()"></div>
+
+        <div class="col-2"><label for="lng">Lng</label></div>
+        <div class="col-10"><input id="lng" type="text" readonly pInputText [ngModel]="selectedPosition.lng()"></div>
+    </div>
+    <ng-template pTemplate="footer">
+        <div>
+            <button type="button" pButton label="Marcar" icon="pi pi-plus" (click)="adicionarMarcador()"></button>
+        </div>
+    </ng-template>
+</p-dialog>

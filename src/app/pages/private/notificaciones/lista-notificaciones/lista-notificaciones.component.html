@@ -1,0 +1,54 @@
+<p-panel header="NOTIFICACIONES" [toggleable]="true">
+    <p-table #dt styleClass="p-datatable-sm" [value]="items" responsiveLayout="scroll"
+        [globalFilterFields]="['nit','titulo','mensaje']" [paginator]="false" [rowHover]="true"
+        dataKey="id">
+        <ng-template pTemplate="caption">
+            <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                <span class="block mt-2 md:mt-0 p-input-icon-left">
+                    <i class="pi pi-search"></i>
+                    <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Filtrar...." class="w-full sm:w-auto" />
+                </span>
+                <div class="flex">
+                    <p-inputNumber [(ngModel)]="cantidadRegistros" mode="decimal" [showButtons]="true" inputId="minmax-buttons" [min]="5" [max]="100"></p-inputNumber>
+                    <button pButton pRipple label="Ver" icon="pi pi-refresh" class="p-button-primary mr-2"
+                    (click)="loadData()"></button>
+                    <button pButton pRipple label="Nuevo" icon="pi pi-plus" class="p-button-success mr-2"
+                    (click)="newItem()"></button>
+                </div>
+            </div>
+        </ng-template>
+
+        <ng-template pTemplate="header">
+            <tr>
+                <th>N°</th>
+                <th pSortableColumn="id">Id<p-sortIcon field="id"></p-sortIcon></th>
+                <th pSortableColumn="titulo">Titulo<p-sortIcon field="titulo"></p-sortIcon></th>
+                <th pSortableColumn="mensaje">Mensaje<p-sortIcon field="mensaje"></p-sortIcon></th>
+                <th pSortableColumn="nit">Nit<p-sortIcon field="nit"></p-sortIcon></th>
+                <th pSortableColumn="usuario">Usuario<p-sortIcon field="usuario"></p-sortIcon></th>
+                <th pSortableColumn="fecha">Fecha<p-sortIcon field="fecha"></p-sortIcon></th>
+                <th>Operación</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-i="rowIndex" let-item>
+            <tr>
+                <td><b>{{ i + 1 }}</b></td>
+                <td>{{item.id}}</td>
+                <td>{{item.titulo}}</td>
+                <td><span  [innerHTML]="item.mensaje"></span ></td>
+                <td>{{item.nit==0? 'TODOS': item.nit}}</td>
+                <td>{{item.usuario ?? 'TODOS'}}</td>
+                <td>{{item.fecha["seconds"] * 1000 | date: 'dd/MM/yyyy hh:mm:ss' }}</td>
+                 <td style="width:5rem; min-width:5rem;">
+                    <div class="flex">
+                        <!-- <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2"
+                            (click)="editItem(item)"></button> -->
+                        <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
+                            (click)="deleteItem(item)"></button>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</p-panel>
+

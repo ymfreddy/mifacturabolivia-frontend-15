@@ -1,0 +1,23 @@
+<p-blockUI [blocked]="submited"><app-bloqueo></app-bloqueo></p-blockUI>
+<form [formGroup]="itemForm" (ngSubmit)="onSubmit()" autocomplete="off">
+    <div class="card p-fluid">
+        <div class="field">
+            <label>Descripción</label>
+            <textarea rows="5" cols="30" autofocus formControlName="descripcion" pInputTextarea [autoResize]="true" id="descripcion"  maxlength="500" onfocus="this.select();"></textarea>
+            <small class="p-error block" *ngIf="itemForm.get('descripcion')?.hasError('required')">Dato requerido.</small>
+        </div>
+
+        <div class="field">
+            <label>Cant. días validez</label>
+            <p-inputNumber formControlName="diasCotizacion" locale="en-US" id="diasCotizacion" [maxlength]="3"
+                [inputStyle]="{'text-align': 'right'}" mode="decimal" [minFractionDigits]="0"
+                [maxFractionDigits]="0"></p-inputNumber>
+            <small class="p-error block" *ngIf="itemForm.get('diasCotizacion')?.hasError('required')">Dato requerido.</small>
+        </div>
+    </div>
+    <div class="flex justify-content-end flex-wrap">
+        <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-secondary p-button-text" (click)="onClose()"></button>
+        <button pButton pRipple label="Generar" icon="pi pi-check" class="p-button-text" (click)="onSave()"></button>
+    </div>
+
+</form>

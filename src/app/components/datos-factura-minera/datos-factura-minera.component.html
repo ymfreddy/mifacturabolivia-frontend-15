@@ -1,0 +1,45 @@
+<p-blockUI [blocked]="submited"><app-bloqueo></app-bloqueo></p-blockUI>
+<form [formGroup]="itemForm" (ngSubmit)="onSubmit()" autocomplete="off">
+    <div class="card">
+        <div class="p-fluid p-formgrid grid">
+            <div class="field col-12 md:col-2">
+                <label>Cod. Nandina</label>
+                    <input type="text" formControlName="codigoNandina" pInputText maxlength="50" onfocus="this.select();"/>
+                    <small class="p-error block" *ngIf="itemForm.get('codigoNandina')?.hasError('required')">Dato
+                        requerido.</small>
+            </div>
+            <div class="field col-12 md:col-10">
+                <label>Leyes</label>
+                    <input type="text" formControlName="descripcionLeyes" pInputText maxlength="500" />
+                    <small class="p-error block" *ngIf="itemForm.get('descripcionLeyes')?.hasError('required')">Dato
+                        requerido.</small>
+            </div>
+
+            <div class="field col-12 md:col-2">
+                <label>Cant. Extracción</label>
+                <p-inputNumber formControlName="cantidadExtraccion" #cantidadExtraccion locale="en-US"
+                        id="cantidadExtraccion" [maxlength]="20"
+                        [inputStyle]="{'text-align': 'right'}" mode="decimal" [minFractionDigits]="2"
+                        [maxFractionDigits]="5" (onFocus)="$event.target.select()"></p-inputNumber>
+                <small class="p-error block" *ngIf="itemForm.get('cantidadExtraccion')?.hasError('required')">Dato
+                    requerido.</small>
+            </div>
+
+
+            <div class="field col-12 md:col-4">
+                <label>Unidad Extracción</label>
+                <p-dropdown appendTo="body" formControlName="unidadMedidaExtraccion" id="unidadMedidaExtraccion" appendTo="body"
+                    [options]="listaMedidas" optionLabel="descripcion" optionValue="codigo" [autofocus]="true"
+                    [filter]="true" filterBy="descripcion"
+                    placeholder="Seleccione una opción"></p-dropdown>
+                <small class="p-error block" *ngIf="itemForm.get('unidadMedidaExtraccion')?.hasError('required')">Dato
+                    requerido.</small>
+            </div>
+        </div>
+    </div>
+    <div class="flex justify-content-end flex-wrap">
+        <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-secondary p-button-text"
+            (click)="onClose()"></button>
+        <button pButton pRipple label="Aceptar" icon="pi pi-check" class="p-button-text" (click)="onSave()"></button>
+    </div>
+</form>

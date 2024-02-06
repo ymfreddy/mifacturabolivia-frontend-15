@@ -1,0 +1,59 @@
+<p-blockUI [blocked]="submited"><app-bloqueo></app-bloqueo></p-blockUI>
+<form [formGroup]="itemForm" (ngSubmit)="onSubmit()" autocomplete="off">
+    <div class="card">
+        <div class="p-fluid p-formgrid grid">
+            <div class="field col-12 md:col-12">
+                <label>Factura</label>
+                <p-dropdown appendTo="body" formControlName="codigoAsociacion" id="codigoAsociacion"
+                    [options]="listaAsociacion" optionLabel="documentoSector" optionValue="codigoAsociacion"
+                    placeholder="SIN FACTURA">
+                    <ng-template let-item pTemplate="item">
+                        {{item.modalidad}} - {{item.documentoSector}}
+                    </ng-template>
+                    <ng-template let-item pTemplate="selectedItem">
+                        {{item.modalidad}} - {{item.documentoSector}}
+                    </ng-template>
+                </p-dropdown>
+                <small class="p-error block" *ngIf="itemForm.get('codigoAsociacion')?.hasError('required')">Factura
+                    inválida.</small>
+            </div>
+            <div class="field col-12 md:col-12">
+                <label>Código Cafc</label>
+                <input formControlName="cafc" type="text" pInputText id="cafc"  maxlength="50" oninput="this.value = this.value.toUpperCase()"/>
+                <small class="p-error block" *ngIf="itemForm.get('cafc')?.hasError('required')">Cafc
+                    inválido.</small>
+            </div>
+
+            <div class="field col-12 md:col-6">
+                <label>Inicio Evento</label>
+                <p-calendar appendTo="body" formControlName="fechaInicio" dateFormat="dd/mm/yy" [showTime]="true"
+                    hourFormat="24"></p-calendar>
+                <small class="p-error block" *ngIf="itemForm.get('fechaInicio')?.hasError('required')">
+                    Dato requerido.</small>
+            </div>
+
+            <div class="field col-12 md:col-6">
+                <label>Fin Evento</label>
+                <p-calendar appendTo="body" formControlName="fechaFin" dateFormat="dd/mm/yy" [showTime]="true"
+                    hourFormat="24"></p-calendar>
+                <small class="p-error block" *ngIf="itemForm.get('fechaFin')?.hasError('required')">
+                    Dato requerido.</small>
+            </div>
+
+            <div class="field col-12 md:col-12">
+                <label>Tipo Evento</label>
+                <p-dropdown appendTo="body" formControlName="codigoMotivoEvento" id="codigoMotivoEvento"
+                [options]="listaTipoEvento" optionLabel="descripcion" optionValue="codigo" placeholder="Seleccione una opción">
+            </p-dropdown>
+            <small class="p-error block" *ngIf="itemForm.get('codigoMotivoEvento')?.hasError('required')">
+                Dato requerido.</small>
+            </div>
+        </div>
+    </div>
+    <div class="flex justify-content-end flex-wrap">
+        <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-secondary p-button-text"
+            (click)="onClose()"></button>
+        <button pButton pRipple label="Aceptar" icon="pi pi-check" class="p-button-text" (click)="onSave()"
+            ></button>
+    </div>
+</form>

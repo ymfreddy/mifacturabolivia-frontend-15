@@ -1,0 +1,58 @@
+<p-table #dt styleClass="p-datatable-sm" [value]="items" responsiveLayout="scroll" [rows]="10" [paginator]="false"
+    [rowHover]="true" dataKey="id"
+    (onEditComplete)="onEditComplete($event)">
+    <ng-template pTemplate="header">
+        <tr>
+            <th>N°</th>
+            <th style="text-align:center">Tipo Pago</th>
+            <th style="text-align:center">Monto Total Caja</th>
+            <th style="text-align:center">Monto Total Actual</th>
+            <th style="text-align:center">Monto Total Diferencia</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-i="rowIndex" let-item>
+        <tr>
+            <td><b>{{ i + 1 }}</b></td>
+            <td>{{item.tipoPago}}</td>
+            <td class="text-right">{{item.montoTotalCaja | formatoDecimal}}</td>
+            <td pEditableColumn class="text-right" [pEditableColumn]="item" [pEditableColumnField]="'montoTotalActual'">
+                <p-cellEditor>
+                    <ng-template pTemplate="input">
+                        <span class="p-fluid">
+                            <p-inputNumber [(ngModel)]="item.montoTotalActual" locale="en-US" [maxlength]="17"
+                                [inputStyle]="{'text-align': 'right'}" mode="decimal" [minFractionDigits]="2"
+                                [maxFractionDigits]="2" [step]="0" (onFocus)="$event.target.select()"></p-inputNumber>
+                        </span>
+                    </ng-template>
+                    <ng-template pTemplate="output">
+                        {{item.montoTotalActual | formatoDecimal}}
+                    </ng-template>
+                </p-cellEditor>
+            </td>
+            <td class="text-right">{{item.montoTotalDiferencia | formatoDecimal}}</td>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <tr>
+            <td colspan="2" class="text-right">Totales</td>
+            <td class="text-right">{{getTotalCaja() | formatoDecimal}}</td>
+            <td class="text-right">{{getTotalActual() | formatoDecimal}}</td>
+            <td class="text-right">{{getTotalDiferencia() | formatoDecimal}}</td>
+        </tr>
+        <tr>
+            <td colspan="3" class="text-right">Base</td>
+            <td class="text-right">{{this.item.base| formatoDecimal}}</td>
+        </tr>
+    </ng-template>
+</p-table>
+<form [formGroup]="itemForm" (ngSubmit)="onSubmit()" autocomplete="off">
+    <p>Observaciones</p>
+    <textarea formControlName="observaciones" id="observaciones" rows="5" cols="30" pInputTextarea maxlength="500"
+        style="width: 100%;"></textarea>
+    <br />
+    <div class="flex justify-content-end flex-wrap">
+        <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-secondary p-button-text"
+            (click)="onClose()"></button>
+        <button pButton pRipple label="Aceptar" icon="pi pi-check" class="p-button-text" (click)="onSave()"></button>
+    </div>
+</form>

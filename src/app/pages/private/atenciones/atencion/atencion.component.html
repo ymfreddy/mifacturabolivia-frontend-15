@@ -1,0 +1,30 @@
+<div *ngFor="let grupo of grupos; let j = index" >
+    <p-divider align="left" type="dashed">
+      <b>{{grupo.lugar}}</b>
+    </p-divider>
+    <div class="flex justify-content-center flex-wrap">
+      <div class="mr-2" style="height: 120px; width: 150px"  *ngFor="let mesa of grupo.mesas; let i = index" >
+      <div class="card-modify" [ngStyle]="{ 'background-color': mesa.estadoMesa === 'OCUPADO' ? '#6F9645' : mesa.estadoMesa === 'RESERVADO' ? '#12a7df' : '#ffffff' }" >
+        <div class="card-body text-center">
+          <h5 class="card-title">{{ mesa.numero }}</h5>
+          <h6 class="card-subtitle">estado :{{ mesa.estadoMesa }}</h6>
+          <!-- <h6 class="card-title">reservas: {{ mesa.cantidadReservas }}</h6> -->
+          <!-- <h6 class="card-title">venta activa: {{ mesa.idVentaActivo }}</h6> -->
+          <button
+            pButton
+            pRipple
+            type="button"
+            icon="pi pi-pencil"
+            class="button-rounded"
+            (click)="verPedido(mesa.idVentaActivo, mesa.id)"
+          ></button>
+        </div>
+        <div class="justify-content-center">
+
+        </div>
+      </div>
+      </div>
+    </div>
+    <br>
+  </div>
+

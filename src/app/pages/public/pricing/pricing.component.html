@@ -1,0 +1,29 @@
+    <div class="p-3 flex flex-column border-200 pricing-card cursor-pointer bg-white" style="border:2px solid; border-radius:10px;">
+        <!-- <img class="img-fluid mb-4" src="assets/chariteam/img/icon-1.png" alt=""> -->
+        <h3 class="text-900 text-center">{{item.nombre}}</h3>
+        <span class="text-600 text-center">{{item.descripcion}}</span>
+        <div class="text-center">
+            <span class="text-5xl font-bold mr-2 text-900">BS {{item.precio}}</span>
+            <br>
+            <a class="btn btn-outline-primary px-3" (click)="solicitar(item.solicitar)">
+                Solicitar
+            </a>
+        </div>
+        <p-divider class="w-full bg-surface-200"></p-divider>
+        <ul class="my-3 list-none p-0 flex text-900 flex-column">
+
+            <li *ngFor="let modulo of item.modulos">
+                <i class="pi pi-fw pi-check text-xl mr-2"></i>
+                <span class="text-l line-height-3">{{modulo}}</span>
+            </li>
+            <li *ngFor="let caracteristica of item.caracteristicas">
+                <i class="pi pi-fw pi-check text-xl  mr-2"></i>
+                <span class="text-l line-height-3">{{caracteristica}}</span>
+            </li>
+            <li *ngFor="let factura of item.facturas">
+                <i class="pi pi-fw pi-check text-xl  mr-2"></i>
+                <span class="text-l line-height-3"><b> {{factura}}</b></span>
+            </li>
+        </ul>
+    </div>
+

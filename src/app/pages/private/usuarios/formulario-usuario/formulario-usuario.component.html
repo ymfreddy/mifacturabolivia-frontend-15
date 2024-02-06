@@ -1,0 +1,140 @@
+<p-blockUI [blocked]="submited"><app-bloqueo></app-bloqueo></p-blockUI>
+<form [formGroup]="itemForm" (ngSubmit)="onSubmit()" autocomplete="off">
+    <div class="card">
+        <div class="p-fluid p-formgrid grid">
+            <div class="field col-12 md:col-4">
+                <label>Empresa</label>
+                <p-dropdown appendTo="body" formControlName="idEmpresa" id="idEmpresa"
+                    [options]="listaEmpresas" optionLabel="nombre" optionValue="id"  placeholder="Seleccione una opción"
+                    (onChange)="cambioEmpresa($event)" [showClear]="true"
+                    ></p-dropdown>
+                <small class="p-error block" *ngIf="itemForm.get('idEmpresa')?.hasError('required')">Tipo
+                    Dato requerido.</small>
+            </div>
+
+            <div class="field col-12 md:col-4">
+                <label>Sucursal</label>
+                <p-dropdown appendTo="body" formControlName="idSucursal" id="idSucursal" [showClear]="true"
+                    [options]="listaSucursales" optionLabel="direccion" optionValue="id"  placeholder="Seleccione una opción"
+                    ></p-dropdown>
+            </div>
+            <div class="field col-12 md:col-2">
+                Habilitado
+                <div class="field">
+                    <input id="remember-me" type="checkbox" formControlName="enabled">
+                </div>
+            </div>
+            <div class="field col-12 md:col-2">
+                Cambiar Password
+                <div class="field">
+                    <input id="remember" type="checkbox" formControlName="cambiarClave">
+                </div>
+            </div>
+            <div class="field col-12 md:col-4">
+                <label>Nombre</label>
+                <input formControlName="nombre" type="text" pInputText id="nombre" maxlength="50" autofocus />
+                <small class="p-error block" *ngIf="itemForm.get('nombre')?.hasError('required')">Dato requerido.</small>
+            </div>
+            <div class="field col-12 md:col-4">
+                <label>Ap. Paterno</label>
+                <input formControlName="paterno" type="text" pInputText id="paterno" maxlength="50" />
+            </div>
+            <div class="field col-12 md:col-4">
+                <label>Ap. Materno</label>
+                <input formControlName="materno" type="text" pInputText id="materno" maxlength="50" />
+            </div>
+            <div class="field col-12 md:col-2">
+                <label>Ci</label>
+                <input formControlName="ci" type="text" pInputText id="ci" maxlength="15" #ci />
+                <small class="p-error block" *ngIf="itemForm.get('ci')?.hasError('required')">Ci inválido.</small>
+            </div>
+            <div class="field col-12 md:col-2">
+                <label>celular</label>
+                <input formControlName="celular" type="text" pInputText id="celular" maxlength="8" />
+                <small class="p-error block" *ngIf="itemForm.get('celular')?.hasError('required')">Celular
+                    inválido.</small>
+            </div>
+            <div class="field col-12 md:col-4">
+                <label>Email</label>
+                <input formControlName="email" type="text" pInputText id="email" maxlength="50" onfocus="this.select();" />
+                <small class="p-error block" *ngIf="itemForm.get('email')?.hasError('email')">Email no válido.</small>
+            </div>
+            <div class="field col-12 md:col-4">
+                <label>Tipo Usuario</label>
+                <p-dropdown appendTo="body" formControlName="idTipoUsuario" id="idTipoUsuario"
+                    [options]="listaTiposUsuarios" optionLabel="nombre" optionValue="id"
+                    placeholder="Seleccione una opción">
+                    <ng-template let-item pTemplate="item">
+                        <div class="text-wrap">
+                            <div>{{item.nombre}} - {{item.descripcion}}</div>
+                        </div>
+                    </ng-template>
+
+                </p-dropdown>
+                <small class="p-error block" *ngIf="itemForm.get('idTipoUsuario')?.hasError('required')">Tipo Usuario
+                    inválido.</small>
+            </div>
+        </div>
+        <div class="p-fluid p-formgrid grid">
+            <div class="field col-12 md:col-4">
+                <label>Opciones</label>
+                <p-multiSelect appendTo="body"
+                [options]="listaOpcionesAgrupadas" formControlName="opciones" [group]="true"
+                defaultLabel="Seleccione opciones" scrollHeight="250px" >
+                    <ng-template let-group pTemplate="group">
+                        <div class="flex align-items-center">
+                            <span>{{group.label}}</span>
+                        </div>
+                    </ng-template>
+                </p-multiSelect>
+                <small class="p-error block" *ngIf="itemForm.get('opciones')?.hasError('required')">Dato requerido</small>
+            </div>
+            <div class="field col-12 md:col-4">
+                <label>username</label>
+                <input formControlName="username" type="text" pInputText id="username" autofocus maxlength="20"
+                    #username />
+                <small class="p-error block" *ngIf="itemForm.get('username')?.hasError('required')">username
+                    inválido.</small>
+            </div>
+            <div class="field col-12 md:col-4" *ngIf="!(itemForm.controls['id'].value>0)">
+                <label>password</label>
+                <p-password formControlName="password" [toggleMask]="true" maxlength="30"></p-password>
+                <small class="p-error block" *ngIf="itemForm.get('password')?.hasError('required')">password
+                    inválido.</small>
+            </div>
+        </div>
+        <div class="p-fluid p-formgrid grid">
+            <div class="field col-12 md:col-4">
+                <label>Facturación asignada</label>
+                <p-multiSelect appendTo="body" id="asociaciones"
+                [showHeader]="false"
+                [options]="listaAsociaciones" formControlName="asociaciones"
+                defaultLabel="NINGUNO"
+                optionLabel="documentoSector" optionValue="codigoAsociacion">
+                    <ng-template let-item pTemplate="item">
+                        <div class="flex align-items-center">
+                            <span>{{item.nombreSistema}}</span>
+                        </div>
+                    </ng-template>
+                </p-multiSelect>
+            </div>
+
+            <div class="field col-12 md:col-4">
+                <label>Categorias especificas asignadas</label>
+                <p-multiSelect appendTo="body" id="categorias"
+                [showHeader]="false"
+                [options]="listaCategorias" formControlName="categorias"
+                defaultLabel="NINGUNO"
+                optionLabel="nombre" optionValue="codigo">
+                </p-multiSelect>
+            </div>
+        </div>
+
+    </div>
+    <div class="flex justify-content-end flex-wrap">
+        <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-secondary p-button-text"
+            (click)="onClose()"></button>
+        <button pButton pRipple label="Aceptar" icon="pi pi-check" class="p-button-text" (click)="onSave()"
+            ></button>
+    </div>
+</form>

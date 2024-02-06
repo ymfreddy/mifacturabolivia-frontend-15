@@ -1,0 +1,29 @@
+
+<div class="card p-fluid">
+    <div *ngIf="item">
+        <p><b>
+            Cliente: {{item.nombreRazonSocial}}
+            <br>
+            Número Factura: {{item.numeroFactura}}
+            <br>
+            Codigo Estado: {{item.codigoEstado}}
+            </b>
+        </p>
+    </div>
+    <p-table [value]="lista" styleClass="mt-5" dataKey="id">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Código</th>
+                <th>Descripción</th>
+                <th>Advertencia</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
+            <tr [pSelectableRow]="item" [pSelectableRowIndex]="rowIndex">
+                <td>{{item.codigoError}}</td>
+                <td>{{item.descripcion}}</td>
+                <td>{{item.advertencia ? 'SI':'NO'}}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>

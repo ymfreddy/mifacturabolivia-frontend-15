@@ -1,0 +1,57 @@
+<p-panel header="INTERESADOS (MEDICOS)" [toggleable]="true">
+    <p-table #dt styleClass="p-datatable-sm" [value]="items" dataKey="id" responsiveLayout="scroll" [rows]="busqueda.cantidadItems!"
+        [lazy]="true"
+        [loading]="loading"
+        (onLazyLoad)="loadPaged($event)"
+        [totalRecords]="totalRecords"
+        [globalFilterFields]="['numeroDocumento','nombre']" [rows]="10" [paginator]="true" [rowsPerPageOptions]="[10,20,30]"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros" [rowHover]="true"
+        >
+        <ng-template pTemplate="caption">
+            <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                    <div class="p-inputgroup">
+                        <span class="block mt-0 md:mt-0 p-input-icon-right" style="width: 350px;">
+                            <i *ngIf="texttosearch.value" class="pi pi-times" (click)="texttosearch.value = ''; onGlobalFilterClear(dt)"></i>
+                            <input pInputText #texttosearch type="text" placeholder="buscar por número documento, nombre" class="w-full sm:w-full"
+                            />
+                        </span>
+                        <p-button pTooltip="Crear cliente" tooltipPosition="top" (onClick)="onGlobalFilterClick(dt, texttosearch.value)"
+                                icon="pi pi-search" styleClass="p-button" tabindex="-1"></p-button>
+                    </div>
+                    <button pButton pRipple label="Nuevo" icon="pi pi-plus" class="p-button-success mr-2"
+                    (click)="newItem()"></button>
+            </div>
+        </ng-template>
+
+        <ng-template pTemplate="header">
+            <tr>
+                <th>N°</th>
+                <th pSortableColumn="numeroDocumento">N° Documento<p-sortIcon field="numeroDocumento"></p-sortIcon></th>
+                <th pSortableColumn="nombre">Nombre<p-sortIcon field="nombre"></p-sortIcon></th>
+                <th pSortableColumn="especialidad">Especialidad<p-sortIcon field="especialidad"></p-sortIcon></th>
+                <th pSortableColumn="telefono">Telefono<p-sortIcon field="telefono"></p-sortIcon></th>
+                <th pSortableColumn="usuario">Visitador<p-sortIcon field="usuario"></p-sortIcon></th>
+                <th>Operación</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-i="rowIndex" let-item>
+            <tr>
+                <td><span class="p-column-title text-negrita">N°</span><b>{{ i + 1 }}</b></td>
+                <td><span class="p-column-title text-negrita">N° Documento</span>{{item.numeroDocumento}}</td>
+                <td><span class="p-column-title text-negrita">Nombre</span>{{item.nombre}}</td>
+                <td><span class="p-column-title text-negrita">Especialidad</span>{{item.especialidad}}</td>
+                <td><span class="p-column-title text-negrita">Telefono</span>{{item.telefono}}</td>
+                <td><span class="p-column-title text-negrita">Visitador</span>{{item.usuario}}</td>
+                 <td style="width:5rem; min-width:5rem;">
+                    <div class="flex">
+                        <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-primary mr-2"
+                            (click)="editItem(item)"></button>
+                        <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger"
+                            (click)="deleteItem(item)"></button>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</p-panel>

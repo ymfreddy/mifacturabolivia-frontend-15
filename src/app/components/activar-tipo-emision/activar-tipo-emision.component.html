@@ -1,0 +1,32 @@
+<p-blockUI [blocked]="submited"><app-bloqueo></app-bloqueo></p-blockUI>
+<form [formGroup]="itemForm" (ngSubmit)="onSubmit()" autocomplete="off">
+    <div class="card p-fluid">
+        <div class="field text-negrita">
+            Sucursal: &nbsp;  {{item?.sucursal}}
+        </div>
+        <div class="field text-negrita">
+            Punto Venta: &nbsp;  {{item?.puntoVenta}}
+        </div>
+    <br>
+        <div class="field">
+            <label>Tipo Emisión</label>
+            <p-dropdown appendTo="body" formControlName="codigoTipoEmision" id="codigoTipoEmision"
+                [options]="listaTipo" optionLabel="descripcion" optionValue="codigo" placeholder="Seleccione una opción"
+                (onChange)="canbioTipoEmision($event)">
+            </p-dropdown>
+            <small class="p-error block" *ngIf="itemForm.get('codigoTipoEmision')?.hasError('required')">Tipo inválido.</small>
+        </div>
+        <div class="field">
+            <label>Tipo Evento</label>
+            <p-dropdown appendTo="body" formControlName="codigoMotivoEvento" id="codigoMotivoEvento"
+                [options]="listaTipoEvento" optionLabel="descripcion" optionValue="codigo" placeholder="Seleccione una opción">
+            </p-dropdown>
+        </div>
+    </div>
+    <div class="flex justify-content-end flex-wrap">
+        <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-secondary p-button-text"
+            (click)="onClose()"></button>
+        <button pButton pRipple label="Aceptar" icon="pi pi-check" class="p-button-text" (click)="onSave()"
+            ></button>
+    </div>
+</form>

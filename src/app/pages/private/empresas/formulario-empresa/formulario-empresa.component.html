@@ -1,0 +1,95 @@
+<p-blockUI [blocked]="submited"> <app-bloqueo></app-bloqueo></p-blockUI>
+<form [formGroup]="itemForm" (ngSubmit)="onSubmit()" autocomplete="off">
+    <div class="card">
+        <div class="p-fluid p-formgrid grid">
+            <div class="field col-12 md:col-2">
+                <label>Nit</label>
+                <p-inputNumber formControlName="nit" id="nit" [maxlength]="15"
+                    [inputStyle]="{'text-align': 'right'}" [minFractionDigits]="0"
+                    [maxFractionDigits]="0"></p-inputNumber>
+                <small class="p-error block" *ngIf="itemForm.get('nit')?.hasError('required')">Dato requerido.</small>
+            </div>
+
+            <div class="field col-12 md:col-5">
+                <label>Nombre</label>
+                <input formControlName="nombre" type="text" pInputText id="nombre" maxlength="255" oninput="this.value = this.value.toUpperCase()" onfocus="this.select();" />
+                <small class="p-error block" *ngIf="itemForm.get('nombre')?.hasError('required')">Dato requerido.</small>
+            </div>
+            <div class="field col-12 md:col-1">
+                <label>Sigla</label>
+                <input formControlName="sigla" type="text" pInputText id="sigla" maxlength="4" oninput="this.value = this.value.toUpperCase()" onfocus="this.select();" />
+                <small class="p-error block" *ngIf="itemForm.get('sigla')?.hasError('required')">Dato requerido.</small>
+            </div>
+            <div class="field col-12 md:col-4">
+                <label>Representante Legal</label>
+                <input formControlName="representanteLegal" type="text" pInputText id="representanteLegal" maxlength="100" oninput="this.value = this.value.toUpperCase()" onfocus="this.select();" />
+            </div>
+
+            <div class="field col-12 md:col-2">
+                <label>Email</label>
+                <input formControlName="email" type="text" pInputText id="email" maxlength="30" onfocus="this.select();" />
+                <small class="p-error block" *ngIf="itemForm.get('email')?.hasError('email')">Email no válido.</small>
+            </div>
+            <div class="field col-12 md:col-10">
+                <label>Mensaje Factura</label>
+                <input formControlName="mensajeFactura" type="text" pInputText id="mensajeFactura" maxlength="500" onfocus="this.select();" />
+            </div>
+            <div class="field col-12 md:col-2">
+                Factura Rollo
+                <div class="field">
+                    <input type="checkbox" formControlName="facturaRollo">
+                </div>
+            </div>
+            <div class="field col-12 md:col-2">
+                Factura con Copia
+                <div class="field">
+                    <input type="checkbox" formControlName="copiaImpresion">
+                </div>
+            </div>
+            <div class="field col-12 md:col-2">
+                Factura por email
+                <div class="field">
+                    <input type="checkbox" formControlName="envioEmail">
+                </div>
+            </div>
+            <div class="field col-12 md:col-2">
+                Factura por email con copia
+                <div class="field">
+                    <input  type="checkbox" formControlName="envioEmailCopia">
+                </div>
+            </div>
+            <div class="field col-12 md:col-2">
+                Es Restaurante
+                <div class="field">
+                    <input  type="checkbox" formControlName="restaurante">
+                </div>
+            </div>
+            <div class="field col-12 md:col-2">
+                Impresion Directa
+                <div class="field">
+                    <input  type="checkbox" formControlName="impresionDirecta">
+                </div>
+            </div>
+            <div class="field col-12 md:col-2">
+                Desc. Adicional Prod
+                <div class="field">
+                    <input  type="checkbox" formControlName="descripcionAdicionalProducto">
+                </div>
+            </div>
+            <div class="field col-12 md:col-4">
+                <label>Categorias online</label>
+                <p-multiSelect appendTo="body" id="categoriasOnline"
+                [showHeader]="false"
+                [options]="listaCategorias" formControlName="categoriasOnline"
+                defaultLabel="NINGUNO"
+                optionLabel="nombre" optionValue="codigo">
+                </p-multiSelect>
+            </div>
+        </div>
+    </div>
+    <div class="flex justify-content-end flex-wrap">
+        <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-secondary p-button-text"
+            (click)="onClose()"></button>
+        <button pButton pRipple label="Aceptar" icon="pi pi-check" class="p-button-text" (click)="onSave()"></button>
+    </div>
+</form>

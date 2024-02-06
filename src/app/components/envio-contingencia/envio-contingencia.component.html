@@ -1,0 +1,50 @@
+<p-blockUI [blocked]="submited"><app-bloqueo></app-bloqueo></p-blockUI>
+<form [formGroup]="itemForm" (ngSubmit)="onSubmit()" autocomplete="off">
+    <div class="card">
+        <div class="p-fluid p-formgrid grid">
+            <div class="field col-12 md:col-12">
+                <label>Factura</label>
+                <p-dropdown appendTo="body" formControlName="codigoAsociacion" id="codigoAsociacion"
+                    [options]="listaAsociacion" optionLabel="documentoSector" optionValue="codigoAsociacion"
+                    placeholder="NO SELECCIONADO" (onChange)="cambioSector($event)">
+                    <ng-template let-item pTemplate="item">
+                        {{item.modalidad}} - {{item.documentoSector}}
+                    </ng-template>
+                    <ng-template let-item pTemplate="selectedItem">
+                        {{item.modalidad}} - {{item.documentoSector}}
+                    </ng-template>
+                </p-dropdown>
+                <small class="p-error block" *ngIf="itemForm.get('codigoAsociacion')?.hasError('required')">Sector
+                    inválido.</small>
+            </div>
+        </div>
+
+        <p-table [value]="listaPaquete" styleClass="mt-5" dataKey="idPaqueteContingencia">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Cafc</th>
+                <th>Descripcion</th>
+                <th>Inicio Evento</th>
+                <th>Fin Evento</th>
+                <th>Cantidad</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
+            <tr [pSelectableRow]="item" [pSelectableRowIndex]="rowIndex">
+                <td>{{item.cafc}}</td>
+                <td>{{item.descripcion}}</td>
+                <td>{{item.inicioEvento | formatoFechaHora }}</td>
+                <td>{{item.finEvento | formatoFechaHora}}</td>
+                <td>{{item.cantidad}}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+
+    </div>
+    <div class="flex justify-content-end flex-wrap">
+        <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-secondary p-button-text"
+            (click)="onClose()"></button>
+        <button pButton pRipple label="Aceptar" icon="pi pi-check" class="p-button-text" (click)="onSave()"
+            ></button>
+    </div>
+</form>

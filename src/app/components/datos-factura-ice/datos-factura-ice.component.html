@@ -1,0 +1,77 @@
+<p-blockUI [blocked]="submited"><app-bloqueo></app-bloqueo></p-blockUI>
+<form [formGroup]="itemForm" (ngSubmit)="onSubmit()" autocomplete="off">
+    <div class="card">
+        <div class="p-fluid p-formgrid grid">
+            <div class="field col-12 md:col-3">
+                <label>Marca Ice</label>
+                <p-dropdown appendTo="body" formControlName="marcaIce" id="marcaIce" appendTo="body"
+                    [options]="listaMarcaIce" optionLabel="nombre" optionValue="id" [autofocus]="true"
+                    [filter]="true" filterBy="nombre"
+                    placeholder="Seleccione una opción"></p-dropdown>
+                <small class="p-error block" *ngIf="itemForm.get('marcaIce')?.hasError('required')">Dato
+                    requerido.</small>
+            </div>
+
+            <div class="field col-12 md:col-3">
+                <label>Cantidad Ice</label>
+                <p-inputNumber formControlName="cantidadIce" #cantidadIce locale="en-US"
+                        id="cantidadIce" (onInput)="keyInput($event, 'cantidadIce')" [maxlength]="20"
+                        [inputStyle]="{'text-align': 'right'}" mode="decimal" [minFractionDigits]="5"
+                        [maxFractionDigits]="5" (onFocus)="$event.target.select()" ></p-inputNumber>
+            </div>
+            <div class="field col-12 md:col-3">
+                <label>Alicuota Especifica</label>
+                <p-inputNumber formControlName="alicuotaEspecifica" #alicuotaEspecifica locale="en-US"
+                        id="alicuotaEspecifica" (onInput)="keyInput($event, 'alicuotaEspecifica')" [maxlength]="20"
+                        [inputStyle]="{'text-align': 'right'}" mode="decimal" [minFractionDigits]="5"
+                        [maxFractionDigits]="5" (onFocus)="$event.target.select()" ></p-inputNumber>
+            </div>
+
+            <div class="field col-12 md:col-3">
+                <label>Alicuota Porcentual</label>
+                <p-inputNumber formControlName="alicuotaPorcentual" #alicuotaPorcentual locale="en-US"
+                        id="alicuotaPorcentual" (onInput)="keyInput($event, 'alicuotaPorcentual')" [maxlength]="20"
+                        [inputStyle]="{'text-align': 'right'}" mode="decimal" [minFractionDigits]="5"
+                        [maxFractionDigits]="5" (onFocus)="$event.target.select()" ></p-inputNumber>
+            </div>
+
+            <!-- <div class="field col-12 md:col-3">
+                <label>Alicuota Iva</label>
+                <p-inputNumber formControlName="alicuotaIva" #alicuotaIva locale="en-US"
+                        id="alicuotaIva" (onInput)="keyInput($event, 'alicuotaIva')" [maxlength]="20" [readonly]="true"
+                        [inputStyle]="{'text-align': 'right'}" mode="decimal" [minFractionDigits]="5"
+                        [maxFractionDigits]="5" (onFocus)="$event.target.select()" ></p-inputNumber>
+            </div>
+            <div class="field col-12 md:col-3">
+                <label>Precio Neto Venta Ice</label>
+                <p-inputNumber formControlName="precioNetoVentaIce" #precioNetoVentaIce locale="en-US"
+                        id="precioNetoVentaIce" (onInput)="keyInput($event, 'precioNetoVentaIce')" [maxlength]="20" [readonly]="true"
+                        [inputStyle]="{'text-align': 'right'}" mode="decimal" [minFractionDigits]="5"
+                        [maxFractionDigits]="5" (onFocus)="$event.target.select()" ></p-inputNumber>
+            </div>
+
+            <div class="field col-12 md:col-3">
+                <label>Monto Ice Especifico</label>
+                <p-inputNumber formControlName="montoIceEspecifico" #montoIceEspecifico locale="en-US"
+                        id="montoIceEspecifico" (onInput)="keyInput($event, 'montoIceEspecifico')" [maxlength]="20" [readonly]="true"
+                        [inputStyle]="{'text-align': 'right'}" mode="decimal" [minFractionDigits]="5"
+                        [maxFractionDigits]="5" (onFocus)="$event.target.select()" ></p-inputNumber>
+            </div>
+
+            <div class="field col-12 md:col-3">
+                <label>Monto Ice Porcentual</label>
+                <p-inputNumber formControlName="montoIcePorcentual" #montoIcePorcentual locale="en-US"
+                        id="montoIcePorcentual" (onInput)="keyInput($event, 'montoIcePorcentual')" [maxlength]="20" [readonly]="true"
+                        [inputStyle]="{'text-align': 'right'}" mode="decimal" [minFractionDigits]="5"
+                        [maxFractionDigits]="5" (onFocus)="$event.target.select()" ></p-inputNumber>
+            </div> -->
+
+
+        </div>
+    </div>
+    <div class="flex justify-content-end flex-wrap">
+        <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-secondary p-button-text"
+            (click)="onClose()"></button>
+        <button pButton pRipple label="Aceptar" icon="pi pi-check" class="p-button-text" (click)="onSave()"></button>
+    </div>
+</form>

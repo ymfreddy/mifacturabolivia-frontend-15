@@ -1,0 +1,83 @@
+<p-panel header="ESTUDIANTES" [toggleable]="true">
+    <div class="p-fluid p-formgrid grid" *ngIf="esSuperAdm()">
+        <div class="field col-12 md:col-4">
+            <label>Empresa:</label>
+            <p-dropdown appendTo="body" [(ngModel)]="idEmpresa" [ngModelOptions]="{standalone: true}"  id="idEmpresa" [autofocus]="true"
+            [options]="listaEmpresas" optionLabel="nombre" optionValue="id" (onChange)="cambioEmpresa($event)"
+            placeholder="Seleccione una empresa"
+            ></p-dropdown>
+        </div>
+    </div>
+
+    <p-table #dt styleClass="p-datatable-sm" [value]="items" dataKey="id" responsiveLayout="scroll" [rows]="busqueda.cantidadItems!"
+        [lazy]="true"
+        [loading]="loading"
+        (onLazyLoad)="loadPaged($event)"
+        [totalRecords]="totalRecords"
+        [globalFilterFields]="['nitDocumento','nombre']" [rows]="10" [paginator]="true" [rowsPerPageOptions]="[10,20,30]"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros" [rowHover]="true"
+        >
+        <ng-template pTemplate="caption">
+            <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                    <div class="p-inputgroup">
+                        <span class="block mt-0 md:mt-0 p-input-icon-right" style="width: 250px;">
+                            <i *ngIf="texttosearch.value" class="pi pi-times" (click)="texttosearch.value = ''; onGlobalFilterClear(dt)"></i>
+                            <input pInputText #texttosearch type="text" placeholder="buscar por código, nombre" class="w-full sm:w-full"
+                            />
+                        </span>
+                        <p-button pTooltip="Crear estudiante" tooltipPosition="top" (onClick)="onGlobalFilterClick(dt, texttosearch.value)"
+                                icon="pi pi-search" styleClass="p-button" tabindex="-1"></p-button>
+                    </div>
+
+                    <div class="flex">
+                    <p-fileUpload *ngIf="esSuperAdm()" #fileUpload mode="basic" name="myfile" accept="{{acceptedFiles}}" icon="pi pi-upload" class="p-button-primary mr-2"
+                            invalidFileSizeMessageSummary="{0}: Tamaño del archivo inválido, "
+                            invalidFileSizeMessageDetail="El tamaño máximo debe ser {0}."
+                            invalidFileTypeMessageSummary="{0}: Tipo del archivo inválido, " [maxFileSize]=1000000
+                            [customUpload]="true" (uploadHandler)="cargarXls($event, fileUpload)" [auto]="true"
+                            chooseLabel=" Subir ">
+                        </p-fileUpload>
+
+                    <button pButton pRipple label="Nuevo" icon="pi pi-plus" class="p-button-success mr-2" (click)="newItem()"></button>
+                </div>
+            </div>
+        </ng-template>
+
+        <ng-template pTemplate="header">
+            <tr>
+                <th>N°</th>
+                <th pSortableColumn="codigoEstudiante">Código<p-sortIcon field="codigoEstudiante"></p-sortIcon></th>
+                <th pSortableColumn="numeroDocumento">N° Documento<p-sortIcon field="numeroDocumento"></p-sortIcon></th>
+                <th pSortableColumn="nombres">Nombres<p-sortIcon field="nombres"></p-sortIcon></th>
+                <th pSortableColumn="apellidoPaterno">Apellido Paterno<p-sortIcon field="apellidoPaterno"></p-sortIcon></th>
+                <th pSortableColumn="apellidoMaterno">Apellido Materno<p-sortIcon field="apellidoMaterno"></p-sortIcon></th>
+                <th pSortableColumn="curso">Curso<p-sortIcon field="curso"></p-sortIcon></th>
+                <th pSortableColumn="grado">Grado<p-sortIcon field="grado"></p-sortIcon></th>
+                <th pSortableColumn="turno">Turno<p-sortIcon field="turno"></p-sortIcon></th>
+                <th>Operación</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-i="rowIndex" let-item>
+            <tr>
+                <td><b>{{ i + 1 }}</b></td>
+                <td>{{item.codigoEstudiante}}</td>
+                <td>{{item.numeroDocumento}}</td>
+                <td>{{item.nombres}}</td>
+                <td>{{item.apellidoPaterno}}</td>
+                <td>{{item.apellidoMaterno}}</td>
+                <td>{{item.curso}}</td>
+                <td>{{item.grado}}</td>
+                <td>{{item.turno}}</td>
+                 <td style="width:5rem; min-width:5rem;">
+                    <div class="flex">
+                        <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-primary mr-2"
+                            (click)="editItem(item)"></button>
+                        <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger"
+                            (click)="deleteItem(item)"></button>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</p-panel>

@@ -1,0 +1,160 @@
+<p-blockUI [blocked]="blockedPanel"> <app-bloqueo></app-bloqueo></p-blockUI>
+<p-panel header="BUSQUEDA" [toggleable]="true">
+    <form [formGroup]="criteriosBusquedaForm" (ngSubmit)="onSubmit()" autocomplete="off">
+            <!-- <p><b>Criterios de busqueda</b></p> -->
+            <div class="p-fluid p-formgrid grid" *ngIf="esSuperAdm()">
+                <div class="field col-12 md:col-2">
+                    <label>Empresa:</label>
+                    <p-dropdown appendTo="body" [(ngModel)]="idEmpresa" [ngModelOptions]="{standalone: true}"  id="idEmpresa" [autofocus]="true"
+                    [options]="listaEmpresas" optionLabel="nombre" optionValue="id" (onChange)="cambioEmpresa($event)"
+                    placeholder="Seleccione una empresa"
+                    ></p-dropdown>
+                </div>
+            </div>
+
+            <div class="p-fluid p-formgrid grid">
+                <div class="field col-12 md:col-2">
+                    <label htmlFor="name2">Fecha Inicio</label>
+                    <p-calendar formControlName="fechaInicio" inputId="fechaInicio" [showIcon]="true" dateFormat="dd/mm/yy"></p-calendar>
+                    <small class="p-error block" *ngIf="criteriosBusquedaForm.get('fechaInicio')?.hasError('required')">
+                        Fecha inválida.</small>
+                </div>
+                <div class="field col-12 md:col-2">
+                    <label htmlFor="name2">Fecha Fin</label>
+                    <p-calendar formControlName="fechaFin" inputId="fechaFin" [showIcon]="true"  dateFormat="dd/mm/yy"></p-calendar>
+                    <small class="p-error block" *ngIf="criteriosBusquedaForm.get('fechaFin')?.hasError('required')">
+                        Fecha inválida.</small>
+                </div>
+                <div class="field col-12 md:col-2">
+                    <label>Sucursal</label>
+                        <p-dropdown appendTo="body" formControlName="idSucursal" id="idSucursal"
+                            [options]="listaSucursales" optionLabel="direccion" optionValue="id"  [showClear]="true" placeholder="TODOS">
+                            <ng-template let-item pTemplate="item">
+                                <div class="text-wrap">
+                                    <div>{{item.numero}} - {{item.direccion}}</div>
+                                </div>
+                            </ng-template></p-dropdown>
+                </div>
+                <div class="field col-12 md:col-2">
+                    <label>Usuario</label>
+                    <p-dropdown appendTo="body" formControlName="usuario" id="usuario" [options]="listaUsuarios"
+                        optionLabel="username" optionValue="username" [showClear]="true" placeholder="TODOS">
+                    </p-dropdown>
+                </div>
+                <div class="field col-12 md:col-2">
+                    <label>Estado Venta</label>
+                            <p-multiSelect appendTo="body" id="idsEstadosVenta"
+                                [showHeader]="false"
+                                [options]="listaEstadosVenta" formControlName="idsEstadosVenta"
+                                defaultLabel="TODOS"
+                                [showClear]="true"
+                                optionLabel="nombre" optionValue="id">
+                                </p-multiSelect>
+                </div>
+                <div class="field col-12 md:col-2">
+                    <label>Tipo Venta</label>
+                            <p-multiSelect appendTo="body" id="idsTiposVenta"
+                            [showHeader]="false"
+                            [options]="listaTiposVenta" formControlName="idsTiposVenta"
+                            defaultLabel="TODOS"
+                            [showClear]="true"
+                            optionLabel="nombre" optionValue="id">
+                            </p-multiSelect>
+                </div>
+            </div>
+            <p-divider type="dashed"></p-divider>
+            <div class="flex justify-content-end flex-wrap">
+                <!-- <button pButton pRipple label="Buscar" icon="pi pi-search" class="p-button mr-2"></button> -->
+                <p-splitButton label="Buscar" icon="pi pi-search" (onClick)="loadData(0)" [model]="opciones"></p-splitButton>
+            </div>
+
+    </form>
+</p-panel>
+<p-panel header="VENTAS" [toggleable]="true">
+    <p-table #dt styleClass="p-datatable-sm" [value]="items" responsiveLayout="scroll" [rows]="10" [globalFilterFields]="['correlativo','numeroSucursal','fecha','codigoCliente','nombreCliente','descuentoAdicional','total','totalSujetoIva','estadoVenta','diasCredito','tipoVenta','saldo']" [rows]="10" [paginator]="true" [rowsPerPageOptions]="[10,20,30]"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros" [rowHover]="true"
+        dataKey="id">
+        <ng-template pTemplate="caption">
+            <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                <span class="block mt-2 md:mt-0 p-input-icon-left">
+                    <i class="pi pi-search"></i>
+                    <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Filtrar...."
+                        class="w-full sm:w-auto" />
+                </span>
+                <div class="flex">
+                    <button pButton pRipple label="Nuevo" icon="pi pi-plus" class="p-button-success mr-2"  (click)="newItem()"></button>
+                </div>
+            </div>
+        </ng-template>
+
+        <ng-template pTemplate="header">
+            <tr>
+                <th>N°</th>
+                <th pSortableColumn="correlativo">Código Venta<p-sortIcon field="correlativo"></p-sortIcon>
+                </th>
+                <th pSortableColumn="numeroSucursal">Sucursal<p-sortIcon field="numeroSucursal"></p-sortIcon>
+                </th>
+                <th pSortableColumn="fecha">Fecha<p-sortIcon field="fecha"></p-sortIcon>
+                </th>
+                <th pSortableColumn="codigoCliente">Código Cliente<p-sortIcon field="codigoCliente"></p-sortIcon>
+                </th>
+                <th pSortableColumn="nombreCliente">Cliente<p-sortIcon field="nombreCliente"></p-sortIcon>
+                </th>
+                <th pSortableColumn="total">Monto Total<p-sortIcon
+                    field="total"></p-sortIcon>
+                </th>
+                <th pSortableColumn="descuentoadicional">Descuento<p-sortIcon field="descuentoadicional">
+                    </p-sortIcon>
+                </th>
+                <th pSortableColumn="totalSujetoIva">Monto Total Sujeto Iva<p-sortIcon
+                    field="totalSujetoIva"></p-sortIcon>
+            </th>
+            <th pSortableColumn="tipoVenta">Tipo Venta<p-sortIcon field="tipoVenta"></p-sortIcon>
+            </th>
+            <th pSortableColumn="estadoVenta">Estado Venta<p-sortIcon field="estadoVenta"></p-sortIcon>  </th>
+            <th *ngIf="esRestaurante()">Mesa</th>
+            <th>Número Factura</th>
+            <th>Estado Factura</th>
+            <th>Usuario</th>
+            <th>Operación</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-i="rowIndex" let-item>
+            <tr>
+                <td><b>{{ i + 1 }}</b></td>
+                <td>{{item.correlativo }}</td>
+                <td>{{item.numeroSucursal }}</td>
+                <td>{{item.fecha  | formatoFechaHora }}</td>
+                <td>{{item.codigoCliente}}</td>
+                <td>{{item.nombreCliente}}</td>
+                <td class="text-right">{{item.total | formatoDecimal }}</td>
+                <td class="text-right">{{item.descuentoAdicional | formatoDecimal}}</td>
+                <td class="text-right">{{item.totalSujetoIva | formatoDecimal}}</td>
+                <td>{{item.tipoVenta}}</td>
+                <td>{{item.estadoVenta}}</td>
+                <td *ngIf="esRestaurante()">{{item.mesa}}</td>
+                <td>{{ item.factura ? item.factura.numeroFactura : ''}}</td>
+                <td>
+                    <p-chip [styleClass]="getClaseFactura(item.factura)">{{getEstadoFactura(item.factura)}}</p-chip>
+                </td>
+                <td>{{item.usuario}}</td>
+                <td style="width:5rem; min-width:5rem;">
+                    <div class="flex">
+                        <button appendTo="body" pButton pRipple pTooltip="Servicio de Impuestos Nacionales"  tooltipPosition="top"  icon="pi" class="p-button-rounded p-button-primary mr-2 icon-sin"
+                            (click)="opcionesVenta(menuFactura, $event, item)"></button>
+                        <button appendTo="body" pButton pRipple pTooltip="Más opciones"  tooltipPosition="top"   icon="pi pi-cog" class="p-button-rounded p-button-primary mr-2"
+                            (click)="opcionesVenta(menuVenta, $event, item)"></button>
+                        <button appendTo="body" pButton pRipple pTooltip="Editar venta"  tooltipPosition="top"  icon="pi pi-pencil" class="p-button-rounded p-button-primary mr-2"
+                            (click)="editItem(item)" [disabled]="!esEditable(item.idEstadoVenta)"></button>
+                        <button appendTo="body" pButton pRipple pTooltip="Eliminar venta"  tooltipPosition="top"  icon="pi pi-trash" class="p-button-rounded p-button-danger"
+                            (click)="deleteItem(item)" [disabled]="!esEditable(item.idEstadoVenta)"></button>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</p-panel>
+
+<p-menu [showTransitionOptions]="'0ms'" [hideTransitionOptions]="'0ms'" #menuFactura [popup]="true" [model]="itemsMenuFactura"></p-menu>
+<p-menu [showTransitionOptions]="'0ms'" [hideTransitionOptions]="'0ms'" #menuVenta [popup]="true" [model]="itemsMenuVenta"></p-menu>

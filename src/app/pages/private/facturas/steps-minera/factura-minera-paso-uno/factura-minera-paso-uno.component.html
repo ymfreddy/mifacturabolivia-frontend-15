@@ -1,0 +1,405 @@
+<p-blockUI [blocked]="submited">
+    <app-bloqueo></app-bloqueo>
+</p-blockUI>
+
+<p-contextMenu #cm [model]="itemsMenu"></p-contextMenu>
+
+<p-card>
+    <ng-template pTemplate="title">
+        Paso 1
+    </ng-template>
+    <ng-template pTemplate="subtitle">
+        Elija los items de la factura {{item!.asociacion.documentoSector}}
+    </ng-template>
+    <form [formGroup]="itemForm" (ngSubmit)="onSubmit()" autocomplete="off">
+        <div class="p-fluid p-formgrid grid">
+            <div class="field col-12 md:col-10">
+                <div class="p-fluid p-formgrid grid">
+                    <div class="field col-12 md:col-6">
+                        <label>Concentrado</label>
+                        <input type="text" formControlName="concentradoGranel" pInputText maxlength="100" uppercase
+                        onfocus="this.select();" />
+                        <small class="p-error block" *ngIf="itemForm.get('concentradoGranel')?.hasError('required')">
+                            Dato requerido.</small>
+                    </div>
+                    <div class="field col-12 md:col-3">
+                        <label>Origen</label>
+                        <input type="text" formControlName="origen" pInputText maxlength="100" uppercase
+                        onfocus="this.select();" />
+                        <small class="p-error block" *ngIf="itemForm.get('origen')?.hasError('required')">
+                            Dato requerido.</small>
+                    </div>
+                    <div class="field col-12 md:col-3">
+                        <label>Puerto Transito</label>
+                        <input type="text" formControlName="puertoTransito" pInputText maxlength="100" uppercase
+                        onfocus="this.select();" />
+                    </div>
+                    <div class="field col-12 md:col-3">
+                        <label>Puerto Destino</label>
+                        <input type="text" formControlName="puertoDestino" pInputText maxlength="100" uppercase
+                        onfocus="this.select();" />
+                    </div>
+
+                    <div class="field col-12 md:col-3">
+                        <label>Pais Destino</label>
+                        <p-dropdown appendTo="body" formControlName="paisDestino" id="paisDestino" [filter]="true"
+                        filterBy="descripcion" [showClear]="true" [options]="listaPais" optionLabel="descripcion"
+                        optionValue="codigo" placeholder="Seleccione una opción">
+                        </p-dropdown>
+                    </div>
+
+                    <div class="field col-12 md:col-3">
+                        <label>Moneda</label>
+                        <p-dropdown appendTo="body" formControlName="codigoMoneda" id="codigoMoneda" [filter]="true"
+                        filterBy="descripcion" [showClear]="true" [options]="listaMoneda" optionLabel="descripcion"
+                        optionValue="codigo" placeholder="Seleccione una opción">
+                        </p-dropdown>
+                    </div>
+                    <div class="field col-12 md:col-3">
+                        <label>Tipo Cambio</label>
+                        <p-inputNumber formControlName="tipoCambio" #tipoCambio locale="en-US"
+                            id="tipoCambio" (onInput)="keyInput($event, 'tipoCambio')" [maxlength]="17"
+                            [inputStyle]="{'text-align': 'right'}" mode="decimal" [minFractionDigits]="2"
+                            [maxFractionDigits]="2" (onFocus)="$event.target.select()" ></p-inputNumber>
+                        <small class="p-error block" *ngIf="itemForm.get('tipoCambio')?.hasError('required')">
+                            Dato requerido.</small>
+                        <small class="p-error block" *ngIf="itemForm.get('tipoCambio')?.hasError('min')">
+                            El dato debe ser mayor a 0</small>
+                    </div>
+
+
+                    <div class="field col-12 md:col-3">
+                        <label>Incoterm</label>
+                        <input type="text" formControlName="incoterm" pInputText maxlength="100" uppercase
+                        onfocus="this.select();" />
+                        <small class="p-error block" *ngIf="itemForm.get('incoterm')?.hasError('required')">
+                            Dato requerido.</small>
+                    </div>
+                    <div class="field col-12 md:col-3">
+                        <label>Numero Lote</label>
+                        <input type="text" formControlName="numeroLote" pInputText maxlength="100" uppercase
+                        onfocus="this.select();" />
+                        <small class="p-error block" *ngIf="itemForm.get('numeroLote')?.hasError('required')">
+                            Dato requerido.</small>
+                    </div>
+                    <div class="field col-12 md:col-3">
+                        <label>Kilos Netos Humedos</label>
+                        <p-inputNumber formControlName="kilosNetosHumedos" #kilosNetosHumedos locale="en-US"
+                            id="kilosNetosHumedos" (onInput)="keyInput($event, 'kilosNetosHumedos')" [maxlength]="17"
+                            [inputStyle]="{'text-align': 'right'}" mode="decimal" [minFractionDigits]="2"
+                            [maxFractionDigits]="2" (onFocus)="$event.target.select()" ></p-inputNumber>
+                        <small class="p-error block" *ngIf="itemForm.get('kilosNetosHumedos')?.hasError('required')">
+                            Dato requerido.</small>
+                            <small class="p-error block" *ngIf="itemForm.get('kilosNetosHumedos')?.hasError('min')">
+                                El dato debe ser mayor a 0</small>
+                    </div>
+
+                    <div class="field col-12 md:col-3">
+                        <label>Humedad %</label>
+                        <p-inputNumber formControlName="humedadPorcentaje" #humedadPorcentaje locale="en-US"
+                            id="humedadPorcentaje" (onInput)="keyInput($event, 'humedadPorcentaje')" [maxlength]="17"
+                            [inputStyle]="{'text-align': 'right'}" mode="decimal" [minFractionDigits]="2"
+                            [maxFractionDigits]="2" (onFocus)="$event.target.select()" ></p-inputNumber>
+                    </div>
+                    <div class="field col-12 md:col-3">
+                        <label>Humedad Valor</label>
+                        <p-inputNumber formControlName="humedadValor" #humedadValor locale="en-US"
+                            id="humedadValor" (onInput)="keyInput($event, 'humedadValor')" [maxlength]="17"
+                            [inputStyle]="{'text-align': 'right'}" mode="decimal" [minFractionDigits]="2"
+                            [maxFractionDigits]="2" (onFocus)="$event.target.select()" ></p-inputNumber>
+                    </div>
+                    <div class="field col-12 md:col-3">
+                        <label>Merma %</label>
+                        <p-inputNumber formControlName="mermaPorcentaje" #mermaPorcentaje locale="en-US"
+                            id="mermaPorcentaje" (onInput)="keyInput($event, 'mermaPorcentaje')" [maxlength]="17"
+                            [inputStyle]="{'text-align': 'right'}" mode="decimal" [minFractionDigits]="2"
+                            [maxFractionDigits]="2" (onFocus)="$event.target.select()" ></p-inputNumber>
+                    </div>
+                    <div class="field col-12 md:col-3">
+                        <label>Merma Valor</label>
+                        <p-inputNumber formControlName="mermaValor" #mermaValor locale="en-US"
+                            id="mermaValor" (onInput)="keyInput($event, 'mermaValor')" [maxlength]="17"
+                            [inputStyle]="{'text-align': 'right'}" mode="decimal" [minFractionDigits]="2"
+                            [maxFractionDigits]="2" (onFocus)="$event.target.select()" ></p-inputNumber>
+                    </div>
+                    <div class="field col-12 md:col-3">
+                        <label>Kilos Netos Secos</label>
+                        <p-inputNumber formControlName="kilosNetosSecos" #kilosNetosSecos locale="en-US"
+                            id="kilosNetosSecos" (onInput)="keyInput($event, 'kilosNetosSecos')" [maxlength]="17"
+                            [inputStyle]="{'text-align': 'right'}" mode="decimal" [minFractionDigits]="2"
+                            [maxFractionDigits]="2" (onFocus)="$event.target.select()" ></p-inputNumber>
+                        <small class="p-error block" *ngIf="itemForm.get('kilosNetosSecos')?.hasError('required')">
+                            Dato requerido.</small>
+                        <small class="p-error block" *ngIf="itemForm.get('kilosNetosSecos')?.hasError('min')">
+                                El dato debe ser mayor a 0</small>
+                    </div>
+                    <div class="field col-12 md:col-3" *ngIf="esFacturaComercializacionMinera()">
+                        <label>Ruex</label>
+                        <input type="text" formControlName="ruex" pInputText maxlength="50" uppercase/>
+                    </div>
+                    <div class="field col-12 md:col-3" *ngIf="esFacturaComercializacionMinera()">
+                        <label>Nim</label>
+                        <input type="text" formControlName="nim" pInputText maxlength="50" uppercase/>
+                    </div>
+                    <div class="field col-12 md:col-6" *ngIf="esFacturaComercializacionMinera()">
+                        <label>Otros Datos</label>
+                        <input type="text" formControlName="otrosDatos" pInputText maxlength="10000" uppercase/>
+                    </div>
+
+                    <div class="field col-12 md:col-12">
+                        <label>Productos</label>
+                        <div class="p-inputgroup">
+                            <p-autoComplete formControlName="producto" #producto styleClass="w-full"
+                                [suggestions]="listaProductosFiltrados" (completeMethod)="filtrarProducto($event)"
+                                [showEmptyMessage]="true" emptyMessage="No existe" [forceSelection]="true"
+                                [minLength]="1" [maxlength]="50" (onSelect)="seleccionarProducto($event)" field="nombre"
+                                placeholder="Introduzca el código o nombre del producto/servicio" [delay]=750 [autofocus]="true">
+                                <ng-template let-item pTemplate="item">
+                                    <div class="p-fluid p-formgrid grid text-wrap">
+                                        <div class="field col-12 md:col-2">
+                                            <div class="text-center">
+                                                <img [src]="item.imagenRuta  ? item.imagenRuta : 'assets/layout/images/sin-imagen.png'" [alt]="item.imagenNombre" width="50" class="shadow-4" />
+                                            </div>
+                                        </div>
+                                        <div class="field col-12 md:col-10">
+                                            <div class="field">
+                                                <b>{{ item.codigoProducto }}</b> - {{ item.nombre }}
+                                            </div>
+                                            <div class="field">
+                                                <b>Precio Bs.</b> {{ item.precio | formatoDecimal}}
+                                            </div>
+                                            <div class="field" *ngIf="item.idTipoProducto==12">
+                                                <span >Saldo: {{item.saldo}} </span>
+                                            </div>
+                                            <div class="field" *ngIf="item.descuento && item.descuento.descuentoEstablecido>0">
+                                                <b>Descuento : NO APLICA </b>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- <div class="row">
+                                        <div class="text-wrap">
+                                            <b>{{ item.codigoProducto }}</b> - {{ item.nombre }}<br />
+                                            <div
+                                                class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                                                <span><b>Precio Bs. {{ item.precio | formatoDecimal}}</b></span>
+                                                <span *ngIf="item.idTipoProducto==12">Saldo: {{item.saldo}} </span>
+                                            </div>
+                                        </div>
+                                    </div> -->
+                                </ng-template>
+                            </p-autoComplete>
+                            <p-button label="+" (onClick)="adicionarNuevoProducto()" pTooltip="Crear producto"
+                                tooltipPosition="top" icon="pi pi-box"  styleClass="p-button" tabindex="-1"></p-button>
+                        </div>
+                    </div>
+
+                    <div class="field col-12 md:col-12">
+                        <p-divider></p-divider>
+                    </div>
+                </div>
+                <p-table #dt styleClass="p-datatable-sm" [value]="detalle" responsiveLayout="scroll" [rows]="10"
+                    [paginator]="false" [rowHover]="true" dataKey="id" (onEditComplete)="onEditComplete($event)"
+                    [contextMenu]="cm"
+                    [(contextMenuSelection)]="detalleSeleccionado"
+                    >
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>N°</th>
+                            <th style="text-align:center; width:10%">Código</th>
+                            <th style="text-align:center; width:30%">Producto/Servicio</th>
+                            <th style="text-align:center; width:10%">Cantidad</th>
+                            <th style="text-align:center; width:10%">Precio</th>
+                            <th style="text-align:center; width:10%">Monto</th>
+                            <th style="text-align:center; width:10%">Sub Total</th>
+                            <th style="text-align:center; width:5%"></th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-i="rowIndex" let-item>
+                        <tr [pContextMenuRow]="item">
+                            <td><b>{{ i + 1 }}</b></td>
+                            <td>{{item.codigoProducto}}</td>
+                            <td>
+                                <p-cellEditor>
+                                    <ng-template pTemplate="output">
+                                        <label class="text-negrita">{{item.producto }}</label><br/>
+                                        <div *ngIf="esFacturaVentaMineral()" (click)="editItemMinera(item)">
+                                            <label class="text-negrita">Cod. Nandina: </label> {{item.datosEspecificos.codigoNandina }} <br/>
+                                            <label class="text-negrita">Leyes: </label> {{item.datosEspecificos.descripcionLeyes }} <br/>
+                                            <label class="text-negrita">Cant. Extracción: </label> {{item.datosEspecificos.cantidadExtraccion }} <br/>
+                                            <label class="text-negrita">Unidad Medida: </label> {{item.datosEspecificos.unidadMedidaExtraccion }} <br/>
+                                            <!-- <label class="text-negrita">Unidad Medida: </label>{{item.datosEspecificos.unidadMedidaExtraccionDescripcion }} <br/> -->
+                                        </div>
+                                    </ng-template>
+                                </p-cellEditor>
+                            </td>
+
+                            <td pEditableColumn class="text-right" [pEditableColumn]="item"
+                                [pEditableColumnField]="'cantidad'">
+                                <p-cellEditor>
+                                    <ng-template pTemplate="input">
+                                        <span class="p-fluid">
+                                            <p-inputNumber [(ngModel)]="item.cantidad"
+                                                [ngModelOptions]="{standalone: true}" locale="en-US" [maxlength]="10"
+                                                [inputStyle]="{'text-align': 'right'}" mode="decimal"
+                                                [minFractionDigits]="2" [maxFractionDigits]="2" [step]="0"
+                                                (onFocus)="$event.target.select()">
+                                            </p-inputNumber>
+                                        </span>
+                                    </ng-template>
+                                    <ng-template pTemplate="output">
+                                        {{item.cantidad }}
+                                    </ng-template>
+                                </p-cellEditor>
+                            </td>
+
+                            <td pEditableColumn class="text-right" [pEditableColumn]="item"
+                                [pEditableColumnField]="'precioUnitario'">
+                                <p-cellEditor>
+                                    <ng-template pTemplate="input">
+                                        <span class="p-fluid">
+                                            <p-inputNumber [(ngModel)]="item.precioUnitario"
+                                                [ngModelOptions]="{standalone: true}" locale="en-US" [maxlength]="10"
+                                                [inputStyle]="{'text-align': 'right'}" mode="decimal"
+                                                [minFractionDigits]="2" [maxFractionDigits]="2" [step]="0"
+                                                (onFocus)="$event.target.select()"></p-inputNumber>
+                                        </span>
+                                    </ng-template>
+                                    <ng-template pTemplate="output">
+                                        {{item.precioUnitario | formatoDecimal}}
+                                    </ng-template>
+                                </p-cellEditor>
+                            </td>
+                            <td class="text-right">{{item.monto | formatoDecimal}}</td>
+
+                            <td class="text-right">{{item.subTotal | formatoDecimal}}</td>
+                            <td style="width:5rem; min-width:2rem;">
+                                <div class="flex">
+                                    <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
+                                        (click)="deleteItem(item)"></button>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="footer">
+                        <tr>
+                            <td colspan="5" class="text-right">TOTALES</td>
+                            <td class="text-right">{{getDetalleMonto() | formatoDecimal}}</td>
+                            <td class="text-right">{{getDetalleSubTotal() | formatoDecimal}}</td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+                <br><br>
+                <!-- <div class="p-fluid p-formgrid grid" *ngIf="esFacturaVentaMineral()">
+                    <div class="field col-12 md:col-2" >
+                        <label>Cant. Huespedes</label>
+                        <input formControlName="cantidadHuespedes" type="text" pInputText id="cantidadHuespedes" maxlength="3"
+                        pKeyFilter="int" onfocus="this.select();" />
+                    </div>
+                    <div class="field col-12 md:col-2" >
+                        <label>Cant. Habitaciones</label>
+                        <input formControlName="cantidadHabitaciones" type="text" pInputText id="cantidadHabitaciones" maxlength="3"
+                        pKeyFilter="int" onfocus="this.select();" />
+                    </div>
+                </div> -->
+
+            </div>
+
+            <!--<p-divider layout="vertical" ></p-divider>-->
+            <div class="field col-12 md:col-2">
+                <div class="field">
+                    <label>FECHA</label>
+                    <input pInputText type="text" formControlName="fecha" readonly="true" />
+                </div>
+                <div class="field">
+                    <label for="firstname1">SUBTOTAL</label>
+                    <p-inputNumber [ngModel]="getDetalleSubTotal()" [ngModelOptions]="{standalone: true}" locale="en-US"
+                        id="total" [maxlength]="17" [inputStyle]="{'text-align': 'right'}" mode="decimal"
+                        [minFractionDigits]="2" [maxFractionDigits]="2" [readonly]="true">
+                    </p-inputNumber>
+                </div>
+                <div class="field">
+                    <label for="firstname1">GASTOS REALIZACION</label>
+                    <p-inputNumber formControlName="gastosRealizacion" #gastosRealizacion locale="en-US"
+                            id="gastosRealizacion" (onInput)="keyInput($event, 'gastosRealizacion')" [maxlength]="17"
+                            [inputStyle]="{'text-align': 'right'}" mode="decimal" [minFractionDigits]="2"
+                            [maxFractionDigits]="2" (onFocus)="$event.target.select()"></p-inputNumber>
+                    <small class="p-error block" *ngIf="itemForm.get('gastosRealizacion')?.hasError('required')">
+                            Dato requerido.</small>
+                    <small class="p-error block" *ngIf="itemForm.get('gastosRealizacion')?.hasError('min')">
+                                El dato debe ser mayor a 0</small>
+                </div>
+                <div class="field" *ngIf="esFacturaVentaMineral()">
+                    <label for="firstname1">TASA EFECTIVA</label>
+                    <p-inputNumber formControlName="tasaEfectiva" #tasaEfectiva locale="en-US"
+                            id="tasaEfectiva" (onInput)="keyInput($event, 'tasaEfectiva')" [maxlength]="17"
+                            [inputStyle]="{'text-align': 'right'}" mode="decimal" [minFractionDigits]="2"
+                            [maxFractionDigits]="7" (onFocus)="$event.target.select()"></p-inputNumber>
+                        <small class="p-error block" *ngIf="itemForm.get('tasaEfectiva')?.hasError('required')">
+                            Dato requerido.</small>
+                </div>
+
+                <div class="field" *ngIf="esFacturaVentaMineral()">
+                    <label>IVA</label>
+                        <p-inputNumber [ngModel]="getIva()" [ngModelOptions]="{standalone: true}" locale="en-US"
+                        id="iva" [maxlength]="17" [inputStyle]="{'text-align': 'right'}" mode="decimal"
+                        [minFractionDigits]="2" [maxFractionDigits]="2" [readonly]="true">
+                        </p-inputNumber>
+                </div>
+
+                <div class="field" *ngIf="esFacturaVentaMineral()">
+                    <label>LIQUIDACION PRELIMINAR</label>
+                    <p-inputNumber formControlName="liquidacionPreliminar" #liquidacionPreliminar locale="en-US"
+                        id="liquidacionPreliminar" (onInput)="keyInput($event, 'liquidacionPreliminar')" [maxlength]="17"
+                        [inputStyle]="{'text-align': 'right'}" mode="decimal" [minFractionDigits]="2"
+                        [maxFractionDigits]="2" (onFocus)="$event.target.select()"></p-inputNumber>
+                    <small class="p-error block" *ngIf="itemForm.get('liquidacionPreliminar')?.hasError('required')">
+                        Dato requerido.</small>
+                </div>
+                <div class="field">
+                    <label for="lastname1">DESCUENTO ADICIONAL</label>
+                    <p-inputNumber formControlName="descuentoAdicional" #descuentoAdicional locale="en-US"
+                        id="descuentoAdicional" (onInput)="keyInput($event, 'descuentoAdicional')" [maxlength]="17"
+                        [inputStyle]="{'text-align': 'right'}" mode="decimal" [minFractionDigits]="2"
+                        [maxFractionDigits]="2" (onFocus)="$event.target.select()"></p-inputNumber>
+                    <small class="p-error block" *ngIf="itemForm.get('descuentoAdicional')?.hasError('required')">
+                        Dato requerido.</small>
+                </div>
+
+                <div class="field">
+                    <label>MONTO TOTAL MONEDA</label>
+                    <p-inputNumber [ngModel]="getMontoTotalMoneda()" [ngModelOptions]="{standalone: true}" locale="en-US"
+                        id="total" [maxlength]="17" [inputStyle]="{'text-align': 'right'}" mode="decimal"
+                        [minFractionDigits]="2" [maxFractionDigits]="2" [readonly]="true">
+                    </p-inputNumber>
+                </div>
+                <div class="field">
+                    <label>TIPO CAMBIO ANB</label>
+                    <p-inputNumber formControlName="tipoCambioAnb" #tipoCambioAnb locale="en-US"
+                        id="tipoCambioAnb" (onInput)="keyInput($event, 'tipoCambioAnb')" [maxlength]="17"
+                        [inputStyle]="{'text-align': 'right'}" mode="decimal" [minFractionDigits]="2"
+                        [maxFractionDigits]="2" (onFocus)="$event.target.select()" ></p-inputNumber>
+                    <small class="p-error block" *ngIf="itemForm.get('tipoCambioAnb')?.hasError('required')">
+                        Dato requerido.</small>
+                    <small class="p-error block" *ngIf="itemForm.get('tipoCambioAnb')?.hasError('min')">
+                            El dato debe ser mayor a 0</small>
+                </div>
+                <div class="field">
+                    <label for="lastname1">MONTO TOTAL</label>
+                    <p-inputNumber [ngModel]="getMontoTotal()" [ngModelOptions]="{standalone: true}" locale="en-US"
+                        id="total" [maxlength]="17" [inputStyle]="{'text-align': 'right'}" mode="decimal"
+                        [minFractionDigits]="2" [maxFractionDigits]="2" [readonly]="true">
+                    </p-inputNumber>
+                </div>
+            </div>
+        </div>
+        <p-divider type="dashed"></p-divider>
+        <div class="flex justify-content-between flex-wrap card-container purple-container">
+            <div class="flex align-items-center justify-content-center m-2">
+                <button pButton label="Facturas" (click)="prevPage()" icon="pi pi-angle-left"></button> &nbsp;
+            </div>
+            <div class="flex align-items-center justify-content-center m-2">
+                <button pButton label="Siguiente" icon="pi pi-angle-right" iconPos="right" (click)="onSave()"></button>
+            </div>
+        </div>
+    </form>
+</p-card>

@@ -1,0 +1,121 @@
+<p-blockUI [blocked]="blockedPanel"> <app-bloqueo></app-bloqueo></p-blockUI>
+<p-panel header="BUSQUEDA" [toggleable]="true">
+    <form [formGroup]="criteriosBusquedaForm" (ngSubmit)="onSubmit()" autocomplete="off">
+            <!-- <p><b>Criterios de busqueda</b></p> -->
+            <div class="p-fluid p-formgrid grid" *ngIf="esSuperAdm()">
+                <div class="field col-12 md:col-2">
+                    <label>Empresa:</label>
+                    <p-dropdown appendTo="body" [(ngModel)]="idEmpresa" [ngModelOptions]="{standalone: true}"  id="idEmpresa" [autofocus]="true"
+                    [options]="listaEmpresas" optionLabel="nombre" optionValue="id" (onChange)="cambioEmpresa($event)"
+                    placeholder="Seleccione una empresa"
+                    ></p-dropdown>
+                </div>
+            </div>
+            <div class="p-fluid p-formgrid grid">
+                <div class="field col-12 md:col-2">
+                    <label htmlFor="name2">Fecha Inicio</label>
+                    <p-calendar formControlName="fechaInicio" inputId="fechaInicio" [showIcon]="true" dateFormat="dd/mm/yy"></p-calendar>
+                    <small class="p-error block" *ngIf="criteriosBusquedaForm.get('fechaInicio')?.hasError('required')">
+                        Fecha inválida.</small>
+                </div>
+                <div class="field col-12 md:col-2">
+                    <label htmlFor="name2">Fecha Fin</label>
+                    <p-calendar formControlName="fechaFin" inputId="fechaFin" [showIcon]="true"  dateFormat="dd/mm/yy"></p-calendar>
+                    <small class="p-error block" *ngIf="criteriosBusquedaForm.get('fechaFin')?.hasError('required')">
+                        Fecha inválida.</small>
+                </div>
+                <div class="field col-12 md:col-3">
+                    <label>Sucursal Origen</label>
+                        <p-dropdown appendTo="body" formControlName="idSucursalOrigen" id="idSucursalOrigen"
+                            [options]="listaSucursales" optionLabel="direccion" optionValue="id"  [showClear]="true" placeholder="TODOS">
+                            <ng-template let-item pTemplate="item">
+                                <div class="text-wrap">
+                                    <div>{{item.numero}} - {{item.direccion}}</div>
+                                </div>
+                            </ng-template>
+                        </p-dropdown>
+                </div>
+                <div class="field col-12 md:col-3">
+                    <label>Sucursal Destino</label>
+                        <p-dropdown appendTo="body" formControlName="idSucursalDestino" id="idSucursalDestino"
+                            [options]="listaSucursales" optionLabel="direccion" optionValue="id"  [showClear]="true" placeholder="TODOS"></p-dropdown>
+                </div>
+                <div class="field col-12 md:col-2">
+                    <label>Estado Traspaso</label>
+                        <p-dropdown appendTo="body" formControlName="idEstadoTraspaso" id="idEstadoTraspaso"
+                            [options]="listaEstadosTraspaso" optionLabel="nombre" optionValue="id"  [showClear]="true" placeholder="TODOS"></p-dropdown>
+                </div>
+            </div>
+            <p-divider type="dashed"></p-divider>
+            <div class="flex justify-content-end flex-wrap">
+                <button pButton pRipple label="Buscar" icon="pi pi-search" class="p-button mr-2"></button>
+            </div>
+    </form>
+
+</p-panel>
+<p-panel header="TRASPASOS" [toggleable]="true">
+    <p-table #dt styleClass="p-datatable-sm" [value]="items" responsiveLayout="scroll" [rows]="10"
+        [globalFilterFields]="['correlativo','fechaSolicitud','usuarioSolicitud','sucursalOrigen','sucursalDestino','descripcion','estadoTraspaso','fechaTraspaso', 'usuarioTraspso']" [rows]="10" [paginator]="true" [rowsPerPageOptions]="[10,20,30]"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros" [rowHover]="true"
+        dataKey="id">
+        <ng-template pTemplate="caption">
+            <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                <span class="block mt-2 md:mt-0 p-input-icon-left">
+                    <i class="pi pi-search"></i>
+                    <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Filtrar...."
+                        class="w-full sm:w-auto" />
+                </span>
+                <button pButton pRipple label="Nuevo" icon="pi pi-plus" class="p-button-success mr-2"
+                    (click)="newItem()"></button>
+            </div>
+        </ng-template>
+
+        <ng-template pTemplate="header">
+            <tr>
+                <th>N°</th>
+                <th pSortableColumn="id">Codigo Traspaso<p-sortIcon field="numeroFactura"></p-sortIcon>
+                </th>
+                <th pSortableColumn="fechaSolicitud">Fecha <p-sortIcon field="fechaSolicitud"></p-sortIcon>
+                </th>
+                <th pSortableColumn="usuarioSolicitud">Usuario Pedido<p-sortIcon field="usuarioSolicitud"></p-sortIcon>
+                </th>
+                <th pSortableColumn="sucursalOrigen">Sucursal Origen<p-sortIcon field="sucursalOrigen"></p-sortIcon>
+                </th>
+                <th pSortableColumn="sucursalDestino">Sucursal Destino<p-sortIcon field="sucursalDestino"></p-sortIcon>
+                </th>
+                <th pSortableColumn="descripcion">Motivo<p-sortIcon field="descripcion"></p-sortIcon>
+                </th>
+                <th pSortableColumn="estadoTraspaso">Estado Traspaso<p-sortIcon field="estadoTraspaso"></p-sortIcon>
+                </th>
+                <th pSortableColumn="fechaTraspaso">Fecha Traspaso<p-sortIcon field="fechaTraspaso"></p-sortIcon>
+                </th>
+                <th pSortableColumn="usuarioTraspaso">Usuario Traspaso<p-sortIcon field="usuarioTraspaso"></p-sortIcon>
+                </th>
+                <th>Operación</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-i="rowIndex" let-item>
+            <tr>
+                <td><b>{{ i + 1 }}</b></td>
+                <td>{{item.correlativo}}</td>
+                <td>{{item.fechaSolicitud  | formatoFechaHora:false }}</td>
+                <td>{{item.usuarioSolicitud}}</td>
+                <td>{{item.sucursalOrigen}}</td>
+                <td>{{item.sucursalDestino}}</td>
+                <td>{{item.descripcion}}</td>
+                <td>{{item.estadoTraspaso}}</td>
+                <td>{{item.fechaTraspaso  | formatoFechaHora:false }}</td>
+                <td>{{item.usuarioTraspaso}}</td>
+                <td style="width:5rem; min-width:5rem;">
+                    <div class="flex">
+                        <button pButton pRipple icon="pi pi-sync" class="p-button-rounded p-button-primary"
+                            (click)="editItem(item)" [disabled]="!esEditable(item.idEstadoTraspaso)"></button>
+                        <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger"
+                            (click)="deleteItem(item)" [disabled]="!esEditable(item.idEstadoTraspaso)"></button>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</p-panel>

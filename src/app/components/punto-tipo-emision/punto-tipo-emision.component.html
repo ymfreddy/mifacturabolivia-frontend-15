@@ -1,0 +1,42 @@
+<p-table #dt2 styleClass="p-datatable-sm" [value]="listaDatosFacturacion" responsiveLayout="scroll" [paginator]="false"
+    [rowHover]="true" dataKey="id">
+    <ng-template pTemplate="header">
+        <tr>
+            <th pSortableColumn="nombreSistema">Nombre Sistema<p-sortIcon field="nombreSistema"></p-sortIcon></th>
+            <th pSortableColumn="modalidad">modalidad<p-sortIcon field="modalidad"></p-sortIcon></th>
+            <th pSortableColumn="sucursal">sucursal<p-sortIcon field="sucursal"></p-sortIcon></th>
+            <th pSortableColumn="puntoVenta">punto Venta<p-sortIcon field="puntoVenta"></p-sortIcon></th>
+            <th pSortableColumn="tipoEmision">tipo Emision<p-sortIcon field="tipoEmision"></p-sortIcon></th>
+            <th pSortableColumn="cufd">cufd<p-sortIcon field="cufd"></p-sortIcon></th>
+            <th pSortableColumn="fechaVigencia">fecha Vigencia<p-sortIcon field="fechaVigencia"></p-sortIcon></th>
+            <th>Operación</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-i="rowIndex" let-item>
+        <tr>
+            <td>{{item.nombreSistema}}</td>
+            <td>{{item.modalidad==1 ? 'ELECTRONICA': 'COMPUTARIZADA'}}</td>
+            <td>{{item.sucursal}}</td>
+            <td>{{item.puntoVenta}}</td>
+            <td class="text-negrita">
+                {{item.tipoEmision}}
+            </td>
+            <td>{{item.cufd | slice:0:15 }}</td>
+            <td>{{item.fechaVigencia | formatoFechaHora }}</td>
+            <td style="width:5rem; min-width:5rem;">
+                <div class="flex">
+                    <!-- <button pButton pRipple  pTooltip="Generar Cufd"  tooltipPosition="top"  icon="pi pi-bolt" class="p-button-rounded p-button-primary mr-2"
+                        (click)="getCufd(item)"></button> -->
+                    <button pButton pRipple pTooltip="Cambiar Modalidad" tooltipPosition="top" icon="pi pi-cog"
+                        class="p-button-rounded p-button-primary mr-2" (click)="changeModalidad(item)"></button>
+                </div>
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+
+<br>
+<div class="flex justify-content-end flex-wrap">
+    <button pButton pRipple label="Salir" icon="pi pi-times" class="p-button-secondary p-button-text"
+        (click)="onClose()"></button>
+</div>

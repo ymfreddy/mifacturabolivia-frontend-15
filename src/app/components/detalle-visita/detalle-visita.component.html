@@ -1,0 +1,21 @@
+<p-blockUI [blocked]="submited"><app-bloqueo></app-bloqueo></p-blockUI>
+<form [formGroup]="itemForm" (ngSubmit)="onSubmit()" autocomplete="off">
+    <div class="p-fluid">
+        <div class="field">
+            <label>Detalle</label>
+            <textarea rows="5" cols="30" formControlName="detalle"  pInputTextarea [autoResize]="true" maxlength="1500"></textarea>
+            <small class="p-error block" *ngIf="itemForm.get('detalle')?.hasError('required')">Detalle inválido.</small>
+        </div>
+        <div class="field">
+            <label>Observaciones</label>
+            <textarea rows="2" cols="30" formControlName="observaciones"  pInputTextarea [autoResize]="true" maxlength="250"></textarea>
+        </div>
+    </div>
+    <br>
+    <div class="flex justify-content-end flex-wrap">
+        <button pButton pRipple [label]="this.esEditable() ? 'Cancelar':'Cerrar'" icon="pi pi-times" class="p-button-secondary p-button-text"
+            (click)="onClose()"></button>
+        <button  *ngIf="this.esEditable()" pButton pRipple label="Finalizar" icon="pi pi-check" class="p-button-text" (click)="onSave()"
+            ></button>
+    </div>
+</form>

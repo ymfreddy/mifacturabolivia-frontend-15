@@ -1,0 +1,26 @@
+<form [formGroup]="itemForm" (ngSubmit)="onSubmit()" autocomplete="off">
+    <div class="card p-fluid">
+        <div class="field">
+            <label>Tipo Descuento</label>
+            <p-dropdown appendTo="body" formControlName="idTipoDescuento" id="idTipoDescuento"
+                [options]="listaTipoDescuento" optionLabel="nombre" optionValue="id" placeholder="Seleccione una opción">
+            </p-dropdown>
+            <small class="p-error block" *ngIf="itemForm.get('idTipoDescuento')?.hasError('required')">Dato
+                requerido.</small>
+        </div>
+        <br>
+        <div class="field">
+            <label>Descuento Establecido</label>
+            <p-inputNumber formControlName="descuentoEstablecido" locale="en-US" id="descuentoEstablecido"
+                [maxlength]="15" [inputStyle]="{'text-align': 'right'}" mode="decimal" [minFractionDigits]="2"
+                [maxFractionDigits]="2" onfocus="this.select();"></p-inputNumber>
+            <small class="p-error block" *ngIf="itemForm.get('descuentoEstablecido')?.hasError('required')">Dato
+                requerido.</small>
+        </div>
+    </div>
+    <div class="flex justify-content-end flex-wrap">
+        <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-secondary p-button-text"
+            (click)="onClose()"></button>
+        <button pButton pRipple label="Aceptar" icon="pi pi-check" class="p-button-text" (click)="onSave()"></button>
+    </div>
+</form>

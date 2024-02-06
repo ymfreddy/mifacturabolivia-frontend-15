@@ -1,0 +1,96 @@
+/* You can add global styles to this file, and also import other style files */
+$gutter: 0.5rem; //for primeflex grid system
+.field {
+    margin-bottom: 0rem !important;
+}
+
+.text-wrap{
+    white-space:pre-wrap !important;
+}
+
+.text-upper-case{
+    text-transform: uppercase;
+}
+
+.text-right {
+    justify-content: flex-end;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-negrita {
+    font-weight: 700;
+}
+
+.ui-blockui {
+    position : fixed;
+ }
+
+/*.bloqueo-pantalla {
+    display: contents;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+}*/
+
+.p-blockui.p-component-overlay {
+    position: fixed;
+    z-index: 1000;
+}
+
+.pac-container {
+    z-index: 1000000000 !important;
+}
+
+.icon-sin
+{
+    background-image: url('./assets/sin.png') !important;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 2em;
+}
+
+.icon-descuento
+{
+    background-image: url('./assets/images/oferta.png') !important;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 2.2em;
+}
+
+.p-badge {
+    padding: 0;
+    border-radius: 50%;
+    display: block !important;
+    position: absolute;
+    top: 3px;
+    left: 20px;
+}
+
+.p-badge-no-gutter {
+    padding: 0;
+    border-radius: 50%;
+    display: block !important;
+    position: absolute;
+    top: 3px;
+    left: 20px;
+}
+
+@import "assets/layout/styles/layout/layout.scss";
+
+/* PrimeNG */
+@import "../node_modules/primeng/resources/primeng.min.css";
+@import "../node_modules/primeflex/primeflex.scss";
+@import "../node_modules/primeicons/primeicons.css";
+
+/* Code Highlight */
+@import "../node_modules/prismjs/themes/prism-coy.css";
+
+/* Demos */
+@import "assets/demo/styles/flags/flags.css";
+@import "assets/demo/styles/badges.scss";

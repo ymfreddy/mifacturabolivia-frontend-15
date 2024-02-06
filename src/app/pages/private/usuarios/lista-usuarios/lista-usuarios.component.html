@@ -1,0 +1,68 @@
+<p-blockUI [blocked]="blockedPanel"> <app-bloqueo></app-bloqueo></p-blockUI>
+<p-panel header="USUARIOS" [toggleable]="true">
+    <div class="p-fluid p-formgrid grid">
+        <div class="field col-12 md:col-4">
+            <label>Empresa:</label>
+            <p-dropdown appendTo="body" [(ngModel)]="idEmpresa" [ngModelOptions]="{standalone: true}"  id="idEmpresa" [autofocus]="true"
+            [options]="listaEmpresas" optionLabel="nombre" optionValue="id" (onChange)="cambioEmpresa($event)"
+            placeholder="Seleccione una empresa"
+            ></p-dropdown>
+        </div>
+    </div>
+
+
+    <p-table #dt styleClass="p-datatable-sm" [value]="items" responsiveLayout="scroll" [rows]="10"
+        [globalFilterFields]="['tipoUsuario','nombreCompleto','ci','celular','username','empresaNit']" [rows]="10" [paginator]="true" [rowsPerPageOptions]="[10,20,30]"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros" [rowHover]="true"
+        dataKey="id">
+        <ng-template pTemplate="caption">
+            <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                <span class="block mt-2 md:mt-0 p-input-icon-left">
+                    <i class="pi pi-search"></i>
+                    <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Filtrar...." class="w-full sm:w-auto" />
+                </span>
+                <button pButton pRipple label="Nuevo" icon="pi pi-plus" class="p-button-success mr-2"
+                    (click)="newItem()"></button>
+            </div>
+        </ng-template>
+
+        <ng-template pTemplate="header">
+            <tr>
+                <th>N°</th>
+                <th pSortableColumn="empresaNit">Empresa<p-sortIcon field="empresaNit"></p-sortIcon></th>
+                <th pSortableColumn="tipoUsuario">Tipo Usuario<p-sortIcon field="tipoUsuario"></p-sortIcon></th>
+                <th pSortableColumn="ci">Ci<p-sortIcon field="ci"></p-sortIcon></th>
+                <th pSortableColumn="nombreCompleto">Nombre Completo<p-sortIcon field="nombreCompleto"></p-sortIcon></th>
+                <th pSortableColumn="celular">Celular<p-sortIcon field="celular"></p-sortIcon></th>
+                <th pSortableColumn="username">username<p-sortIcon field="username"></p-sortIcon></th>
+                <th pSortableColumn="cambiarClave">Cambiar Clave</th>
+                <th pSortableColumn="enabled">Habilitado</th>
+                <th>Operación</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-i="rowIndex" let-item>
+            <tr>
+                <td><b>{{ i + 1 }}</b></td>
+                <td>{{item.empresaNit}}</td>
+                <td>{{item.tipoUsuario}}</td>
+                <td>{{item.ci}}</td>
+                <td>{{item.nombreCompleto}}</td>
+                <td>{{item.celular}}</td>
+                <td>{{item.username}}</td>
+                <td>{{item.cambiarClave ? 'SI':'NO'}}</td>
+                <td>{{item.enabled ? 'SI':'NO'}}</td>
+                 <td style="width:5rem; min-width:5rem;">
+                    <div class="flex">
+                        <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2"
+                            (click)="editItem(item)"></button>
+                            <button pButton pRipple icon="pi pi-send" class="p-button-rounded p-button-success mr-2"
+                            (click)="resetPasswordItem(item)"></button>
+                        <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
+                            (click)="deleteItem(item)"></button>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</p-panel>

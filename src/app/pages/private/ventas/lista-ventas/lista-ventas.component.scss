@@ -1,0 +1,11 @@
+:host ::ng-deep .p-chip.factura-emitida {
+    background: rgb(9, 150, 21);
+    text-align: center;
+    color: white;
+}
+
+:host ::ng-deep .p-chip.factura-anulada {
+    background: rgb(192, 1, 1);
+    text-align: center;
+    color: white;
+}

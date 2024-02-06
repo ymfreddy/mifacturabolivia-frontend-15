@@ -1,0 +1,29 @@
+<p-blockUI [blocked]="submited"><app-bloqueo></app-bloqueo></p-blockUI>
+<form [formGroup]="itemForm" (ngSubmit)="onSubmit()" autocomplete="off">
+    <div class="p-fluid">
+        <div class="field">
+            Se cancelara la siguiente visita
+        </div>
+        <div class="field" style="overflow-wrap: break-word;">
+            Medico: {{item.interesado}}
+        </div>
+        <div class="field">
+         Fecha: {{item.fecha! | formatoFechaHora:false }}
+        </div>
+    <br>
+        <div class="field">
+            <label>Motivo Cancelación</label>
+            <p-dropdown appendTo="body" formControlName="idMotivoCancelacion" id="idMotivoCancelacion"
+                [options]="listaMotivos" optionLabel="descripcion" optionValue="id" placeholder="Seleccione una opción">
+            </p-dropdown>
+            <small class="p-error block" *ngIf="itemForm.get('idMotivoCancelacion')?.hasError('required')">Motivo inválido.</small>
+        </div>
+    </div>
+    <br>
+    <div class="flex justify-content-end flex-wrap">
+        <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-secondary p-button-text"
+            (click)="onClose()"></button>
+        <button pButton pRipple label="Aceptar" icon="pi pi-check" class="p-button-text" (click)="onSave()"
+            ></button>
+    </div>
+</form>

@@ -1,0 +1,252 @@
+<p-blockUI [blocked]="submited"><app-bloqueo></app-bloqueo></p-blockUI>
+
+<p-panel header="BUSQUEDA DIRECCIONES" [toggleable]="true">
+    <p-tabView>
+        <p-tabPanel header="Busqueda por día" leftIcon="pi pi-map">
+            <div class="p-fluid p-formgrid grid">
+                <div class="field col-12 md:col-2">
+                    <label>Día Semana</label>
+                    <p-calendar appendTo="body" [(ngModel)]="fecha" [minDate]="minDate"
+                        dateFormat="dd/mm/yy"></p-calendar>
+                </div>
+                <div class="field col-12 md:col-3">
+                    <label>Zona</label>
+                    <p-dropdown appendTo="body" [(ngModel)]="zona" id="zona" [options]="listaZonas" optionLabel="nombre"
+                        optionValue="id" [showClear]="true" placeholder="TODOS">
+                    </p-dropdown>
+                </div>
+                <div class="field col-12 md:col-3">
+                    <label>Usuario</label>
+                    <p-dropdown appendTo="body" [(ngModel)]="idUsuario" id="idUsuario" [options]="listaUsuarios"
+                        optionLabel="nombreCompleto" optionValue="id" [showClear]="true" placeholder="TODOS">
+                    </p-dropdown>
+                </div>
+                <div class="field col-12 md:col-2">
+                    <label>&nbsp;</label>
+                    <p-button (onClick)="verSugerencia()" icon="pi pi-search" label="Buscar" tabindex="-1"></p-button>
+                </div>
+                <div class="field col-12 md:col-2">
+                    <label>&nbsp;</label>
+                    <p-button (onClick)="limpiarSugerencia()" label="Limpiar" tabindex="-1"></p-button>
+                </div>
+                <div class="field col-12 md:col-12">
+                    <!-- <p-divider></p-divider> -->
+                </div>
+            </div>
+
+            <p-table *ngIf="listaSugerencia.length>0" #dt2 styleClass="p-datatable-sm" [value]="listaSugerencia"
+                [(selection)]="listaSugerenciaSeleccionada"
+                responsiveLayout="scroll" [rows]="10" [paginator]="true" [rowHover]="true" dataKey="id">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>N°</th>
+                        <th style="width: 4rem">
+                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                        </th>
+                        <th pSortableColumn="interesado" style="text-align:center;">medico<p-sortIcon
+                                field="interesado"></p-sortIcon></th>
+                        <th pSortableColumn="especialidad" style="text-align:center;">especialidad<p-sortIcon
+                                field="especialidad"></p-sortIcon></th>
+                        <th pSortableColumn="zona" style="text-align:center;">zona<p-sortIcon field="zona"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="direccion" style="text-align:center;">direccion<p-sortIcon
+                                field="direccion"></p-sortIcon></th>
+                        <th pSortableColumn="tipoPuestoTrabajo" style="text-align:center;">tipo puesto<p-sortIcon
+                                field="tipoPuestoTrabajo"></p-sortIcon></th>
+                        <th pSortableColumn="puestoTrabajo" style="text-align:center;">puesto trabajo<p-sortIcon
+                                field="puestoTrabajo"></p-sortIcon></th>
+                        <th pSortableColumn="dias" style="text-align:center;">dias<p-sortIcon field="dias"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="turnos" style="text-align:center;">turno<p-sortIcon
+                                field="turnos"></p-sortIcon></th>
+                        <th pSortableColumn="horarios" style="text-align:center;">horarios<p-sortIcon
+                                field="horarios"></p-sortIcon></th>
+                        <th pSortableColumn="usuario" style="text-align:center;">usuario asignado<p-sortIcon
+                                field="usuario"></p-sortIcon></th>
+                    </tr>
+
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th><input pInputText type="text"
+                                (input)="dt2.filter($any($event.target).value, 'interesado', 'contains')"
+                                [value]="$any(dt2.filters['interesado'])?.value" placeholder="" class="w-full"></th>
+                        <th><input pInputText type="text"
+                                (input)="dt2.filter($any($event.target).value, 'especialidad', 'contains')"
+                                [value]="$any(dt2.filters['especialidad'])?.value" placeholder="" class="w-full"></th>
+                        <th><input pInputText type="text"
+                                (input)="dt2.filter($any($event.target).value, 'zona', 'contains')"
+                                [value]="$any(dt2.filters['zona'])?.value" placeholder="" class="w-full"></th>
+                        <th><input pInputText type="text"
+                                (input)="dt2.filter($any($event.target).value, 'direccion', 'contains')"
+                                [value]="$any(dt2.filters['direccion'])?.value" placeholder="" class="w-full"></th>
+                        <th><input pInputText type="text"
+                                (input)="dt2.filter($any($event.target).value, 'tipoPuestoTrabajo', 'contains')"
+                                [value]="$any(dt2.filters['tipoPuestoTrabajo'])?.value" placeholder="" class="w-full">
+                        </th>
+                        <th><input pInputText type="text"
+                                (input)="dt2.filter($any($event.target).value, 'puestoTrabajo', 'contains')"
+                                [value]="$any(dt2.filters['puestoTrabajo'])?.value" placeholder="" class="w-full"></th>
+                        <th><input pInputText type="text"
+                                (input)="dt2.filter($any($event.target).value, 'dias', 'contains')"
+                                [value]="$any(dt2.filters['dias'])?.value" placeholder="" class="w-full"></th>
+                        <th><input pInputText type="text"
+                                (input)="dt2.filter($any($event.target).value, 'turnos', 'contains')"
+                                [value]="$any(dt2.filters['turnos'])?.value" placeholder="" class="w-full"></th>
+                        <th><input pInputText type="text"
+                                (input)="dt2.filter($any($event.target).value, 'horarios', 'contains')"
+                                [value]="$any(dt2.filters['horarios'])?.value" placeholder="" class="w-full"></th>
+                        <th><input pInputText type="text"
+                                (input)="dt2.filter($any($event.target).value, 'usuario', 'contains')"
+                                [value]="$any(dt2.filters['usuario'])?.value" placeholder="" class="w-full"></th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-i="rowIndex" let-item>
+                    <tr>
+                        <td><b>{{ i + 1 }}</b></td>
+                        <td>
+                            <p-tableCheckbox [value]="item"></p-tableCheckbox>
+                        </td>
+                        <td>{{item.interesado}}</td>
+                        <td>{{item.especialidad}}</td>
+                        <td>{{item.zona}}</td>
+                        <td>{{item.direccion}}</td>
+                        <td>{{item.tipoPuestoTrabajo}}</td>
+                        <td>{{item.puestoTrabajo}}</td>
+                        <td>{{item.dias}}</td>
+                        <td>{{item.turnos}}</td>
+                        <td>{{item.horarios}}</td>
+                        <td>{{item.usuario}}</td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="summary">
+                    <div class="flex align-items-end justify-content-end">
+                        <p-button (onClick)="adicionarSeleccion(); dt.reset();" icon="pi pi-arrow-down" label="Seleccionar" tabindex="-1"
+                            class="p-button-secondary"></p-button>
+                    </div>
+                </ng-template>
+            </p-table>
+
+
+        </p-tabPanel>
+        <p-tabPanel header="Busqueda por médico" leftIcon="pi pi-map">
+            <div class="p-fluid p-formgrid grid">
+                <div class="field col-12 md:col-7">
+                    <label>Medico</label>
+                    <p-autoComplete [(ngModel)]="interesadoDireccion" #direccion [suggestions]="listaDireccionAutocompletar"
+                        styleClass="w-full" (completeMethod)="filtrarDireccion($event)" [showEmptyMessage]="true"
+                        [maxlength]="50" emptyMessage="No existe" [forceSelection]="true"
+                        (onSelect)="seleccionarDireccion($event); dt.reset();" field="nombre" [delay]=500
+                        placeholder="Busqueda por el nombre, direccion, dias de atención del medico" [autofocus]="true">
+                        <ng-template let-item pTemplate="item">
+                            <div class="row">
+                                <div class="text-wrap">
+                                    <b>{{ item.interesado }}</b> - {{ item.direccion }}<br />
+                                    <div
+                                        class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                                        <span>dias atención: {{ item.dias}}</span>
+                                        <span>puesto trabajo: {{ item.puestoTrabajo}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </p-autoComplete>
+                </div>
+                <div class="field col-12 md:col-12">
+                    <!-- <p-divider></p-divider> -->
+                </div>
+            </div>
+        </p-tabPanel>
+
+
+
+    </p-tabView>
+</p-panel>
+<p-panel header="DIRECCIONES SELECCIONADAS" [toggleable]="true">
+        <p-table #dt styleClass="p-datatable-sm" [value]="detalle"
+        responsiveLayout="stack" [rows]="10"  [paginator]="true"
+         [rowHover]="true" dataKey="id">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>N°</th>
+                <th style="text-align:center;">medico</th>
+                <th style="text-align:center;">especialidad</th>
+                <th style="text-align:center;">zona</th>
+                <th style="text-align:center;">direccion</th>
+                <th style="text-align:center;">tipo puesto</th>
+                <th style="text-align:center;">puesto trabajo</th>
+                <th style="text-align:center;">dias</th>
+                <th style="text-align:center;">turno</th>
+                <th style="text-align:center;">horarios</th>
+                <th style="text-align:center;">usuario asignado</th>
+                <th style="text-align:center;">
+                    <div class="flex">
+                        <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning p-button-text"
+                            (click)="deleteAllItem()"></button>
+                    </div>
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-i="rowIndex" let-item>
+            <tr [ngClass]="{'row-not-user': !item.idUsuario}">
+                <td><span class="p-column-title text-negrita">N°</span><b>{{ i + 1 }}</b></td>
+                <td><span class="p-column-title text-negrita">médico</span>{{item.interesado}}</td>
+                <td><span class="p-column-title text-negrita">especialidad</span>{{item.especialidad}}</td>
+                <td><span class="p-column-title text-negrita">zona</span>{{item.zona}}</td>
+                <td><span class="p-column-title text-negrita">direccion</span>{{item.direccion}}</td>
+                <td><span class="p-column-title text-negrita">tipo puesto trabajo</span>{{item.tipoPuestoTrabajo}}</td>
+                <td><span class="p-column-title text-negrita">puesto trabajo</span>{{item.puestoTrabajo}}</td>
+                <td><span class="p-column-title text-negrita">dias</span>{{item.dias}}</td>
+                <td><span class="p-column-title text-negrita">turnos</span>{{item.turnos}}</td>
+                <td><span class="p-column-title text-negrita">horarios</span>{{item.horarios}}</td>
+                <td><span class="p-column-title text-negrita">usuario</span>{{item.usuario}}</td>
+                <td style="width:5rem; min-width:5rem;">
+                    <div class="flex">
+                        <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
+                            (click)="deleteItem(item)"></button>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+    <form [formGroup]="itemForm" (ngSubmit)="onSubmit()" autocomplete="off">
+        <div class="p-fluid p-formgrid grid">
+            <div class="field col-12 md:col-2">
+                Asignación global a un Usuario
+                <input id="asignacion-sugerida" type="checkbox" formControlName="asignacionGlobal">
+                <!-- <p-divider></p-divider> -->
+            </div>
+            <div class="field col-12 md:col-5">
+            </div>
+            <div class="field col-12 md:col-3">
+                <div *ngIf="itemForm.get('asignacionGlobal')?.value" >
+                    <label>Usuario Asignación</label>
+                    <p-dropdown appendTo="body" formControlName="idUsuarioAsignacion" id="idUsuarioAsignacion"
+                                [options]="listaUsuarios" optionLabel="nombreCompleto" optionValue="id" [showClear]="true"
+                                placeholder="NO SELECCIONADO">
+                            </p-dropdown>
+                            <small class="p-error block" *ngIf="itemForm.get('idUsuarioAsignacion')?.hasError('required')">Dato requerido</small>
+                </div>
+            </div>
+            <div class="field col-12 md:col-2">
+                <div>
+                    <label>Fecha Asignación</label>
+                    <p-calendar appendTo="body" formControlName="fechaAsignacion" [minDate]="minDate"
+                        dateFormat="dd/mm/yy"></p-calendar>
+                       <small class="p-error block" *ngIf="itemForm.get('fechaAsignacion')?.hasError('required')">Dato requerido</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex justify-content-between flex-wrap card-container purple-container">
+            <div class="flex align-items-center justify-content-center m-2">
+                <button pButton label="Visitas" (click)="prevPage()" icon="pi pi-angle-left"></button> &nbsp;
+            </div>
+            <div class="flex align-items-center justify-content-center m-2">
+                <button pButton label="Asignar" icon="pi pi-check" iconPos="right" (click)="onSave()"></button>
+            </div>
+        </div>
+    </form>
+
+    <!-- </p-card> -->
+</p-panel>

@@ -1,0 +1,215 @@
+<p-blockUI [blocked]="submited" >
+    <app-bloqueo ></app-bloqueo>
+</p-blockUI>
+
+<p-card>
+    <ng-template pTemplate="title">
+        Pedido Compra
+    </ng-template>
+    <ng-template pTemplate="subtitle">
+        Seleccione sucursal, proveedor y productos
+    </ng-template>
+
+    <form [formGroup]="itemForm" (ngSubmit)="onSubmit()" autocomplete="off">
+            <div class="p-fluid p-formgrid grid">
+                <div class="field col-12 md:col-10">
+                    <div class="p-fluid p-formgrid grid">
+                        <div class="field col-12 md:col-6">
+                            <label>Sucursal</label>
+                            <p-dropdown appendTo="body" formControlName="idSucursal" id="idSucursal"
+                                [options]="listaSucursales" optionLabel="direccion" optionValue="id"  placeholder="Seleccione una opción"></p-dropdown>
+                                <small class="p-error block" *ngIf="itemForm.get('idSucursal')?.hasError('required')">
+                                    Dato requerido.</small>
+                        </div>
+                        <div class="field col-12 md:col-6">
+                            <label>Proveedor</label>
+                            <p-dropdown appendTo="body" formControlName="idProveedor" id="idProveedor"
+                                [options]="listaProveedores" optionLabel="nombre" optionValue="id"  placeholder="Seleccione una opción"></p-dropdown>
+                                <small class="p-error block" *ngIf="itemForm.get('idProveedor')?.hasError('required')">
+                                    Dato requerido.</small>
+                        </div>
+                        <div class="field col-12 md:col-2">
+                            <p-button label="Productos" icon="pi pi-plus" class="p-button-success mr-2" (onClick)="dialogoProductosAbrir()"></p-button>
+                        </div>
+                    </div>
+
+                    <p-table #dt styleClass="p-datatable-sm" [value]="detalle" responsiveLayout="scroll" [rows]="10"
+                        [paginator]="false" [rowHover]="true" dataKey="id"
+                        (onEditComplete)="onEditComplete($event)"
+                        >
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>N°</th>
+                                <th style="text-align:center; width:15%">Cod. Producto</th>
+                                <th style="text-align:center; width:35%">Producto</th>
+                                <th style="text-align:center; width:10%">Cantidad</th>
+                                <th style="text-align:center; width:10%">Precio de Entrada/Compra</th>
+                                <th style="text-align:center; width:10%">Subtotal</th>
+                                <th style="text-align:center; width:15%">Precio para Venta</th>
+                                <th style="text-align:center; width:5%">Operación</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-i="rowIndex" let-item>
+                            <tr>
+                                <td><b>{{ i + 1 }}</b></td>
+                                <td>{{item.codigoProducto}}</td>
+                                <td>{{item.producto}}</td>
+                                <td pEditableColumn class="text-right" [pEditableColumn]="item" [pEditableColumnField]="'cantidad'">
+                                    <p-cellEditor>
+                                        <ng-template pTemplate="input">
+                                            <span class="p-fluid">
+                                                <p-inputNumber [(ngModel)]="item.cantidad"  [ngModelOptions]="{standalone: true}"  locale="en-US" [maxlength]="6"
+                                                    [inputStyle]="{'text-align': 'right'}" mode="decimal" [minFractionDigits]="0"
+                                                    [maxFractionDigits]="0"
+                                                    [step]="0" (onFocus)="$event.target.select()"
+                                                    ></p-inputNumber>
+                                            </span>
+                                        </ng-template>
+                                        <ng-template pTemplate="output">
+                                            {{item.cantidad}}
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+
+                                <td pEditableColumn class="text-right" [pEditableColumn]="item" [pEditableColumnField]="'precio'">
+                                    <p-cellEditor>
+                                        <ng-template pTemplate="input">
+                                            <span class="p-fluid">
+                                                <p-inputNumber [(ngModel)]="item.precio" [ngModelOptions]="{standalone: true}" locale="en-US" [maxlength]="10"
+                                                    [inputStyle]="{'text-align': 'right'}" mode="decimal" [minFractionDigits]="2"
+                                                    [maxFractionDigits]="2"
+                                                    [step]="0" (onFocus)="$event.target.select()"
+                                                    ></p-inputNumber>
+                                            </span>
+                                        </ng-template>
+                                        <ng-template pTemplate="output">
+                                            {{item.precio | formatoDecimal}}
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                                <td class="text-right">{{item.total | formatoDecimal}}</td>
+                                <td pEditableColumn class="text-right" [pEditableColumn]="item" [pEditableColumnField]="'precioVenta'">
+                                    <p-cellEditor>
+                                        <ng-template pTemplate="input">
+                                            <span class="p-fluid">
+                                                <p-inputNumber [(ngModel)]="item.precioVenta" [ngModelOptions]="{standalone: true}" locale="en-US" [maxlength]="10"
+                                                    [inputStyle]="{'text-align': 'right'}" mode="decimal" [minFractionDigits]="2"
+                                                    [maxFractionDigits]="2"
+                                                    [step]="0" (onFocus)="$event.target.select()"
+                                                    ></p-inputNumber>
+                                            </span>
+                                        </ng-template>
+                                        <ng-template pTemplate="output">
+                                            {{item.precioVenta | formatoDecimal}}
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                                <td style="width:5rem; min-width:5rem;">
+                                    <div class="flex">
+                                        <button pButton pRipple icon="pi pi-trash"
+                                            class="p-button-rounded p-button-warning"
+                                            (click)="deleteItem(item)"></button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="footer">
+                            <tr>
+                                <td colspan="5" class="text-right">TOTALES</td>
+                                <td class="text-right">{{getDetalleTotal() | formatoDecimal}}</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+
+                <!--<p-divider layout="vertical" ></p-divider>-->
+                <div class="field col-12 md:col-2">
+                    <div class="field">
+                        <label>CODIGO COMPRA</label>
+                        <input type="text" formControlName="correlativo" pInputText />
+                    </div>
+                    <div class="field">
+                        <label>FECHA PEDIDO</label>
+                        <!-- <input pInputText type="text" formControlName="fechaPedido" readonly="true"/> -->
+                        <p-calendar appendTo="body" formControlName="fechaPedido" [maxDate]="maxDate" dateFormat="dd/mm/yy" [showTime]="false"></p-calendar>
+                        <small class="p-error block" *ngIf="itemForm.get('fechaPedido')?.hasError('required')">
+                            Dato requerido.</small>
+                    </div>
+                    <div class="field">
+                        <label for="firstname1">SUBTOTAL</label>
+                        <p-inputNumber [ngModel]="getDetalleTotal()" [ngModelOptions]="{standalone: true}"
+                            locale="en-US" id="total" [maxlength]="15" [inputStyle]="{'text-align': 'right'}"
+                            mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2" [readonly]="true">
+                        </p-inputNumber>
+                    </div>
+                    <div class="field">
+                        <label for="lastname1">DESCUENTOS</label>
+                        <p-inputNumber formControlName="descuentos" #descuentos locale="en-US"
+                            id="descuentos" (onInput)="keyInput($event, 'descuentos')" [maxlength]="15"
+                            [inputStyle]="{'text-align': 'right'}" mode="decimal" [minFractionDigits]="2"
+                            [maxFractionDigits]="2"></p-inputNumber>
+                        <small class="p-error block" *ngIf="itemForm.get('descuentos')?.hasError('required')">
+                            Dato requerido.</small>
+                    </div>
+                    <div class="field">
+                        <label for="lastname1">TOTAL</label>
+                        <p-inputNumber [ngModel]="getTotal()" [ngModelOptions]="{standalone: true}"
+                            locale="en-US" id="total" [maxlength]="15" [inputStyle]="{'text-align': 'right'}"
+                            mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2" [readonly]="true">
+                        </p-inputNumber>
+                    </div>
+                </div>
+            </div>
+            <p-divider type="dashed"></p-divider>
+            <div class="flex justify-content-between flex-wrap card-container purple-container">
+                <div class="flex align-items-center justify-content-center m-2">
+                    <button pButton label="Compras" (click)="prevPage()" icon="pi pi-angle-left"></button> &nbsp;
+                </div>
+                <div class="flex align-items-center justify-content-center m-2">
+                    <button pButton label="Siguiente" icon="pi pi-angle-right"  iconPos="right" (click)="onSave()"></button>
+                </div>
+            </div>
+
+    </form>
+
+  </p-card>
+
+<p-dialog header="Productos con Inventario" [(visible)]="verProductos" [modal]="true" [style]="{width: '80vw'}" [maximizable]="true" [draggable]="false" [resizable]="true">
+    <p-table #dt2  [value]="listaProductos" selectionMode="multiple" [(selection)]="listaProductosSeleccionados"
+    [globalFilterFields]="['codigoProducto','nombre','tipoUnidad','categoria']" [rows]="10" [paginator]="true" [rowsPerPageOptions]="[10,20,30]"
+    [rowHover]="true"
+    styleClass="mt-5" dataKey="id">
+    <ng-template pTemplate="caption">
+        <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+            <span class="block mt-2 md:mt-0 p-input-icon-left">
+                <i class="pi pi-search"></i>
+                <input pInputText type="text" (input)="onGlobalFilter(dt2, $event)" placeholder="Filtrar...."
+                    class="w-full sm:w-auto" />
+            </span>
+            <div class="flex">
+
+            </div>
+        </div>
+    </ng-template>
+
+        <ng-template pTemplate="header">
+            <tr>
+                <th>codigo producto</th>
+                <th>nombre</th>
+                <th>tipo unidad</th>
+                <th>categoria</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-product let-rowIndex="rowIndex">
+            <tr [pSelectableRow]="product" [pSelectableRowIndex]="rowIndex">
+                <td>{{product.codigoProducto}}</td>
+                <td>{{product.nombre}}</td>
+                <td>{{product.tipoUnidad}}</td>
+                <td>{{product.categoria}}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+    <ng-template pTemplate="footer">
+        <p-button icon="pi pi-check" (click)="dialogoProductosCerrar()" label="Aceptar" styleClass="p-button-text"></p-button>
+    </ng-template>
+</p-dialog>

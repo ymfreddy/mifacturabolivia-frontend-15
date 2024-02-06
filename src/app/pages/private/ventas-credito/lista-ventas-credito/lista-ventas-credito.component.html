@@ -1,0 +1,197 @@
+<p-blockUI [blocked]="blockedPanel">
+    <app-bloqueo></app-bloqueo>
+</p-blockUI>
+<p-panel header="BUSQUEDA" [toggleable]="true">
+    <form [formGroup]="criteriosBusquedaForm" (ngSubmit)="onSubmit()" autocomplete="off">
+            <!-- <p><b>Criterios de busqueda</b></p> -->
+            <div class="p-fluid p-formgrid grid" *ngIf="esSuperAdm()">
+                <div class="field col-12 md:col-2">
+                    <label>Empresa:</label>
+                    <p-dropdown appendTo="body" [(ngModel)]="idEmpresa" [ngModelOptions]="{standalone: true}"  id="idEmpresa" [autofocus]="true"
+                    [options]="listaEmpresas" optionLabel="nombre" optionValue="id" (onChange)="cambioEmpresa($event)"
+                    placeholder="Seleccione una empresa"
+                    ></p-dropdown>
+                </div>
+            </div>
+            <div class="p-fluid p-formgrid grid">
+                <!--<div class="field col-12 md:col-3">
+                    <label htmlFor="name2">Fecha Inicio</label>
+                    <p-calendar formControlName="fechaInicio" inputId="fechaInicio" [showIcon]="true" dateFormat="dd/mm/yy"></p-calendar>
+                    <small class="p-error block" *ngIf="criteriosBusquedaForm.get('fechaInicio')?.hasError('required')">
+                        Fecha inválida.</small>
+                </div>
+                <div class="field col-12 md:col-3">
+                    <label htmlFor="name2">Fecha Fin</label>
+                    <p-calendar formControlName="fechaFin" inputId="fechaFin" [showIcon]="true"  dateFormat="dd/mm/yy"></p-calendar>
+                    <small class="p-error block" *ngIf="criteriosBusquedaForm.get('fechaFin')?.hasError('required')">
+                        Fecha inválida.</small>
+                </div>-->
+                <div class="field col-12 md:col-4">
+                    <label>Sucursal</label>
+                        <p-dropdown appendTo="body" formControlName="idSucursal" id="idSucursal"
+                            [options]="listaSucursales" optionLabel="direccion" optionValue="id"  [showClear]="true" placeholder="TODOS">
+                            <ng-template let-item pTemplate="item">
+                                <div class="text-wrap">
+                                    <div>{{item.numero}} - {{item.direccion}}</div>
+                                </div>
+                            </ng-template>
+                        </p-dropdown>
+                </div>
+                <div class="field col-12 md:col-2">
+                    <label>Estado Venta</label>
+                            <p-multiSelect appendTo="body" id="idsEstadosVenta"
+                                [showHeader]="false"
+                                [options]="listaEstadosVenta" formControlName="idsEstadosVenta"
+                                defaultLabel="TODOS"
+                                [showClear]="true"
+                                optionLabel="nombre" optionValue="id">
+                                </p-multiSelect>
+                </div>
+                <div class="field col-12 md:col-2">
+                    <label>Tipo Venta</label>
+                            <p-multiSelect appendTo="body" id="idsTiposVenta"
+                            [showHeader]="false"
+                            [options]="listaTiposVenta" formControlName="idsTiposVenta"
+                            defaultLabel="TODOS"
+                            [showClear]="true"
+                            optionLabel="nombre" optionValue="id">
+                            </p-multiSelect>
+                </div>
+                <div class="field col-12 md:col-2">
+                    <label>Código Venta</label>
+                    <input type="text"  formControlName="correlativo" id="correlativo" oninput="this.value = this.value.toUpperCase()"
+                    pInputText maxlength="15"/>
+                </div>
+                <div class="field col-12 md:col-2">
+                    <label>Código Cliente</label>
+                    <input type="text" formControlName="codigoCliente" pInputText maxlength="25" oninput="this.value = this.value.toUpperCase()"/>
+                </div>
+            </div>
+            <p-divider type="dashed"></p-divider>
+            <div class="flex justify-content-end flex-wrap">
+                <p-splitButton label="Buscar" icon="pi pi-search" (onClick)="loadData(0)" [model]="opciones"></p-splitButton>
+            </div>
+
+    </form>
+</p-panel>
+<p-panel header="VENTAS CREDITO" [toggleable]="true">
+    <p-table #dt styleClass="p-datatable-sm" [value]="items" responsiveLayout="scroll" [rows]="10" [globalFilterFields]="['numeroSucursal','correlativo','fecha','codigoCliente','nombreCliente','totalSujetoIva','estadoVenta','diasCredito','tipoVenta','saldo','fechaLimite']" [rows]="10" [paginator]="true" [rowsPerPageOptions]="[10,20,30]"
+        [showCurrentPageReport]="true" [(selection)]="itemsSeleccionados"
+        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros" [rowHover]="true"
+        dataKey="id">
+        <ng-template pTemplate="caption">
+            <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                <span class="block mt-2 md:mt-0 p-input-icon-left">
+                    <i class="pi pi-search"></i>
+                    <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Filtrar...."
+                        class="w-full sm:w-auto" />
+                </span>
+                <div class="flex">
+                    <button type="button" label="Liquidar" pButton pRipple icon="pi pi-eraser" (click)="liquidar()" class="p-button-primary mr-2" pTooltip="LIQUIDAR DEUDAS" tooltipPosition="bottom"
+                    [disabled]="!itemsSeleccionados || !itemsSeleccionados.length"></button>
+                    <button type="button" pButton pRipple icon="pi pi-file-excel" (click)="exportExcel()" class="p-button-success mr-2"  pTooltip="XLS" tooltipPosition="bottom"></button>
+                    <button type="button" pButton pRipple icon="pi pi-file-pdf" (click)="exportPdf()" class="p-button-warning mr-2" pTooltip="PDF" tooltipPosition="bottom"></button>
+                </div>
+            </div>
+        </ng-template>
+
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="width: 4rem">
+                    <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                </th>
+               <th>N°</th>
+               <th pSortableColumn="correlativo">Código Venta<p-sortIcon field="correlativo"></p-sortIcon>
+               </th>
+               <th>Sucursal</th>
+               <th pSortableColumn="codigoCliente">Código Cliente<p-sortIcon field="codigoCliente"></p-sortIcon>
+               </th>
+               <th pSortableColumn="nombreCliente">Cliente<p-sortIcon field="nombreCliente"></p-sortIcon>
+               </th>
+                <th pSortableColumn="fecha">Fecha Venta<p-sortIcon field="fecha"></p-sortIcon>
+                </th>
+                <th pSortableColumn="diasCredito">Dias Credito<p-sortIcon field="diasCredito"></p-sortIcon>
+                </th>
+                <th pSortableColumn="fechaLimite">FechaLimite<p-sortIcon field="fechaLimite"></p-sortIcon>
+                </th>
+                <th pSortableColumn="totalSujetoIva">Total<p-sortIcon field="totalSujetoIva"></p-sortIcon>
+                </th>
+                <th >A Cuenta</th>
+                <th pSortableColumn="saldo">Saldo<p-sortIcon field="saldo"></p-sortIcon>
+                </th>
+                <th pSortableColumn="estadoVenta">Estado Venta<p-sortIcon field="estadoVenta"></p-sortIcon>  </th>
+                <th>Operación</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-i="rowIndex" let-item>
+            <tr>
+                <td>
+                    <p-tableCheckbox [value]="item"></p-tableCheckbox>
+                </td>
+                <td><b>{{ i + 1 }}</b></td>
+                <td>{{item.correlativo }}</td>
+                <td>{{item.numeroSucursal }}</td>
+                <td>{{item.codigoCliente}}</td>
+                <td>{{item.nombreCliente}}</td>
+                <td>{{item.fecha  | formatoFechaHora }}</td>
+                <td>{{item.diasCredito}}</td>
+                <td>{{item.fechaLimite | formatoFechaHora}}</td>
+                <td class="text-right">{{item.totalSujetoIva | formatoDecimal}}</td>
+                <td class="text-right">{{item.totalSujetoIva - item.saldo | formatoDecimal}}</td>
+                <td class="text-right">{{item.saldo | formatoDecimal}}</td>
+                <td>{{item.estadoVenta}}</td>
+                <td style="width:5rem; min-width:5rem;">
+                    <div class="flex">
+                        <button pButton pRipple icon="pi pi-list" class="p-button-rounded p-button-success mr-2"
+                            (click)="verVentaDetalle(item)"  pTooltip="Ver Detalle Venta"  tooltipPosition="top"></button>
+                        <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2"
+                            (click)="pagar(item)"  pTooltip="Realizar pago"  tooltipPosition="top"  [disabled]="esEditable(item.idEstadoVenta)"></button>
+                        <button pButton pRipple icon="pi pi-search" class="p-button-rounded p-button-success mr-2"
+                            (click)="dialogoPagosAbrir(item)" pTooltip="Ver pagos realizados"  tooltipPosition="top" ></button>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</p-panel>
+
+
+<p-dialog header="Pagos Realizados" [(visible)]="verPagos" [modal]="true" [style]="{width: '80vw'}" [maximizable]="true" [draggable]="false" [resizable]="true">
+    <p-table [value]="listaPagos" styleClass="mt-5" dataKey="id">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Codigo Pago</th>
+                <th>Fecha</th>
+                <th>Descripción</th>
+                <th>Codigo Cliente</th>
+                <th>Cliente</th>
+                <th>Tipo Pago</th>
+                <th>Monto Pagado</th>
+                <th>Operación</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
+            <tr [pSelectableRow]="item" [pSelectableRowIndex]="rowIndex">
+                <td>{{item.correlativo}}</td>
+                <td>{{item.fechaPago | formatoFechaHora}}</td>
+                <td>{{item.descripcion}}</td>
+                <td>{{item.codigoCliente}}</td>
+                <td>{{item.nombreCliente}}</td>
+                <td>{{item.tipoPago}}</td>
+                <td>{{item.montoPagado}}</td>
+                <td style="width:5rem; min-width:5rem;">
+                    <div class="flex">
+                        <button pButton pRipple icon="pi pi-cloud-download" class="p-button-rounded p-button-success mr-2"
+                            (click)="descargarComprobante(item)" pTooltip="Descargar Comprobante de Pago"  tooltipPosition="top" ></button>
+                        <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger  mr-2"
+                            (click)="anularPago(item)" pTooltip="Anular pago"  tooltipPosition="top" ></button>
+                    </div>
+                </td>
+
+            </tr>
+        </ng-template>
+    </p-table>
+    <ng-template pTemplate="footer">
+        <p-button icon="pi pi-check" (click)="dialogoPagosCerrar()" label="Salir" styleClass="p-button-text"></p-button>
+    </ng-template>
+</p-dialog>

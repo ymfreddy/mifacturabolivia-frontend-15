@@ -1,0 +1,195 @@
+<p-blockUI [blocked]="submited">
+    <app-bloqueo></app-bloqueo>
+</p-blockUI>
+<form [formGroup]="itemForm" (ngSubmit)="onSubmit()" autocomplete="off">
+    <div class="card">
+        <div class="p-fluid p-formgrid grid">
+            <div class="field col-12 md:col-2">
+                <label>CODIGO REMISION</label>
+                <input pInputText type="text" formControlName="correlativo" readonly="true"  tabindex="-1"/>
+            </div>
+            <div class="field col-12 md:col-2">
+                <label>Fecha</label>
+                <input pInputText type="text" formControlName="fecha" readonly="true"  tabindex="-1" />
+            </div>
+            <div class="field col-12 md:col-8">
+                <label>Sucursal</label>
+                <p-dropdown appendTo="body" formControlName="idSucursal" id="idSucursal" [options]="listaSucursales"
+                    optionLabel="direccion" optionValue="id" placeholder="Seleccione una opción"></p-dropdown>
+                <small class="p-error block" *ngIf="itemForm.get('idSucursal')?.hasError('required')">
+                    Dato requerido.</small>
+            </div>
+            <div class="field col-12 md:col-2">
+                <label>Codigo Cliente</label>
+                <p-autoComplete formControlName="cliente" #cliente [suggestions]="listaClientesFiltrados"
+                    (completeMethod)="filtrarCliente($event)" [showEmptyMessage]="true" [maxlength]="25"
+                    emptyMessage="No existe" [forceSelection]="true" (onSelect)="seleccionarCliente($event)"
+                    field="codigoCliente" [delay]=500 [showClear]="true" (onClear)="limpiarCliente()"
+                    placeholder="Introduzca el código del cliente" [autofocus]="true">
+                    <ng-template let-item pTemplate="item">
+                        <div class="row">
+                            <div class="text-wrap">
+                                <b>{{ item.codigoCliente }}</b> - {{ item.nombre }}
+                            </div>
+                        </div>
+                    </ng-template>
+                </p-autoComplete>
+                <small class="p-error block" *ngIf="itemForm.get('cliente')?.hasError('required')">
+                    Dato requerido.</small>
+            </div>
+            <div class="field col-12 md:col-5">
+                <label>Cliente</label>
+                <input type="text" formControlName="nombreCliente" pInputText maxlength="200" readonly tabindex="-1" />
+
+            </div>
+
+            <div class="field col-12 md:col-5">
+                <label>Dirección</label>
+                <input formControlName="direccion" #direccion type="text" pInputText id="direccion" maxlength="150"
+                    oninput="this.value = this.value.toUpperCase()" onfocus="this.select();" />
+                <small class="p-error block" *ngIf="itemForm.get('direccion')?.hasError('required')">Dato
+                    requerido..</small>
+            </div>
+
+
+            <div class="field col-12 md:col-12">
+                <label>Observacion</label>
+                <input formControlName="observacion" type="text" pInputText id="observacion" maxlength="250"
+                    oninput="this.value = this.value.toUpperCase()" onfocus="this.select();" />
+            </div>
+
+            <div class="field col-12 md:col-6"></div>
+            <div class="field col-12 md:col-4">
+                <div class="p-inputgroup">
+                    <div class="p-inputgroup">
+                        <input type="text"  maxlength="15"
+                        placeholder="Codigo de venta"
+                        formControlName="codigoVenta" #codigoVenta oninput="this.value = this.value.trim().toUpperCase()" pInputText />
+                    </div>
+                    <p-button icon="pi pi-arrow-down" pTooltip="Adicionar detalle de la venta" tooltipPosition="top"  label="Adicionar" styleClass="p-button" tabindex="-1" (onClick)="buscarVenta()">
+                    </p-button>
+                </div>
+            </div>
+            <div class="field col-12 md:col-2">
+                <p-button label="Otros Productos" pTooltip="Adicionar otros productos" tooltipPosition="top"  icon="pi pi-plus" styleClass="p-button" tabindex="-1"
+                    (onClick)="dialogoProductosAbrir()"></p-button>
+            </div>
+        </div>
+
+        <p-table #dt styleClass="p-datatable-sm" [value]="detalle" responsiveLayout="scroll" [rows]="10"
+            [paginator]="false" [rowHover]="true" dataKey="id">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>N°</th>
+                    <th style="text-align:center; width:10%">Cod. Venta</th>
+                    <th style="text-align:center; width:15%">Cod. Producto</th>
+                    <th style="text-align:center; width:10%">Presupuesto</th>
+                    <th style="text-align:center; width:50%">Producto</th>
+                    <th style="text-align:center; width:10%">Cantidad</th>
+                    <th style="text-align:center; width:5%">Operación</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-i="rowIndex" let-item>
+                <tr>
+                    <td><b>{{ i + 1 }}</b></td>
+                    <td>{{item.correlativoVenta}}</td>
+                    <td pEditableColumn [pEditableColumn]="item" [pEditableColumnField]="'codigoProducto'">
+                        <p-cellEditor>
+                            <ng-template pTemplate="input">
+                                <input type="text" [(ngModel)]="item.codigoProducto" [ngModelOptions]="{standalone: true}" style="width: 100% !important;"
+                                    pInputText [maxlength]="50" oninput="this.value = this.value.toUpperCase()" onfocus="this.select();"/>
+                            </ng-template>
+                            <ng-template pTemplate="output">
+                                {{item.codigoProducto}}
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+                    <td pEditableColumn [pEditableColumn]="item" [pEditableColumnField]="'codigo'">
+                        <p-cellEditor>
+                            <ng-template pTemplate="input">
+                                <input type="text" [(ngModel)]="item.codigo" [ngModelOptions]="{standalone: true}" style="width: 100% !important; "
+                                    pInputText [maxlength]="20" oninput="this.value = this.value.toUpperCase()" onfocus="this.select();"/>
+                            </ng-template>
+                            <ng-template pTemplate="output">
+                                {{item.codigo}}
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+                    <td pEditableColumn [pEditableColumn]="item" [pEditableColumnField]="'producto'">
+                        <p-cellEditor>
+                            <ng-template pTemplate="input"  >
+                                <textarea [(ngModel)]="item.producto" [ngModelOptions]="{standalone: true}" style="width: 100% !important;"
+                                pInputTextarea  [maxlength]="200" onfocus="this.select();">
+                               </textarea>
+                            </ng-template>
+                            <ng-template pTemplate="output">
+                                {{item.producto}}
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+
+                    <td pEditableColumn class="text-right" [pEditableColumn]="item" [pEditableColumnField]="'cantidad'">
+                        <p-cellEditor>
+                            <ng-template pTemplate="input">
+                                <input type="number" [(ngModel)]="item.cantidad" [ngModelOptions]="{standalone: true}" style="width: 100% !important;"
+                                    pInputText [maxlength]="5" onfocus="this.select();" />
+                            </ng-template>
+                            <ng-template pTemplate="output">
+                                {{item.cantidad}}
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+                    <td style="width:5rem; min-width:5rem;">
+                        <div class="flex">
+                            <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
+                                (click)="deleteItem(item)"></button>
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+    <div class="flex justify-content-end flex-wrap">
+        <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-secondary p-button-text"
+            (click)="onClose()"></button>
+        <button pButton pRipple label="Aceptar" icon="pi pi-check" class="p-button-text" (click)="onSave()"></button>
+    </div>
+</form>
+
+<p-dialog header="Productos" [(visible)]="verProductos" [modal]="true" [style]="{width: '80vw'}" [maximizable]="true"
+    [draggable]="false" [resizable]="true">
+    <p-table #dt2 styleClass="p-datatable-sm" [value]="listaProductos" selectionMode="multiple"
+        responsiveLayout="scroll" [(selection)]="listaProductosSeleccionados" dataKey="codigoProducto"
+        [globalFilterFields]="['codigoProducto','nombre','tipoUnidad','categoria']">
+        <ng-template pTemplate="caption">
+            <div class="flex flex-column md:flex-row md:justify-content-end md:align-items-end">
+                <span class="block mt-2 md:mt-0 p-input-icon-left">
+                    <i class="pi pi-search"></i>
+                    <input pInputText type="text" (input)="onGlobalFilter(dt2, $event)" placeholder="Filtrar...."
+                        class="w-full sm:w-auto" />
+                </span>
+            </div>
+        </ng-template>
+
+        <ng-template pTemplate="header">
+            <tr>
+                <th pSortableColumn="codigoProducto">codigo producto<p-sortIcon field="codigoProducto"></p-sortIcon>
+                <th>nombre</th>
+                <th>tipo unidad</th>
+                <th>categoria</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-product let-rowIndex="rowIndex">
+            <tr [pSelectableRow]="product" [pSelectableRowIndex]="rowIndex">
+                <td>{{product.codigoProducto}}</td>
+                <td>{{product.nombre}}</td>
+                <td>{{product.tipoUnidad}}</td>
+                <td>{{product.categoria}}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+    <ng-template pTemplate="footer">
+        <p-button icon="pi pi-check" (click)="dialogoProductosCerrar()" label="Aceptar" styleClass="p-button-text">
+        </p-button>
+    </ng-template>
+</p-dialog>

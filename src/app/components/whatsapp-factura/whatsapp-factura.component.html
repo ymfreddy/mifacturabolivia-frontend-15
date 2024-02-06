@@ -1,0 +1,22 @@
+<p-blockUI [blocked]="submited"><app-bloqueo></app-bloqueo></p-blockUI>
+<form [formGroup]="itemForm" (ngSubmit)="onSubmit()" autocomplete="off">
+    <div class="card p-fluid">
+        <div class="field">
+            Se enviara la factura al siguiente número :
+        </div>
+        <br>
+        <div class="field">
+            <input formControlName="telefono" type="text" pInputText id="telefono" maxlength="15" oninput="this.value = this.value.toUpperCase()" onfocus="this.select();" autofocus />
+        </div>
+        <div class="field">
+            <small class="p-error block" *ngIf="itemForm.get('telefono')?.hasError('required')">Telefono no válido.</small>
+        </div>
+    <br>
+    </div>
+    <div class="flex justify-content-end flex-wrap">
+        <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-secondary p-button-text"
+            (click)="onClose()"></button>
+        <button pButton pRipple label="Aceptar" icon="pi pi-check" class="p-button-text" (click)="onSave()"
+            ></button>
+    </div>
+</form>

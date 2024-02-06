@@ -1,0 +1,65 @@
+
+.fondo-imagen
+{
+    background-image: url('../../../../assets/chariteam/img/carousel-1.jpg') !important;
+    /* Full height */
+    height: 100%;
+    /* Center and scale the image nicely */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.text-white{
+    color: white;
+}
+
+  /* Declare heights because of positioning of img element */
+  .carousel-item {
+    height: auto;
+  }
+
+
+  @media (min-width: 40em) {
+    .carousel-item {
+      height: auto;
+    }
+  }
+
+.btn-primary {
+    color: #000;
+    background-color: #6F9645;
+    border-color: #6F9645;
+}
+
+.btn-outline-primary {
+    color: #6F9645;
+    border-color: #6F9645;
+}
+
+.bg-dark {
+    background-color: #0e1a22 !important;
+}
+
+.carousel-caption {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: rgba(8, 20, 29, 0.8);
+    z-index: 1;
+}
+
+.navbar-padding{
+   padding-top: 2rem !important;
+}
+
+
+.monocromatico {
+    -webkit-filter: grayscale(100%);
+    filter: grayscale(100%);
+}

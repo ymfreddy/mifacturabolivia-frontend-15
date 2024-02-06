@@ -1,0 +1,23 @@
+:host ::ng-deep .p-chip.visita-asignada {
+    background: rgb(238, 211, 59);
+    text-align: center;
+    color: black;
+}
+
+:host ::ng-deep .p-chip.visita-iniciada {
+    background: rgb(14, 131, 29);
+    text-align: center;
+    color: white;
+}
+
+:host ::ng-deep .p-chip.visita-finalizada {
+    background: rgb(33, 54, 168);
+    text-align: center;
+    color: white;
+}
+
+:host ::ng-deep .p-chip.visita-cancelada {
+    background: rgb(219, 9, 9);
+    text-align: center;
+    color: white;
+}

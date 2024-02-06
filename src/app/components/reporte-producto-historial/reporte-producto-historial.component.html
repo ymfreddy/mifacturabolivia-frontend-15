@@ -1,0 +1,26 @@
+<p-blockUI [blocked]="submited"><app-bloqueo></app-bloqueo></p-blockUI>
+<form [formGroup]="itemForm" (ngSubmit)="onSubmit()" autocomplete="off">
+    <div class="card">
+        <div class="p-fluid p-formgrid grid">
+            <div class="field col-12 md:col-6">
+                <label>Fecha Inicio</label>
+                <p-calendar appendTo="body" formControlName="fechaInicio" dateFormat="dd/mm/yy" [showTime]="false"></p-calendar>
+                <small class="p-error block" *ngIf="itemForm.get('fechaInicio')?.hasError('required')">
+                    Dato requerido.</small>
+            </div>
+
+            <div class="field col-12 md:col-6">
+                <label>Fecha Fin</label>
+                <p-calendar appendTo="body" formControlName="fechaFin" dateFormat="dd/mm/yy" [showTime]="false"></p-calendar>
+                <small class="p-error block" *ngIf="itemForm.get('fechaFin')?.hasError('required')">
+                    Dato requerido.</small>
+            </div>
+        </div>
+    </div>
+    <div class="flex justify-content-end flex-wrap">
+        <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-secondary p-button-text"
+            (click)="onClose()"></button>
+        <button pButton pRipple label="Aceptar" icon="pi pi-check" class="p-button-text" (click)="onSave()"
+            ></button>
+    </div>
+</form>

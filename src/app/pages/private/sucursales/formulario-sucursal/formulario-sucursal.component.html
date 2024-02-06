@@ -1,0 +1,86 @@
+<p-blockUI [blocked]="submited"> <app-bloqueo></app-bloqueo></p-blockUI>
+<form [formGroup]="itemForm" (ngSubmit)="onSubmit()" autocomplete="off">
+    <div class="card">
+        <div class="p-fluid p-formgrid grid">
+            <div class="field col-12 md:col-4">
+                <label>Empresa</label>
+                <p-dropdown appendTo="body" formControlName="idEmpresa" id="idEmpresa"
+                    [options]="listaEmpresas" optionLabel="nombre" optionValue="id"  placeholder="Seleccione una opción"
+                    [showClear]="true"
+                    ></p-dropdown>
+                <small class="p-error block" *ngIf="itemForm.get('idEmpresa')?.hasError('required')">
+                    Dato requerido.</small>
+            </div>
+            <div class="field col-12 md:col-2">
+                <label>Número Sucursal</label>
+                <p-inputNumber formControlName="numero"  mode="decimal" [min]="0" [max]="99" id="numero" autofocus [maxlength]="2" ></p-inputNumber>
+                <small class="p-error block" *ngIf="itemForm.get('numero')?.hasError('required')">Dato requerido.</small>
+            </div>
+            <div class="field col-12 md:col-6">
+                <label>Dirección</label>
+                <input formControlName="direccion" type="text" pInputText id="direccion" maxlength="255" oninput="this.value = this.value.toUpperCase()"/>
+                <small class="p-error block" *ngIf="itemForm.get('direccion')?.hasError('required')">Dato requerido.</small>
+            </div>
+            <div class="field col-12 md:col-4">
+                <label>Telefono</label>
+                <input formControlName="telefono" type="text" pInputText id="telefono" maxlength="25" oninput="this.value = this.value.toUpperCase()"/>
+            </div>
+            <div class="field col-12 md:col-4">
+                <label>Ciudad</label>
+                <input formControlName="ciudad" type="text" pInputText id="ciudad" maxlength="20" oninput="this.value = this.value.toUpperCase()"/>
+                <small class="p-error block" *ngIf="itemForm.get('ciudad')?.hasError('required')">Dato requerido.</small>
+            </div>
+            <div class="field col-12 md:col-4">
+                Casa Matriz
+                <div class="field">
+                    <input id="remember-me" type="checkbox" formControlName="casaMatriz">
+                </div>
+            </div>
+            <br>
+            <div class="field col-12 md:col-12">
+                <h5>Solo cuando sea la empresa tipo restaurante</h5>
+            </div>
+
+            <div class="field col-12 md:col-4">
+                <label>impresora (Caja)</label>
+                <p-dropdown appendTo="body" formControlName="impresora" id="impresora" appendTo="body"
+                [options]="listaImpresoras" optionLabel="nombre" optionValue="nombre"
+                placeholder="Seleccione una opción"
+                [showClear]="true"
+                ></p-dropdown>
+            </div>
+
+            <div class="field col-12 md:col-4">
+                <label>impresora (Comanda)</label>
+                <p-dropdown appendTo="body" formControlName="impresoraUno" id="impresoraUno" appendTo="body"
+                [options]="listaImpresoras" optionLabel="nombre" optionValue="nombre"
+                placeholder="Seleccione una opción"
+                [showClear]="true"
+                ></p-dropdown>
+            </div>
+
+            <div class="field col-12 md:col-4">
+                <label>impresora (Bebidas)</label>
+                <p-dropdown appendTo="body" formControlName="impresoraDos" id="impresoraDos" appendTo="body"
+                [options]="listaImpresoras" optionLabel="nombre" optionValue="nombre"
+                placeholder="Seleccione una opción"
+                [showClear]="true"
+                ></p-dropdown>
+            </div>
+            <div class="field col-12 md:col-4">
+                <label>impresora Categorias</label>
+                <p-multiSelect appendTo="body" id="impresoraDosCategorias"
+                [showHeader]="false"
+                [options]="listaCategorias" formControlName="impresoraDosCategorias"
+                defaultLabel="Ninguna"
+                [showClear]="true"
+                optionLabel="nombre" optionValue="codigo">
+                </p-multiSelect>
+            </div>
+        </div>
+    </div>
+    <div class="flex justify-content-end flex-wrap">
+        <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-secondary p-button-text" (click)="onClose()"></button>
+        <button pButton pRipple label="Aceptar" icon="pi pi-check" class="p-button-text" (click)="onSave()"></button>
+    </div>
+</form>

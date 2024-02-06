@@ -1,0 +1,62 @@
+<form [formGroup]="itemForm" (ngSubmit)="onSubmit()" autocomplete="off">
+    <div class="card">
+        <div class="p-fluid p-formgrid grid ">
+            <div class="field col-12 md:col-3">
+                <label>Zona</label>
+                        <p-autoComplete formControlName="zona" #zona [suggestions]="listaZonasFiltradas"
+                            (completeMethod)="filtrarZonas($event)" [showEmptyMessage]="true" [maxlength]="200"
+                            emptyMessage="No existe" [forceSelection]="false" (onSelect)="seleccionarZona($event)"
+                            field="zona" [delay]=500 [showClear]="true"
+                            placeholder="" [autofocus]="true"
+                            class="text-upper-case"
+                            >
+                        </p-autoComplete>
+                <small class="p-error block" *ngIf="itemForm.get('zona')?.hasError('required')">Dato requerido.</small>
+            </div>
+            <div class="field col-12 md:col-6">
+                <label>Dirección</label>
+                    <input formControlName="direccion" #direccion type="text" pInputText id="direccion" maxlength="500" uppercase onfocus="this.select();" />
+                    <small class="p-error block" *ngIf="itemForm.get('direccion')?.hasError('required')">Dato requerido.</small>
+            </div>
+            <div class="field col-12 md:col-3">
+                <label>tipo Puesto</label>
+                <p-dropdown appendTo="body" formControlName="tipoPuestoTrabajo" id="tipoPuestoTrabajo" appendTo="body"
+                [options]="listaPuesto" optionLabel="nombre" optionValue="nombre"
+                placeholder="Seleccione una opción"
+                ></p-dropdown>
+                <small class="p-error block" *ngIf="itemForm.get('tipoPuestoTrabajo')?.hasError('required')">Dato requerido.</small>
+            </div>
+            <div class="field col-12 md:col-3">
+                <label>Puesto Trabajo</label>
+                <input formControlName="puestoTrabajo" type="text" pInputText id="puestoTrabajo" maxlength="100" uppercase onfocus="this.select();" />
+                <small class="p-error block" *ngIf="itemForm.get('puestoTrabajo')?.hasError('required')">Dato requerido.</small>
+            </div>
+            <div class="field col-12 md:col-3">
+                <label>dias</label>
+                <p-multiSelect [options]="listaDias" [showHeader]="false" appendTo="body"
+                formControlName="dias" defaultLabel="Seleccione dias" optionLabel="nombre" optionValue="nombre" selectedItemsLabel="{0} seleccionados"></p-multiSelect>
+                <small class="p-error block" *ngIf="itemForm.get('dias')?.hasError('required')">Dato requerido.</small>
+            </div>
+            <div class="field col-12 md:col-3">
+                <label>turno</label>
+                <p-dropdown appendTo="body" formControlName="turnos" id="turnos" appendTo="body"
+                [options]="listaTurno" optionLabel="nombre" optionValue="nombre"
+                placeholder="Seleccione una opción"
+                ></p-dropdown>
+                <small class="p-error block" *ngIf="itemForm.get('turnos')?.hasError('required')">Dato requerido.</small>
+            </div>
+            <div class="field col-12 md:col-3">
+                <label>horarios</label>
+                <p-multiSelect [options]="listaHorario" [showHeader]="false" appendTo="body"
+                formControlName="horarios" defaultLabel="Seleccione horarios" optionLabel="nombre" optionValue="nombre" selectedItemsLabel="{0} seleccionados"></p-multiSelect>
+                <small class="p-error block" *ngIf="itemForm.get('horarios')?.hasError('required')">Dato requerido.</small>
+            </div>
+        </div>
+    </div>
+    <app-geolocalizacion [lectura]="false" (puntoSeleccionado)="getPuntoSeleccionado( $event )"></app-geolocalizacion>
+    <div class="flex justify-content-end flex-wrap">
+        <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-secondary p-button-text"
+            (click)="onClose()"></button>
+        <button pButton pRipple label="Aceptar" icon="pi pi-check" class="p-button-text" (click)="onSave()"></button>
+    </div>
+</form>

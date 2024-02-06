@@ -1,0 +1,82 @@
+<p-blockUI [blocked]="submited"><h3 style="color: white;"> Espere...</h3></p-blockUI>
+<div class="surface-0 flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden">
+    <div class="grid justify-content-center p-2 lg:p-0" style="min-width:80%">
+        <div class="col-12 xl:col-5" style="border-radius:56px; padding:0.3rem; background: linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%);">
+            <div class="h-full w-full m-0 py-7 px-4" style="border-radius:53px; background: linear-gradient(180deg, var(--surface-50) 38.9%, var(--surface-0));">
+                <div class="text-center mb-5">
+                    <!-- <img src="assets/informacion/logos/logo.png" alt="logo" height="50" class="mb-3"> -->
+                    <div class="text-900 text-3xl font-medium mb-3">Registro</div>
+                </div>
+                <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+
+                    <div class="card p-fluid">
+                        <div class="field p-label">
+                            <label>CI</label>
+                        </div>
+                        <div class="field">
+                            <input formControlName="ci" type="text" pInputText id="numeroDocumento" maxlength="20" #numeroDocumento
+                            pKeyFilter="int" onfocus="this.select();" />
+                            <small class="p-error block" *ngIf="userForm.get('ci')?.hasError('required')">Dato requerido.</small>
+                        </div>
+
+                        <div class="field p-label">
+                            <label>Nombres</label>
+                        </div>
+                        <div class="field">
+                            <input id="nombre" formControlName="nombre" type="text" maxlength="30" pInputText>
+                            <small class="p-error block" *ngIf="userForm.get('nombre')?.hasError('required')">Dato requerido.</small>
+                        </div>
+                        <div class="field p-label">
+                            <label>Apellidos</label>
+                        </div>
+                        <div class="field">
+                            <input id="paterno" formControlName="paterno" type="text" maxlength="30" pInputText>
+                            <small class="p-error block" *ngIf="userForm.get('paterno')?.hasError('required')">Dato requerido.</small>
+                        </div>
+
+                        <div class="field p-label">
+                            <label>Email</label>
+                        </div>
+                        <div class="field">
+                            <input id="email" formControlName="email" type="text" maxlength="35" pInputText>
+                            <small class="p-error block" *ngIf="userForm.get('email')?.hasError('required')">Dato requerido.</small>
+                            <small class="p-error block" *ngIf="userForm.get('email')?.hasError('email')">Email invalido.</small>
+                        </div>
+                        <div class="field p-label">
+                            <label>Password</label>
+                        </div>
+                        <div class="field">
+                            <p-password formControlName="password1" [toggleMask]="true"  maxlength="30" minlength="8">
+                                    <ng-template pTemplate="header">
+                                        <h6>Introduzca un password</h6>
+                                    </ng-template>
+                                    <ng-template pTemplate="footer">
+                                        <!-- <p-divider></p-divider> -->
+                                        <ul class="pl-2 ml-2 mt-0" style="line-height: 1.5">
+                                            <li>Al menos una minuscula</li>
+                                            <li>Al menos una mayuscula</li>
+                                            <li>Al menos un numero</li>
+                                            <li>Minimo 8 caracteres</li>
+                                        </ul>
+                                    </ng-template>
+                            </p-password>
+                            <small class="p-error block" *ngIf="userForm.get('password1')?.hasError('required')">Dato requerido.</small>
+                        </div>
+                        <div class="field">
+                            <div class="flex align-items-center justify-content-center mb-5">
+                                <!-- <p-captcha siteKey="6LeOE60nAAAAALZl-vqezF0tu9a14R1YdaSz9sNj" (onResponse)="showResponse($event)"></p-captcha> -->
+                                <p-captcha siteKey="6LeOE60nAAAAALZl-vqezF0tu9a14R1YdaSz9sNj" (onResponse)="showResponse($event)" initCallback="loadCaptcha"></p-captcha>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-content-center">
+                        <button pButton pRipple label="Cancelar" class="p-button-secondary text-xl" (click)="onCancel()"></button>
+                        &nbsp;&nbsp;&nbsp;
+                        <button pButton pRipple label="Registrar" class="p-button-primary text-xl" (click)="onRegister()"[disabled]="!userForm.valid || !habilitado"></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

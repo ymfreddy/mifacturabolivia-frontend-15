@@ -1,0 +1,25 @@
+<p-blockUI [blocked]="submited"><app-bloqueo></app-bloqueo></p-blockUI>
+<form [formGroup]="itemForm" (ngSubmit)="onSubmit()" autocomplete="off">
+    <div class="card p-fluid">
+        <div class="field" style="overflow-wrap: break-word;">
+            Cliente: {{item?.nombreCliente}}
+        </div>
+    <br>
+        <div class="field" style="overflow-wrap: break-word;">
+            Cotizacion: {{item?.correlativo}}
+        </div>
+    <br>
+        <div class="field">
+            <label>Número Celular</label>
+            <input formControlName="telefono" type="text" pInputText id="telefono" maxlength="8" onfocus="this.select();"
+            pKeyFilter="int"/>
+            <small class="p-error block" *ngIf="itemForm.get('telefono')?.hasError('required')">Celular inválido.</small>
+        </div>
+    </div>
+    <div class="flex justify-content-end flex-wrap">
+        <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-secondary p-button-text"
+            (click)="onClose()"></button>
+        <button pButton pRipple label="Aceptar" icon="pi pi-check" class="p-button-text" (click)="onSave()"
+            ></button>
+    </div>
+</form>

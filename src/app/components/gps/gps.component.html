@@ -1,0 +1,5 @@
+<button class="p-link layout-topbar-button" (click)="activar()" *ngIf="verOpcion()"
+    [ngStyle]="{'background-color': estiloActivo() ? 'skyblue' : 'unset' }">
+    <i class="pi pi-map-marker"></i>
+    <span>GPS</span>
+</button>

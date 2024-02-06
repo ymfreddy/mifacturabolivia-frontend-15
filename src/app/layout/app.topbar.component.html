@@ -1,0 +1,67 @@
+<div class="layout-topbar">
+    <div class="layout-topbar-logo">
+        <!--<img src="assets/layout/images/{{layoutService.config.colorScheme === 'light' ? 'logo-dark' : 'logo-white'}}.svg" alt="logo" (click)="cambiarPuntoVenta(true)">-->
+        <img src="assets/informacion/logos/logo.png" alt="logo" (click)="cambiarPuntoVenta(true)">
+        <div style="FONT-SIZE:  small;">
+            Empresa: {{usuario.empresaNombre}}<br/>
+            Sucursal: {{usuario.numeroSucursal}}<br/>
+            Pto. de Venta: {{usuario.numeroPuntoVenta}}<br/>
+        </div>
+    </div>
+    <button class="p-link layout-menu-button layout-topbar-button p-trigger" (click)="layoutService.onMenuToggle()">
+        <i class="pi pi-bars"></i>
+    </button>
+    <button class="p-link layout-topbar-menu-button layout-topbar-button p-trigger" (click)="layoutService.showProfileSidebar()">
+        <i class="pi pi-ellipsis-v"></i>
+    </button>
+    <div class="layout-topbar-menu" [ngClass]="{'layout-topbar-menu-mobile-active': layoutService.state.profileSidebarVisible}">
+        <div style="FONT-SIZE: small; text-align: center;">
+            ROL: {{usuario.tipoUsuario}}
+            <br>
+            USUARIO: {{usuario.nombreCompleto}}
+        </div>
+
+
+
+
+
+        <button pTooltip="Notificaciones" tooltipPosition="button" class="p-link layout-topbar-button" (click)="verNotificaciones()">
+            <i class="pi pi-bell">
+            </i>
+            <p-badge *ngIf="obtenerNumeroNotificaciones()!='0'" [value]="obtenerNumeroNotificaciones()" styleClass="mr-2"></p-badge>
+                <span>Notificaciones</span>
+        </button>
+        <button pTooltip="Abrir Tuno" tooltipPosition="button" class="p-link layout-topbar-button" (click)="abrirTurno()" *ngIf="verOpcionTurno()">
+            <i class="pi pi-folder-open"></i>
+            <span>Abrir Turno</span>
+        </button>
+        <button pTooltip="Cerrar Tuno"  tooltipPosition="button" class="p-link layout-topbar-button"  (click)="cerrarTurno()" *ngIf="verOpcionTurno()">
+            <i class="pi pi-folder"></i>
+            <span>Cerrar Turno</span>
+        </button>
+        <button pTooltip="Salir"  tooltipPosition="button" class="p-link layout-topbar-button" (click)="confirmarCierreSession()">
+            <i class="pi pi-sign-out"></i>
+            <span>Salir</span>
+        </button>
+    </div>
+</div>
+
+
+<!-- <p-overlayPanel #op [showCloseIcon]="true" [style]="{width: '400px'}">
+    <ng-template pTemplate>
+        <p-table [value]="listaNotificaciones" selectionMode="single"
+        [(selection)]="notificacionSeleccionada" (onRowSelect)="onRowSelect($event)"
+        [paginator]="false" [rows]="5" responsiveLayout="scroll">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Mensajes</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-product>
+                <tr>
+                    <td>{{product.titulo}} - {{product.mensaje}} - {{product.leido}}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </ng-template>
+</p-overlayPanel> -->

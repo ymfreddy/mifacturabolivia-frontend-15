@@ -1,0 +1,146 @@
+<p-blockUI [blocked]="submited"> <app-bloqueo></app-bloqueo></p-blockUI>
+<p-card>
+    <ng-template pTemplate="title">
+        Descuentos de Productos
+    </ng-template>
+    <form [formGroup]="itemForm" (ngSubmit)="onSubmit()" autocomplete="off">
+        <div class="p-fluid p-formgrid grid">
+            <div class="field col-12 md:col-3">
+                <label>Sucursal</label>
+                <p-dropdown appendTo="body" formControlName="idSucursal" id="idSucursal" [options]="listaSucursales"
+                    optionLabel="direccion" optionValue="id" [showClear]="true" placeholder="TODOS">
+                    <ng-template let-item pTemplate="item">
+                        <div class="text-wrap">
+                            <div>{{item.numero}} - {{item.direccion}}</div>
+                        </div>
+                    </ng-template></p-dropdown>
+                <small class="p-error block" *ngIf="itemForm.get('idSucursal')?.hasError('required')">Dato
+                    requerido.</small>
+            </div>
+            <div class="field col-12 md:col-4">
+                <label>Nombre</label>
+                <input formControlName="nombre" type="text" pInputText id="nombre" maxlength="150" uppercase
+                    onfocus="this.select();" />
+                <small class="p-error block" *ngIf="itemForm.get('nombre')?.hasError('required')">Dato
+                    requerido.</small>
+            </div>
+            <div class="field col-12 md:col-2">
+                <label>Tipo Descuento</label>
+                <p-dropdown appendTo="body" formControlName="idTipoDescuento" id="idTipoDescuento" appendTo="body"
+                    [options]="listaDescuentos" optionLabel="nombre" optionValue="id"
+                    placeholder="Seleccione una opción"></p-dropdown>
+                <small class="p-error block" *ngIf="itemForm.get('idTipoDescuento')?.hasError('required')">Dato
+                    requerido.</small>
+            </div>
+            <div class="field col-12 md:col-2">
+                <label>Descuento</label>
+                <p-inputNumber formControlName="descuentoEstablecido" locale="en-US" id="descuentoEstablecido"
+                    [maxlength]="15" [inputStyle]="{'text-align': 'right'}" mode="decimal" [minFractionDigits]="2"
+                    [maxFractionDigits]="2"></p-inputNumber>
+                <small class="p-error block" *ngIf="itemForm.get('descuentoEstablecido')?.hasError('required')">Dato
+                    requerido.</small>
+            </div>
+            <div class="field col-12 md:col-1">
+                Activo
+                <div class="field">
+                    <input id="remember-me" type="checkbox" formControlName="activo">
+                </div>
+            </div>
+
+            <div class="field col-12 md:col-12">
+                <!-- <p-divider></p-divider> -->
+                <label>Productos/Servicios</label>
+            </div>
+        </div>
+
+        <p-table #dt styleClass="p-datatable-sm" [value]="detalle" responsiveLayout="scroll" [rows]="10"
+            [paginator]="false" [rowHover]="true" dataKey="direccion">
+            <ng-template pTemplate="caption">
+                <div class="flex flex-column md:flex-row md:justify-content-end md:align-items-center">
+                    <p-button (onClick)="dialogoProductosAbrir()" label="Productos" icon="pi pi-plus"
+                        styleClass="p-button-success" tabindex="-1"></p-button>
+                </div>
+            </ng-template>
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>N°</th>
+                    <th style="text-align:center">categoria</th>
+                    <th style="text-align:center">código producto</th>
+                    <th style="text-align:center">producto</th>
+                    <th style="text-align:center">Operación</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-i="rowIndex" let-item>
+                <tr>
+                    <td><b>{{ i + 1 }}</b></td>
+                    <td>{{item.categoria}}</td>
+                    <td>{{item.codigoProducto}}</td>
+                    <td>{{item.producto}}</td>
+                    <td style="width:5rem; min-width:5rem;">
+                        <div class="flex">
+                            <button pButton icon="pi pi-trash" class="p-button-rounded p-button-warning"
+                                (click)="deleteItem(item)"></button>
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+
+
+        <p-divider type="dashed"></p-divider>
+        <div class="flex justify-content-between flex-wrap card-container purple-container">
+            <div class="flex align-items-center justify-content-center m-2">
+                <button pButton label="Descuentos" (click)="prevPage()" icon="pi pi-angle-left"
+                    class="p-button-secondary"></button> &nbsp;
+            </div>
+            <div class="flex align-items-center justify-content-center m-2">
+                <button pButton label="Guardar" icon="pi pi-check" iconPos="right" (click)="onSave()"></button>
+            </div>
+        </div>
+    </form>
+
+</p-card>
+
+<p-dialog header="Productos" [(visible)]="verProductos" [modal]="true" [style]="{width: '80vw'}"
+    [maximizable]="true" [draggable]="false" [resizable]="true">
+
+    <p-table  #dt2  [value]="listaProductos" selectionMode="multiple" [(selection)]="listaProductosSeleccionados"
+        [globalFilterFields]="['codigoProducto','nombre','tipoUnidad','categoria']" [rows]="10" [paginator]="true" [rowsPerPageOptions]="[10,20,30]"
+        [rowHover]="true"
+        styleClass="mt-5" dataKey="id">
+
+        <ng-template pTemplate="caption">
+            <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                <span class="block mt-2 md:mt-0 p-input-icon-left">
+                    <i class="pi pi-search"></i>
+                    <input pInputText type="text" (input)="onGlobalFilter(dt2, $event)" placeholder="Filtrar...."
+                        class="w-full sm:w-auto" />
+                </span>
+                <div class="flex">
+
+                </div>
+            </div>
+        </ng-template>
+
+        <ng-template pTemplate="header">
+            <tr>
+                <th>codigo producto</th>
+                <th>nombre</th>
+                <th>tipo unidad</th>
+                <th>categoria</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-product let-rowIndex="rowIndex">
+            <tr [pSelectableRow]="product" [pSelectableRowIndex]="rowIndex">
+                <td>{{product.codigoProducto}}</td>
+                <td>{{product.nombre}}</td>
+                <td>{{product.tipoUnidad}}</td>
+                <td>{{product.categoria}}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+    <ng-template pTemplate="footer">
+        <p-button icon="pi pi-check" (click)="dialogoProductosCerrar()" label="Aceptar"
+            styleClass="p-button-text"></p-button>
+    </ng-template>
+</p-dialog>

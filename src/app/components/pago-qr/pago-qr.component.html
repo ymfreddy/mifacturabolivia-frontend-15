@@ -1,0 +1,14 @@
+<div class="text-center">
+    <div class="field">
+        <button pButton styleClass="w-full" label="Generar Qr" icon="pi pi-qrcode" iconPos="left" (click)="generar()"></button>
+    </div>
+    <div *ngIf="qrImage" class="field">
+        <p-image [src]="qrImage" alt="Image" width="350"></p-image>
+    </div>
+    <div *ngIf="qrImage" class="field">
+        <h5>Tiene 10 minutos par realizar el pago</h5>
+    </div>
+    <div class="field">
+        <button pButton styleClass="w-full" label="Generar Qr" icon="pi pi-qrcode" iconPos="left" (click)="generar()"></button>
+    </div>
+</div>
