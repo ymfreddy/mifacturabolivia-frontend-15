@@ -160,4 +160,9 @@ export class UtilidadesService {
         const apiUrl = `${environment.api.util}/utilidades/pdfs/compras/${idCompra}`;
         return this.httpClient.get<any>(apiUrl, this.httpOptions);
     }
+
+    getReporteSolicitudCompra(idCompra: number): Observable<any> {
+        const apiUrl = `${environment.api.util}/utilidades/pdfs/compras/solicitudes/${idCompra}`;
+        return this.httpClient.get<any>(apiUrl, this.httpOptions);
+    }
 }

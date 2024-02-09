@@ -138,6 +138,17 @@ export class FacturaMineraPasoUnoComponent implements OnInit {
         return 0;
     }
 
+    getDetalleDescuento(): number {
+        if (this.detalle) {
+            const sum = this.detalle
+                .map((t) => t.montoDescuento)
+                .reduce((acc, value) => acc + value, 0);
+            return this.helperService.round(sum, adm.NUMERO_DECIMALES)
+        }
+
+        return 0;
+    }
+
     getDetalleSubTotal(): number {
         if (this.detalle) {
             const sum = this.detalle
@@ -378,11 +389,11 @@ export class FacturaMineraPasoUnoComponent implements OnInit {
             row.montoDescuento = 0;
         }
         let monto = row.precioUnitario * row.cantidad;
-        monto = this.helperService.round(monto, adm.NUMERO_DECIMALES);
+        monto = this.helperService.round(monto, adm.NUMERO_DECIMALES_ICE);
         this.detalle[elementIndex].monto = monto;
 
-        //this.detalle[elementIndex].subTotal = this.helperService.round((row.precioUnitario * row.cantidad - montoDescuento), adm.NUMERO_DECIMALES);
-        this.detalle[elementIndex].subTotal = this.helperService.round((monto), adm.NUMERO_DECIMALES);
+        this.detalle[elementIndex].subTotal = this.helperService.round(((row.precioUnitario * row.cantidad) - row.montoDescuento), adm.NUMERO_DECIMALES_ICE);
+        //this.detalle[elementIndex].subTotal = this.helperService.round((monto), adm.NUMERO_DECIMALES_ICE);
     }
 
     filtrarProducto(event: any) {

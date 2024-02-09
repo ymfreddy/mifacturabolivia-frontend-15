@@ -70,7 +70,7 @@
                 <td class="text-right">{{item.costo | formatoDecimal}}</td>
                 <td *ngIf="!facturaIceAsignada()" class="text-right">{{item.precio | formatoDecimal}}</td>
                 <td *ngIf="facturaIceAsignada()" class="text-right">{{item.precioIce | formatoDecimalIce}}</td>
-                <td><img [src]="item.imagenRuta  ? item.imagenRuta : 'assets/layout/images/sin-imagen.png'" [alt]="item.imagenNombre" width="50" class="shadow-4" /></td>
+                <td><img [ngSrc]="item.imagenRuta  ? item.imagenRuta : 'assets/layout/images/sin-imagen.png'" width="50" height="50" priority/></td>
                 <td>{{item.tipoProducto}}</td>
                 <td>{{item.categoria}}</td>
                  <td style="width:5rem; min-width:5rem;">

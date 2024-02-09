@@ -11,6 +11,7 @@ import { Subject } from 'rxjs';
 import { Empresa } from 'src/app/shared/models/empresa.model';
 import { EmpresasService } from 'src/app/shared/services/empresas.service';
 import { Router } from '@angular/router';
+import { NgOptimizedImage } from '@angular/common';
 
 @Component({
     selector: 'app-lista-categorias',

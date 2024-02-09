@@ -114,8 +114,8 @@
                     <div class="flex">
                         <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-primary mr-2"
                             (click)="editItem(item)" [disabled]="!esEditable(item.idEstadoCompra)"></button>
-                        <button pButton pRipple pTooltip="descargar reporte"  tooltipPosition="top" icon="pi pi-arrow-circle-down" class="p-button-rounded p-button-primary mr-2"
-                            (click)="descargar(item, false)" ></button>
+                        <button appendTo="body" pButton pRipple pTooltip="Opciones"  tooltipPosition="top"  icon="pi pi-cog" class="p-button-rounded p-button-primary mr-2"
+                            (click)="opcionesCompra(menuCompra, $event, item)"></button>
                         <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger"
                             (click)="deleteItem(item)" [disabled]="!esEditable(item.idEstadoCompra)"></button>
                     </div>
@@ -124,3 +124,6 @@
         </ng-template>
     </p-table>
 </p-panel>
+
+
+<p-menu [showTransitionOptions]="'0ms'" [hideTransitionOptions]="'0ms'" #menuCompra [popup]="true" [model]="itemsMenuCompra"></p-menu>

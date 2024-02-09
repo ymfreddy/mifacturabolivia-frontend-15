@@ -37,7 +37,7 @@
             <tr>
                 <td><b>{{ i + 1 }}</b></td>
                 <td>{{item.nombre}}</td>
-                <td><img [src]="item.imagenRuta  ? item.imagenRuta : 'assets/layout/images/sin-imagen.png'" [alt]="item.imagenNombre" width="50" class="shadow-4" /></td>
+                <td><img [ngSrc]="item.imagenRuta  ? item.imagenRuta : 'assets/layout/images/sin-imagen.png'" width="50" height="50" priority/></td>
                 <td style="width:5rem; min-width:5rem;">
                     <div class="flex">
                         <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-primary mr-2"

@@ -77,7 +77,8 @@
                                             </div>
 
                                             <div class="product-grid-item-content">
-                                                <img [src]="product.imagenRuta  ? product.imagenRuta : 'assets/layout/images/sin-imagen.png'" [alt]="product.imagenNombre" />
+                                                <!-- <img [src]="product.imagenRuta  ? product.imagenRuta : 'assets/layout/images/sin-imagen.png'" [alt]="product.imagenNombre" /> -->
+                                                <img [ngSrc]="product.imagenRuta  ? product.imagenRuta : 'assets/layout/images/sin-imagen.png'" priority/>
                                                 <div class="product-name">{{product.nombre}}</div>
 
                                                 <!-- <div class="product-description" *ngIf="product.descuento && product.descuento.descuentoEstablecido>0">

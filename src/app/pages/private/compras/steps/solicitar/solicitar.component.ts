@@ -18,6 +18,9 @@ import { adm } from 'src/app/shared/constants/adm';
 import { Table } from 'primeng/table';
 import { HelperService } from 'src/app/shared/helpers/helper.service';
 import { BusquedaProducto } from 'src/app/shared/models/busqueda-producto.model';
+import { UtilidadesService } from 'src/app/shared/services/utilidades.service';
+import { FilesService } from 'src/app/shared/helpers/files.service';
+import { delay } from 'rxjs';
 
 @Component({
     selector: 'app-solicitar',
@@ -28,7 +31,9 @@ export class SolicitarComponent implements OnInit {
     maxDate = new Date();
     item?: Compra;
     itemForm!: FormGroup;
-    backClicked = false;
+    evento = "";
+
+    //blockedPanel: boolean = false;
     submited = false;
     verProductos = false;
 
@@ -52,7 +57,9 @@ export class SolicitarComponent implements OnInit {
         public dialogService: DialogService,
         private router: Router,
         private datepipe: DatePipe,
-        private helperService: HelperService
+        private helperService: HelperService,
+        private utilidadesService: UtilidadesService,
+        private fileService:FilesService,
     ) {}
 
     ngOnInit(): void {
@@ -174,7 +181,7 @@ export class SolicitarComponent implements OnInit {
     }
 
     public onSubmit(): void {
-        if (this.backClicked) {
+        if (this.evento==='atras') {
             this.router.navigate(['/adm/compras']);
         } else {
             if (!this.itemForm.valid) {
@@ -199,14 +206,6 @@ export class SolicitarComponent implements OnInit {
              this.detalle.forEach((element) => {
                  if (element.cantidad<=0){
                      existeItemError ='La cantidad del producto ' +element.producto +', debe ser mayor a 0 ';
-                     return;
-                 }
-                 if (element.precio<0){
-                     existeItemError ='El precio del producto ' +element.producto +', debe ser mayor o igual a 0 ';
-                     return;
-                 }
-                 if (element.precioVenta <=0){
-                     existeItemError ='El precio de venta del producto ' +element.producto +', debe ser mayor a 0 ';
                      return;
                  }
              });
@@ -237,25 +236,38 @@ export class SolicitarComponent implements OnInit {
 
             console.log(compra);
             this.submited = true;
-            if (compra.id > 0) {
-                // se verifica si existen cambios para realizar la actualizacion
-                const nuevo = JSON.stringify(compra).toString();
-                let itemMemoria:Compra  = this.sessionService.getRegistroCompra();
-                itemMemoria.fechaPedido = this.datepipe.transform(itemMemoria.fechaPedido, 'dd/MM/yyyy HH:mm') ?? '';
-                const session = JSON.stringify(itemMemoria);
-                if (nuevo == session) {
-                    this.router.navigate(['/adm/compra-por-pasos/recibir']);
+                if (compra.id > 0) {
+                    // se verifica si existen cambios para realizar la actualizacion
+                    const nuevo = JSON.stringify(compra).toString();
+                    let itemMemoria:Compra  = this.sessionService.getRegistroCompra();
+                    itemMemoria.fechaPedido = this.datepipe.transform(itemMemoria.fechaPedido, 'dd/MM/yyyy HH:mm') ?? '';
+                    const session = JSON.stringify(itemMemoria);
+                    if (nuevo == session) {
+                        if (this.evento==='solicitar') this.opcionCompraDescargarSolicitud(compra, false);
+                        else this.router.navigate(['/adm/compra-por-pasos/recibir']);
+                    } else {
+                        console.log(nuevo);
+                        console.log(session);
+                        this.compraService.edit(compra).subscribe({
+                            next: (res) => {
+                                this.sessionService.setRegistroCompra(res.content);
+                                this.informationService.showSuccess(res.message);
+                                if (this.evento==='solicitar') this.opcionCompraDescargarSolicitud(compra, false);
+                                else this.router.navigate(['/adm/compra-por-pasos/recibir']);
+                            },
+                            error: (err) => {
+                                this.informationService.showError(err.error.message);
+                                this.submited = false;
+                            },
+                        });
+                    }
                 } else {
-                    console.log(nuevo);
-                    console.log(session);
-
-                    this.compraService.edit(compra).subscribe({
+                    this.compraService.add(compra).subscribe({
                         next: (res) => {
                             this.sessionService.setRegistroCompra(res.content);
                             this.informationService.showSuccess(res.message);
-                            this.router.navigate([
-                                '/adm/compra-por-pasos/recibir',
-                            ]);
+                            if (this.evento==='solicitar') this.opcionCompraDescargarSolicitud(res.content, true);
+                            else this.router.navigate(['/adm/compra-por-pasos/recibir']);
                         },
                         error: (err) => {
                             this.informationService.showError(err.error.message);
@@ -263,19 +275,7 @@ export class SolicitarComponent implements OnInit {
                         },
                     });
                 }
-            } else {
-                this.compraService.add(compra).subscribe({
-                    next: (res) => {
-                        this.sessionService.setRegistroCompra(res.content);
-                        this.informationService.showSuccess(res.message);
-                        this.router.navigate(['/adm/compra-por-pasos/recibir']);
-                    },
-                    error: (err) => {
-                        this.informationService.showError(err.error.message);
-                        this.submited = false;
-                    },
-                });
-            }
+
         }
     }
 
@@ -298,11 +298,15 @@ export class SolicitarComponent implements OnInit {
     }
 
     prevPage() {
-        this.backClicked = true;
+        this.evento = "atras";
     }
 
     public onSave(): void {
-        this.backClicked = false;
+        this.evento = "siguiente";
+    }
+
+    onSolicitud(): void {
+        this.evento = "solicitar";
     }
 
     onGlobalFilter(table: Table, event: Event) {
@@ -310,5 +314,19 @@ export class SolicitarComponent implements OnInit {
             (event.target as HTMLInputElement).value,
             'contains'
         );
+    }
+
+    opcionCompraDescargarSolicitud(compra: Compra, recargar:boolean) {
+        this.submited = true;
+        const fileName = `solicitud-compra-${compra.correlativo}.pdf`;
+        this.utilidadesService
+            .getReporteSolicitudCompra(compra.id)
+            .pipe(delay(1000))
+            .subscribe((blob: Blob): void => {
+                this.fileService.printFile(blob, fileName, false);
+                this.submited = false;
+                //this.router.navigate(['/adm/compras']);
+                if (recargar) document.location.reload();
+            });
     }
 }

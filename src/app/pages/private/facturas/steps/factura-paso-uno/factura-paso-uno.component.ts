@@ -289,7 +289,7 @@ export class FacturaPasoUnoComponent implements OnInit {
             idEmpresa: this.sessionService.getSessionEmpresaId(),
             idSucursal: this.sessionService.getSessionUserData().idSucursal,
             termino: termino.trim(),
-            cantidadRegistros: 10,
+            cantidadRegistros: 20,
             resumen: true,
             idsTipoProducto: spv.TIPO_PRODUCTO_PRODUCTO+","+spv.TIPO_PRODUCTO_SERVICIO_HOTEL_TURISMO,
             idsCategorias : this.sessionService.getSessionUserData().categorias

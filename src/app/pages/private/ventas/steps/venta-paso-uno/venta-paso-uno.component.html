@@ -62,13 +62,13 @@
                             <p-autoComplete formControlName="producto" #producto [suggestions]="listaProductosFiltrados" styleClass="w-full"
                                 (completeMethod)="filtrarProducto($event)" [showEmptyMessage]="true" [maxlength]="50"
                                 emptyMessage="No existe" [forceSelection]="true" (onSelect)="seleccionarProducto($event)"
-                                field="nombre" [delay]=750
-                                placeholder="Introduzca el código o nombre del producto/servicio"  [autofocus]="true">
+                                field="nombre" [delay]=850 [minLength]="3"
+                                placeholder="Introduzca el código o nombre del producto/servicio, mínimo 3 caracteres"  [autofocus]="true">
                                 <ng-template let-item pTemplate="item">
                                     <div class="p-fluid p-formgrid grid text-wrap">
                                         <div class="field col-12 md:col-2">
                                             <div class="text-center">
-                                                <img [src]="item.imagenRuta  ? item.imagenRuta : 'assets/layout/images/sin-imagen.png'" [alt]="item.imagenNombre" width="50" class="shadow-4" />
+                                                <img [ngSrc]="item.imagenRuta  ? item.imagenRuta : 'assets/layout/images/sin-imagen.png'" width="50" height="50" priority/>
                                             </div>
                                         </div>
                                         <div class="field col-12 md:col-10">

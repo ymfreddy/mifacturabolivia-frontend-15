@@ -352,7 +352,6 @@ export class VentaPasoUnoComponent implements OnInit {
                         ref.onClose.subscribe((res) => {});*/
                     }
                 });
-
             }
             else{
                 this.submited = true;
@@ -567,7 +566,7 @@ export class VentaPasoUnoComponent implements OnInit {
             idEmpresa: this.sessionService.getSessionEmpresaId(),
             idSucursal: this.sessionService.getSessionUserData().idSucursal,
             termino: termino.trim(),
-            cantidadRegistros: 10,
+            //cantidadRegistros: 10,
             resumen: true,
             idsCategorias : this.sessionService.getSessionUserData().categorias
         };

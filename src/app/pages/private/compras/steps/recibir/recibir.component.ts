@@ -66,6 +66,28 @@ export class RecibirComponent implements OnInit {
                 return;
             }
 
+            // verificar los item
+            let existeItemError: string = '';
+            this.detalle.forEach((element) => {
+                if (element.cantidad<=0){
+                    existeItemError ='La cantidad del producto ' +element.producto +', debe ser mayor a 0 ';
+                    return;
+                }
+                if (element.precio<0){
+                    existeItemError ='El precio de entrada/compra del producto ' +element.producto +', debe ser mayor o igual a 0 ';
+                    return;
+                }
+                if (element.precioVenta <=0){
+                    existeItemError ='El precio de venta del producto ' +element.producto +', debe ser mayor a 0 ';
+                    return;
+                }
+            });
+
+            if (existeItemError) {
+                this.informationService.showWarning(existeItemError);
+                return;
+            }
+
             const finalizar: any = {
                 idCompra: this.itemForm.controls['id'].value,
                 descripcion: this.itemForm.controls['descripcion'].value,

@@ -12,7 +12,7 @@ import { ParametricasService } from 'src/app/shared/services/parametricas.servic
 import { Sucursal } from 'src/app/shared/models/sucursal.model';
 import { SucursalesService } from 'src/app/shared/services/sucursales.service';
 import { TipoParametrica } from 'src/app/shared/enums/tipo-parametrica.model';
-import { ConfirmationService } from 'primeng/api';
+import { ConfirmationService, MenuItem } from 'primeng/api';
 import { Router } from '@angular/router';
 import { spv } from 'src/app/shared/constants/spv';
 import { BusquedaCompra } from 'src/app/shared/models/busqueda-compra.model';
@@ -43,6 +43,8 @@ export class ListaComprasComponent implements OnInit, OnDestroy {
 
     listaEmpresas: Empresa[] = [];
     idEmpresa!:number;
+    itemsMenuCompra!: MenuItem[];
+    compraSeleccionada!: Compra;
 
     constructor(
         private fb: FormBuilder,
@@ -72,6 +74,7 @@ export class ListaComprasComponent implements OnInit, OnDestroy {
 
         this.idEmpresa = this.busquedaMemoria?.idEmpresa ?? this.sessionService.getSessionEmpresaId();
 
+        this.cargarOpcionesCompras();
         this.cargarEmpresas();
         this.cargarSucursales();
         this.cargarParametricas();
@@ -145,6 +148,30 @@ export class ListaComprasComponent implements OnInit, OnDestroy {
                 this.blockedPanel = false;
             },
         });
+    }
+
+    cargarOpcionesCompras(){
+        this.itemsMenuCompra = [
+            {
+                label: 'Opciones Compra',
+                items: [
+                    {
+                        label: 'Descargar Solicitud',
+                        icon: 'pi pi-cloud-download',
+                        command: () => {
+                            this.opcionCompraDescargarSolicitud();
+                        },
+                    },
+                    {
+                        label: 'Descargar Reporte',
+                        icon: 'pi pi-cloud-download',
+                        command: () => {
+                            this.opcionCompraDescargarReporte();
+                        },
+                    }
+                ],
+            },
+        ];
     }
 
     getBusquedaCriterios() {
@@ -269,14 +296,31 @@ export class ListaComprasComponent implements OnInit, OnDestroy {
         this.cargarSucursales();
     }
 
-    descargar(item: Compra, imprimir: boolean) {
+    opcionesCompra(menu: any, event: any, item: Compra) {
+        this.compraSeleccionada = item;
+        menu.toggle(event);
+    }
+
+    opcionCompraDescargarSolicitud() {
         this.blockedPanel = true;
-        const fileName = `compra-${item.correlativo}.pdf`;
+        const fileName = `solicitud-compra-${this.compraSeleccionada.correlativo}.pdf`;
         this.utilidadesService
-            .getReporteCompra(item.id)
+            .getReporteSolicitudCompra(this.compraSeleccionada.id)
             .pipe(delay(1000))
             .subscribe((blob: Blob): void => {
-                this.fileService.printFile(blob, fileName, imprimir);
+                this.fileService.printFile(blob, fileName, false);
+                this.blockedPanel = false;
+            });
+    }
+
+    opcionCompraDescargarReporte() {
+        this.blockedPanel = true;
+        const fileName = `compra-${this.compraSeleccionada.correlativo}.pdf`;
+        this.utilidadesService
+            .getReporteCompra(this.compraSeleccionada.id)
+            .pipe(delay(1000))
+            .subscribe((blob: Blob): void => {
+                this.fileService.printFile(blob, fileName, false);
                 this.blockedPanel = false;
             });
     }
