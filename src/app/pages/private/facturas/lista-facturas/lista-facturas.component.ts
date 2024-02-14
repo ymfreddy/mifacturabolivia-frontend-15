@@ -34,6 +34,10 @@ import { EmpresasService } from 'src/app/shared/services/empresas.service';
 import { FacturaErrorComponent } from 'src/app/components/factura-error/factura-error.component';
 import { EnviarWhatsappComponent } from 'src/app/components/enviar-whatsapp/enviar-whatsapp.component';
 import { RevertirFacturaComponent } from 'src/app/components/revertir-factura/revertir-factura.component';
+import { Estudiante } from 'src/app/shared/models/estudiante.model';
+import { EstudiantesService } from 'src/app/shared/services/estudiantes.service';
+import { BusquedaEstudiante } from 'src/app/shared/models/busqueda-estudiante.model';
+import { map } from 'rxjs/operators';
 
 @Component({
     selector: 'app-lista-facturas',
@@ -45,6 +49,7 @@ export class ListaFacturasComponent implements OnInit, OnDestroy {
     onDestroy$: Subject<boolean> = new Subject();
     criteriosBusquedaForm!: FormGroup;
     clienteBusquedaForm!: FormGroup;
+    estudianteBusquedaForm!: FormGroup;
     busquedaMemoria?: BusquedaFactura;
     items!: FacturaResumen[];
     listaEstadosFactura: any[] = [
@@ -65,6 +70,7 @@ export class ListaFacturasComponent implements OnInit, OnDestroy {
     itemDialog!: boolean;
     blockedPanel: boolean = false;
     opciones!: MenuItem[];
+    opcionesEstudiantes!: MenuItem[];
     asociaciones: MenuItem[] = [];
     facturaSeleccionada!: FacturaResumen;
     itemsMenuFactura!: MenuItem[];
@@ -76,6 +82,9 @@ export class ListaFacturasComponent implements OnInit, OnDestroy {
 
     blockSpace: RegExp = /[^\s]/;
     first: number = 0;
+
+    listaEstudiantesFiltrados: Estudiante[] = [];
+    listaEstudiantesSeleccionados: Estudiante[] = [];
     constructor(
         private fb: FormBuilder,
         private facturasService: FacturasService,
@@ -90,6 +99,7 @@ export class ListaFacturasComponent implements OnInit, OnDestroy {
         private fileService:FilesService,
         private usuarioService: UsuariosService,
         private empresasService: EmpresasService,
+        private estudianteService: EstudiantesService
     ) {}
 
     ngOnInit(): void {
@@ -137,7 +147,13 @@ export class ListaFacturasComponent implements OnInit, OnDestroy {
         this.clienteBusquedaForm = this.fb.group({
             idEmpresa: this.idEmpresa ,
             nitEmisor: this.nitEmpresa ,
-            codigoCliente: ["", Validators.required],
+            codigoCliente: [null, Validators.required],
+        });
+
+        this.estudianteBusquedaForm = this.fb.group({
+            idEmpresa: this.idEmpresa ,
+            nitEmisor: this.nitEmpresa ,
+            estudiante: [null, Validators.required],
         });
 
         console.log(this.busquedaMemoria);
@@ -630,6 +646,16 @@ export class ListaFacturasComponent implements OnInit, OnDestroy {
                 },
             },
         ];
+
+        this.opcionesEstudiantes = [
+            {
+                label: 'Reporte Estudiantes',
+                icon: 'pi pi-file-pdf',
+                command: () => {
+                    this.reporteFacturasEstudiantes();
+                },
+            }
+        ];
     }
 
     canbioSucursal(event: any) {
@@ -738,6 +764,14 @@ export class ListaFacturasComponent implements OnInit, OnDestroy {
         this.clienteBusquedaForm.controls['idEmpresa'].setValue(empresaAux.id);
     }
 
+    cambioEmpresa3(event: any) {
+        const empresaAux = this.listaEmpresas.find(x=>x.id===event.value)!;
+        this.nitEmpresa = empresaAux.nit;
+        this.idEmpresa = empresaAux.id;
+        this.estudianteBusquedaForm.controls['nitEmisor'].setValue(empresaAux.nit);
+        this.estudianteBusquedaForm.controls['idEmpresa'].setValue(empresaAux.id);
+    }
+
     loadDataCliente(): void {
         if (!this.clienteBusquedaForm.valid) {
             this.informationService.showWarning('Verifique los datos');
@@ -772,4 +806,100 @@ export class ListaFacturasComponent implements OnInit, OnDestroy {
                 });
     }
 
+    reporteFacturasEstudiantes() {
+        this.loadDataEstudiante(1);
+    }
+
+    loadDataEstudiante(reporte:number): void {
+        if (!this.estudianteBusquedaForm.valid) {
+            this.informationService.showWarning('Verifique los datos');
+            return;
+        }
+
+        this.blockedPanel = true;
+
+        const estudiantes: Estudiante[] = this.estudianteBusquedaForm.controls['estudiante'].value
+        const criterios: any = {
+            idEmpresa: this.estudianteBusquedaForm.controls['idEmpresa'].value,
+            nitEmisor: this.estudianteBusquedaForm.controls['nitEmisor'].value,
+            idsEstudiantes: (!estudiantes || estudiantes.length==0) ?'':estudiantes.map(x=>x.id).join(','),
+        };
+
+        console.log(criterios);
+
+        if (reporte>0) {
+                const fileName = `facturas-estudiantes-${this.nitEmpresa}.pdf`;
+                this.utilidadesService.getReporteFacturasEstudiantes(criterios).pipe(delay(1000)).subscribe((blob: Blob): void => {
+                        this.fileService.printFile(blob, fileName, false);
+                        this.blockedPanel = false;
+                    });
+        } else {
+            this.facturasService
+                .get(criterios)
+                .subscribe({
+                    next: (res) => {
+                        this.sessionService.setBusquedaFactura(criterios);
+                        this.first = 0;
+                        this.items = res.content;
+                        this.informationService.showInfo(res.message);
+                        this.blockedPanel = false;
+                    },
+                    error: (err) => {
+                        this.informationService.showError(err.error.message);
+                        this.blockedPanel = false;
+                    },
+                });
+        }
+    }
+
+    filtrarEstudiante(event: any) {
+        //in a real application, make a request to a remote url with the query and return filtered results, for demo we filter at client side
+        let query = event.query;
+        this.buscarEstudiante(query);
+    }
+
+    buscarEstudiante(termino: string) {
+        const criteriosBusqueda: BusquedaEstudiante = {
+            idEmpresa: this.sessionService.getSessionEmpresaId(),
+            termino: termino.trim(),
+            cantidadRegistros: 10,
+            resumen: true,
+        };
+
+        this.estudianteService.get(criteriosBusqueda).subscribe({
+            next: (res) => {
+                if (res.content.length == 0) {
+                    this.listaEstudiantesFiltrados = [];
+                    return;
+                }
+                //const estudiantes = res.content.map((x: any) => {return  x.nombreCompleto });
+                this.listaEstudiantesFiltrados = res.content;
+            },
+            error: (err) => {
+                this.informationService.showError(err.error.message);
+            },
+        });
+    }
+
+    seleccionarEstudiante(event: any) {
+        console.log('SELECT');
+        if (this.listaEstudiantesSeleccionados.filter(x=>x.id===event.id).length==0){
+            this.listaEstudiantesSeleccionados.push(event);
+            this.estudianteBusquedaForm.patchValue({ estudiante: this.listaEstudiantesSeleccionados });
+        }
+    }
+
+    limpiarEstudiante(event: any) {
+        console.log('UNSELECT');
+        const existe = this.listaEstudiantesSeleccionados.find(x=>x.id===event.id);
+
+        if (existe){
+            this.listaEstudiantesSeleccionados=this.listaEstudiantesSeleccionados.filter(x=>x.id!==existe.id);
+            this.estudianteBusquedaForm.patchValue({ estudiante: this.listaEstudiantesSeleccionados });
+        }
+    }
+
+    facturaEducativoAsignada(){
+        return this.sessionService.getFacturaEducativoAsignada();
+    }
 }

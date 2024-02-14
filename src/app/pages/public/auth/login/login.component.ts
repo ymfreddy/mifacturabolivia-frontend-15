@@ -97,6 +97,7 @@ export class LoginComponent {
                             if (resSession.success) {
                                 const asociaciones:Asociacion[] = resSession.content.asociaciones
                                 const facturaIce = asociaciones.filter(x=>x.codigoDocumentoSector===sfe.CODIGO_DOCUMENTO_SECTOR_ICE).length>0;
+                                const facturaEducativo = asociaciones.filter(x=>x.codigoDocumentoSector===sfe.CODIGO_DOCUMENTO_SECTOR_EDUCATIVO).length>0;
                                 // se coloca los datos de session
                                 let usuarioSession: SessionUsuario = {
                                     id: resSession.content.usuario.id,
@@ -133,7 +134,8 @@ export class LoginComponent {
                                     restaurante: resSession.content.usuario.restaurante,
                                     impresionDirecta: resSession.content.usuario.impresionDirecta,
                                     descripcionAdicionalProducto: resSession.content.usuario.descripcionAdicionalProducto,
-                                    facturaIce: facturaIce
+                                    facturaIce: facturaIce,
+                                    facturaEducativo: facturaEducativo
                                 };
                                 this.sessionService.setSessionUserData(
                                     usuarioSession

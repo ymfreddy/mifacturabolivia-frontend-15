@@ -229,4 +229,8 @@ export class SessionService {
         return this.getSessionUserData().facturaIce??false;
     }
 
+    getFacturaEducativoAsignada():boolean{
+        return this.getSessionUserData().facturaEducativo??false;
+    }
+
 }

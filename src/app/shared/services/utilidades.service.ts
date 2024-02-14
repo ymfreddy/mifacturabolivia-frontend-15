@@ -165,4 +165,10 @@ export class UtilidadesService {
         const apiUrl = `${environment.api.util}/utilidades/pdfs/compras/solicitudes/${idCompra}`;
         return this.httpClient.get<any>(apiUrl, this.httpOptions);
     }
+
+    getReporteFacturasEstudiantes(criteriosSearch: any): Observable<any> {
+        const queryString = this.helperService.jsonToQueryStringSinfiltro(criteriosSearch);
+        const apiUrl = `${environment.api.util}/utilidades/pdfs/facturas/estudiantes?${queryString}`;
+        return this.httpClient.get<any>(apiUrl, this.httpOptions);
+    }
 }

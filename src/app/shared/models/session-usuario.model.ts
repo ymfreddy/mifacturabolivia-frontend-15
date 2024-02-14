@@ -20,6 +20,7 @@ export interface SessionUsuario {
     impresionDirecta: boolean;
     descripcionAdicionalProducto: boolean;
     facturaIce: boolean;
+    facturaEducativo: boolean;
 }
 
 export interface Asociacion {

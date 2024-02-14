@@ -100,19 +100,67 @@
 
                 <div class="p-fluid p-formgrid grid">
                     <div class="field col-12 md:col-2">
-                            <div class="p-inputgroup">
                             <input formControlName="codigoCliente" type="text" pInputText id="codigoCliente" placeholder="Código Cliente" maxlength="20" #codigoCliente
                             [pKeyFilter]="blockSpace" uppercase onfocus="this.select();"
                             />
-                            <!-- <small class="p-error block" *ngIf="clienteBusquedaForm.get('codigoCliente')?.hasError('required')">Dato requerido.</small> -->
-                            <p-button icon="pi pi-search" (onClick)="loadDataCliente()" pTooltip="Buscar por Código Cliente"
-                            tooltipPosition="top" styleClass="p-button" tabindex="-1"></p-button>
-                           </div>
+                            <small class="p-error block" *ngIf="clienteBusquedaForm.get('codigoCliente')?.hasError('required')">Dato requerido.</small>
+                            <!-- <p-button icon="pi pi-search" (onClick)="loadDataCliente()" pTooltip="Buscar por Código Cliente"
+                            tooltipPosition="top" styleClass="p-button" tabindex="-1"></p-button> -->
+                    </div>
+                </div>
+                 <!-- <p-divider type="dashed"></p-divider> -->
+                 <div class="flex justify-content-end flex-wrap">
+                    <p-button label="Buscar" icon="pi pi-search" (onClick)="loadDataCliente()" ></p-button>
+                </div>
+            </form>
+        </p-tabPanel>
+
+        <p-tabPanel header="Busqueda Por Estudiante" *ngIf="facturaEducativoAsignada()">
+            <form [formGroup]="estudianteBusquedaForm" (ngSubmit)="onSubmit()" autocomplete="off">
+                <!-- <p><b>Criterios de busqueda</b></p> -->
+                <div class="p-fluid p-formgrid grid" *ngIf="esSuperAdm()">
+                    <div class="field col-12 md:col-2">
+                        <label>Empresa:</label>
+                        <p-dropdown appendTo="body" [(ngModel)]="idEmpresa" [ngModelOptions]="{standalone: true}"  id="idEmpresa" [autofocus]="true"
+                        [options]="listaEmpresas" optionLabel="nombre" optionValue="id" (onChange)="cambioEmpresa3($event)"
+                        placeholder="Seleccione una empresa"
+                        ></p-dropdown>
+                    </div>
+                </div>
+
+                <div class="p-fluid p-formgrid grid">
+                    <div class="field col-12 md:col-6">
+                            <label>Código o Nombre Estudiante</label>
+                            <p-autoComplete formControlName="estudiante" #estudiante styleClass="w-full" [suggestions]="listaEstudiantesFiltrados"
+                            (completeMethod)="filtrarEstudiante($event)" [showEmptyMessage]="true" [maxlength]="150"
+                            [multiple]="true"
+                            emptyMessage="No existe" [forceSelection]="true" (onSelect)="seleccionarEstudiante($event)" (onUnselect)="limpiarEstudiante($event)"
+                            field="nombreCompleto" [delay]=500
+                            placeholder="Introduzca el nombre del estudiante" [autofocus]="true">
+                            <ng-template let-item pTemplate="item">
+                                <div class="row">
+                                    <div class="text-wrap">
+                                        <b>{{ item.codigoEstudiante }} - {{ item.nombreCompleto }}</b>
+                                        <br>
+                                        {{ item.curso }} - {{item.grado}}
+                                    </div>
+                                </div>
+                            </ng-template>
+                          </p-autoComplete>
+
+                            <small class="p-error block" *ngIf="estudianteBusquedaForm.get('estudiante')?.hasError('required')">
+                                Dato requerido.</small>
+
                     </div>
                     <!-- <div class="field col-12 md:col-2">
                         <label htmlFor="name2">&nbsp;</label>
                         <button pButton pRipple label="Buscar" icon="pi pi-search" (click)="loadDataCliente()" class="p-button mr-2"></button>
                     </div> -->
+                </div>
+
+                <!-- <p-divider type="dashed"></p-divider> -->
+                <div class="flex justify-content-end flex-wrap">
+                    <p-splitButton label="Buscar" icon="pi pi-search" (onClick)="loadDataEstudiante(0)" [model]="opcionesEstudiantes"></p-splitButton>
                 </div>
             </form>
         </p-tabPanel>

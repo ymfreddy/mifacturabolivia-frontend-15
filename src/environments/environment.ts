@@ -6,7 +6,7 @@ export const environment = {
     app: 'Mi Factura Bolivia - Facturación Electrónica',
     autor: 'Fx',
     plataforma: 'web',
-    version: '4.8.7',
+    version: '4.9.0',
     paginaInicio:true,
     ventasCredito:true,
     api: {
