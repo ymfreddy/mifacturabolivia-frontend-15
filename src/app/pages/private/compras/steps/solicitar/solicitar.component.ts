@@ -280,21 +280,20 @@ export class SolicitarComponent implements OnInit {
     }
 
     onEditComplete(event: any) {
-        this.calcularFila(event.data);
+        this.calcularFilas();
     }
 
-    calcularFila(row: any) {
-        const elementIndex = this.detalle.findIndex(
-            (obj) => obj.codigoProducto == row.codigoProducto
-        );
-        if (!row.precio) {
-            row.precio = 0;
-        }
-        if (!row.cantidad) {
-            row.cantidad = 0;
-        }
-        const total = row.precio * row.cantidad;
-        this.detalle[elementIndex].total = total;
+    calcularFilas() {
+        this.detalle.forEach(row => {
+            if (!row.precio) {
+                row.precio = 0;
+            }
+            if (!row.cantidad) {
+                row.cantidad = 0;
+            }
+            const total = row.precio * row.cantidad;
+            row.total = total;
+        });
     }
 
     prevPage() {

@@ -106,7 +106,7 @@ export class FacturaIcePasoUnoComponent implements OnInit {
                 this.detalle[objIndex].idTipoDescuento = res.idTipoDescuento;
                 this.detalle[objIndex].valorDescuento = res.descuentoEstablecido;
                 this.detalle[objIndex].montoDescuento = res.descuento;
-                this.calcularFila(this.detalle[objIndex]);
+                this.calcularFilas();
                 this.guardarDatossession();
             }
         });
@@ -373,7 +373,7 @@ export class FacturaIcePasoUnoComponent implements OnInit {
             if (res) {
                 let objIndex = this.detalle.findIndex((obj => obj.codigoProducto == res.codigoProducto));
                 this.detalle[objIndex]=res;
-                this.calcularFila(this.detalle[objIndex]);
+                this.calcularFilas();
                 this.guardarDatossession();
             }
         });
@@ -402,14 +402,12 @@ export class FacturaIcePasoUnoComponent implements OnInit {
     }
 
     onEditComplete(event: any) {
-        this.calcularFila(event.data);
+        this.calcularFilas();
         this.guardarDatossession();
     }
 
-    calcularFila(row: any) {
-        const elementIndex = this.detalle.findIndex(
-            (obj) => obj.codigoProducto == row.codigoProducto
-        );
+    calcularFilas() {
+        this.detalle.forEach(row => {
         if (!row.precioUnitario) {
             row.precioUnitario = 0;
         }
@@ -421,7 +419,7 @@ export class FacturaIcePasoUnoComponent implements OnInit {
         }
         let monto = row.precioUnitario * row.cantidad;
         monto = this.helperService.round(monto, adm.NUMERO_DECIMALES_ICE);
-        this.detalle[elementIndex].monto = monto;
+        row.monto = monto;
 
         let montoDescuento = row.montoDescuento;
         if (row.idTipoDescuento ===spv.TIPO_DESCUENTO_PORCENTAJE){
@@ -432,7 +430,7 @@ export class FacturaIcePasoUnoComponent implements OnInit {
         }
 
         montoDescuento = this.helperService.round(montoDescuento, adm.NUMERO_DECIMALES_ICE);
-        this.detalle[elementIndex].montoDescuento = montoDescuento;
+        row.montoDescuento = montoDescuento;
 
         let montoIcePorcentual = 0;
         let montoIceEspecifico = 0;
@@ -440,31 +438,32 @@ export class FacturaIcePasoUnoComponent implements OnInit {
             let alicuotaIva = this.helperService.round((row.precioUnitario * row.cantidad - montoDescuento)*0.13, adm.NUMERO_DECIMALES_ICE);
             let precioNetoVentaIce = this.helperService.round((row.precioUnitario * row.cantidad- montoDescuento)-alicuotaIva, adm.NUMERO_DECIMALES_ICE);
 
-            let cantidadIce = row.cantidadIce;
-            let alicuotaPorcentual = row.alicuotaPorcentual;
-            let alicuotaEspecifica = row.alicuotaEspecifica;
+            let cantidadIce = row.cantidadIce??0;
+            let alicuotaPorcentual = row.alicuotaPorcentual??0;
+            let alicuotaEspecifica = row.alicuotaEspecifica??0;
 
-            this.detalle[elementIndex].alicuotaIva = alicuotaIva;
-            this.detalle[elementIndex].precioNetoVentaIce = precioNetoVentaIce;
+            row.alicuotaIva = alicuotaIva;
+            row.precioNetoVentaIce = precioNetoVentaIce;
 
             montoIcePorcentual = this.helperService.round((precioNetoVentaIce * alicuotaPorcentual), adm.NUMERO_DECIMALES_ICE);
             montoIceEspecifico = this.helperService.round((cantidadIce * alicuotaEspecifica), adm.NUMERO_DECIMALES_ICE);
 
-            this.detalle[elementIndex].montoIcePorcentual = montoIcePorcentual;
-            this.detalle[elementIndex].montoIceEspecifico = montoIceEspecifico;
+            row.montoIcePorcentual = montoIcePorcentual;
+            row.montoIceEspecifico = montoIceEspecifico;
         }
         else{
-            this.detalle[elementIndex].alicuotaIva = 0;
-            this.detalle[elementIndex].precioNetoVentaIce = 0;
-            this.detalle[elementIndex].alicuotaEspecifica = 0;
-            this.detalle[elementIndex].alicuotaPorcentual = 0;
-            this.detalle[elementIndex].cantidadIce = 0;
-            this.detalle[elementIndex].montoIcePorcentual = 0;
-            this.detalle[elementIndex].montoIceEspecifico = 0;
+            row.alicuotaIva = 0;
+            row.precioNetoVentaIce = 0;
+            row.alicuotaEspecifica = 0;
+            row.alicuotaPorcentual = 0;
+            row.cantidadIce = 0;
+            row.montoIcePorcentual = 0;
+            row.montoIceEspecifico = 0;
         }
 
         //this.detalle[elementIndex].subTotal = this.helperService.round((row.precioUnitario * row.cantidad - montoDescuento), adm.NUMERO_DECIMALES_ICE);
-        this.detalle[elementIndex].subTotal = this.helperService.round((monto- montoDescuento)+ montoIcePorcentual + montoIceEspecifico, adm.NUMERO_DECIMALES_ICE);
+        row.subTotal = this.helperService.round((monto- montoDescuento)+ montoIcePorcentual + montoIceEspecifico, adm.NUMERO_DECIMALES_ICE);
+      });
     }
 
     filtrarProducto(event: any) {

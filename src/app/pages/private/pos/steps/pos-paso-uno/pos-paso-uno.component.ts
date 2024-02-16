@@ -445,13 +445,11 @@ export class PosPasoUnoComponent implements OnInit {
     }
 
 	onEditComplete(event: any) {
-        this.calcularFila(event.data);
+        this.calcularFilas();
     }
 
-    calcularFila(row: VentaDetalle) {
-        const elementIndex = this.detalle.findIndex(
-            (obj) => obj.codigoProducto === row.codigoProducto && obj.codigoStock===row.codigoStock
-        );
+    calcularFilas() {
+        this.detalle.forEach(row => {
         if (!row.precio) {
             row.precio = 0;
         }
@@ -463,7 +461,7 @@ export class PosPasoUnoComponent implements OnInit {
         }
         let subtotal = row.precio * row.cantidad;
         subtotal = this.helperService.round(subtotal, adm.NUMERO_DECIMALES);
-        this.detalle[elementIndex].subtotal = subtotal;
+        row.subtotal = subtotal;
 
 
         let descuento = row.descuento;
@@ -475,10 +473,11 @@ export class PosPasoUnoComponent implements OnInit {
         }
 
         descuento = this.helperService.round(descuento, adm.NUMERO_DECIMALES);
-        this.detalle[elementIndex].descuento = descuento;
+        row.descuento = descuento;
 
         //this.detalle[elementIndex].total = this.helperService.round((row.precio * row.cantidad - descuento), adm.NUMERO_DECIMALES);
-        this.detalle[elementIndex].total = this.helperService.round((subtotal - descuento), adm.NUMERO_DECIMALES);
+        row.total = this.helperService.round((subtotal - descuento), adm.NUMERO_DECIMALES);
+      });
     }
 
     addItem(producto: ProductoResumen) {
@@ -502,7 +501,7 @@ export class PosPasoUnoComponent implements OnInit {
 
         if (existeProducto) {
             existeProducto.cantidad = existeProducto.cantidad+1;
-            this.calcularFila(existeProducto);
+            this.calcularFilas();
             return;
         }
 
@@ -548,7 +547,7 @@ export class PosPasoUnoComponent implements OnInit {
         const existeProducto = this.detalle.find( (x) => x.codigoProducto === row.codigoProducto);
         if (existeProducto && existeProducto.cantidad>1) {
             existeProducto.cantidad = existeProducto.cantidad-1;
-            this.calcularFila(row);
+            this.calcularFilas();
             return;
         }
       }

@@ -129,7 +129,7 @@ export class FacturaPasoUnoComponent implements OnInit {
                 this.detalle[objIndex].idTipoDescuento = res.idTipoDescuento;
                 this.detalle[objIndex].valorDescuento = res.descuentoEstablecido;
                 this.detalle[objIndex].montoDescuento = res.descuento;
-                this.calcularFila(this.detalle[objIndex]);
+                this.calcularFilas();
                 this.guardarDatossession();
             }
         });
@@ -467,14 +467,12 @@ export class FacturaPasoUnoComponent implements OnInit {
     }
 
     onEditComplete(event: any) {
-        this.calcularFila(event.data);
+        this.calcularFilas();
         this.guardarDatossession();
     }
 
-    calcularFila(row: any) {
-        const elementIndex = this.detalle.findIndex(
-            (obj) => obj.codigoProducto == row.codigoProducto
-        );
+    calcularFilas() {
+        this.detalle.forEach(row => {
         if (!row.precioUnitario) {
             row.precioUnitario = 0;
         }
@@ -486,7 +484,7 @@ export class FacturaPasoUnoComponent implements OnInit {
         }
         let monto = row.precioUnitario * row.cantidad;
         monto = this.helperService.round(monto, adm.NUMERO_DECIMALES);
-        this.detalle[elementIndex].monto = monto;
+        row.monto = monto;
 
         let montoDescuento = row.montoDescuento;
         if (row.idTipoDescuento ===spv.TIPO_DESCUENTO_PORCENTAJE){
@@ -497,10 +495,11 @@ export class FacturaPasoUnoComponent implements OnInit {
         }
 
         montoDescuento = this.helperService.round(montoDescuento, adm.NUMERO_DECIMALES);
-        this.detalle[elementIndex].montoDescuento = montoDescuento;
+        row.montoDescuento = montoDescuento;
 
         //this.detalle[elementIndex].subTotal = this.helperService.round((row.precioUnitario * row.cantidad - montoDescuento), adm.NUMERO_DECIMALES);
-        this.detalle[elementIndex].subTotal = this.helperService.round((monto- montoDescuento), adm.NUMERO_DECIMALES);
+        row.subTotal = this.helperService.round((monto- montoDescuento), adm.NUMERO_DECIMALES);
+      });
     }
 
     filtrarProducto(event: any) {

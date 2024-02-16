@@ -63,16 +63,15 @@ export class FormularioTurnoCierreComponent implements OnInit {
         });
     }
 
-    calcularFila(row: any) {
-        const elementIndex = this.items.findIndex(
-            (obj) => obj.tipoPago == row.tipoPago
-        );
+    calcularFilas() {
+        this.items.forEach(row => {
         if (!row.montoTotalActual) {
             row.montoTotalActual = 0;
         }
         const diferencia = row.montoTotalCaja - row.montoTotalActual;
-        this.items[elementIndex].montoTotalActual = row.montoTotalActual;
-        this.items[elementIndex].montoTotalDiferencia = diferencia;
+        row.montoTotalActual = row.montoTotalActual;
+        row.montoTotalDiferencia = diferencia;
+      });
     }
 
     getTotalCaja(): number {
@@ -152,7 +151,7 @@ export class FormularioTurnoCierreComponent implements OnInit {
     }
 
     onEditComplete(event: any) {
-        this.calcularFila(event.data);
+        this.calcularFilas();
     }
 
     public onClose(): void {

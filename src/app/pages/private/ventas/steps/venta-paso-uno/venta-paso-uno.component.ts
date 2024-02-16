@@ -172,7 +172,7 @@ export class VentaPasoUnoComponent implements OnInit {
                 this.detalle[objIndex].idTipoDescuento = res.idTipoDescuento;
                 this.detalle[objIndex].valorDescuento = res.descuentoEstablecido;
                 this.detalle[objIndex].descuento = res.descuento;
-                this.calcularFila(this.detalle[objIndex]);
+                this.calcularFilas();
             }
         });
     }
@@ -429,40 +429,45 @@ export class VentaPasoUnoComponent implements OnInit {
     }
 
     onEditComplete(event: any) {
-        this.calcularFila(event.data);
+        console.log(event);
+        this.calcularFilas();
     }
 
-    calcularFila(row: VentaDetalle) {
-        const elementIndex = this.detalle.findIndex(
+    calcularFilas() {
+        console.log('calcula filas');
+        this.detalle.forEach(row => {
+            if (!row.precio) {
+                row.precio = 0;
+            }
+            if (!row.cantidad) {
+                row.cantidad = 0;
+            }
+            if (!row.descuento) {
+                row.descuento = 0;
+            }
+            let subtotal = row.precio * row.cantidad;
+            subtotal = this.helperService.round(subtotal, adm.NUMERO_DECIMALES);
+            row.subtotal = subtotal;
+
+
+            let descuento = row.descuento;
+            if (row.idTipoDescuento ===spv.TIPO_DESCUENTO_PORCENTAJE){
+                descuento = subtotal* row.valorDescuento! /100;
+            }
+            if (row.idTipoDescuento ===spv.TIPO_DESCUENTO_MONTO){
+                descuento = row.valorDescuento! * row.cantidad;
+            }
+
+            descuento = this.helperService.round(descuento, adm.NUMERO_DECIMALES);
+            row.descuento = descuento;
+
+            //this.detalle[elementIndex].total = this.helperService.round((row.precio * row.cantidad - descuento), adm.NUMERO_DECIMALES);
+            row.total = this.helperService.round((subtotal - descuento), adm.NUMERO_DECIMALES);
+        });
+        /*const elementIndex = this.detalle.findIndex(
             (obj) => obj.codigoProducto === row.codigoProducto && obj.codigoStock===row.codigoStock
-        );
-        if (!row.precio) {
-            row.precio = 0;
-        }
-        if (!row.cantidad) {
-            row.cantidad = 0;
-        }
-        if (!row.descuento) {
-            row.descuento = 0;
-        }
-        let subtotal = row.precio * row.cantidad;
-        subtotal = this.helperService.round(subtotal, adm.NUMERO_DECIMALES);
-        this.detalle[elementIndex].subtotal = subtotal;
+        );*/
 
-
-        let descuento = row.descuento;
-        if (row.idTipoDescuento ===spv.TIPO_DESCUENTO_PORCENTAJE){
-            descuento = subtotal* row.valorDescuento! /100;
-        }
-        if (row.idTipoDescuento ===spv.TIPO_DESCUENTO_MONTO){
-            descuento = row.valorDescuento! * row.cantidad;
-        }
-
-        descuento = this.helperService.round(descuento, adm.NUMERO_DECIMALES);
-        this.detalle[elementIndex].descuento = descuento;
-
-        //this.detalle[elementIndex].total = this.helperService.round((row.precio * row.cantidad - descuento), adm.NUMERO_DECIMALES);
-        this.detalle[elementIndex].total = this.helperService.round((subtotal - descuento), adm.NUMERO_DECIMALES);
     }
 
     // producto

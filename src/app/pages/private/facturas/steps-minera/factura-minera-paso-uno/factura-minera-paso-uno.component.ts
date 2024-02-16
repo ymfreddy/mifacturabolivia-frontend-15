@@ -371,14 +371,12 @@ export class FacturaMineraPasoUnoComponent implements OnInit {
     }
 
     onEditComplete(event: any) {
-        this.calcularFila(event.data);
+        this.calcularFilas();
         this.guardarDatossession();
     }
 
-    calcularFila(row: any) {
-        const elementIndex = this.detalle.findIndex(
-            (obj) => obj.codigoProducto == row.codigoProducto
-        );
+    calcularFilas() {
+        this.detalle.forEach(row => {
         if (!row.precioUnitario) {
             row.precioUnitario = 0;
         }
@@ -390,10 +388,11 @@ export class FacturaMineraPasoUnoComponent implements OnInit {
         }
         let monto = row.precioUnitario * row.cantidad;
         monto = this.helperService.round(monto, adm.NUMERO_DECIMALES_ICE);
-        this.detalle[elementIndex].monto = monto;
+        row.monto = monto;
 
-        this.detalle[elementIndex].subTotal = this.helperService.round(((row.precioUnitario * row.cantidad) - row.montoDescuento), adm.NUMERO_DECIMALES_ICE);
+        row.subTotal = this.helperService.round(((row.precioUnitario * row.cantidad) - row.montoDescuento), adm.NUMERO_DECIMALES_ICE);
         //this.detalle[elementIndex].subTotal = this.helperService.round((monto), adm.NUMERO_DECIMALES_ICE);
+      });
     }
 
     filtrarProducto(event: any) {
