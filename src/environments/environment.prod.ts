@@ -7,7 +7,7 @@ export const environment = {
   autor: 'Fx',
   plataforma: 'web',
   version: '5.0.0',
-  paginaInicio:true,
+  paginaInicio:false,
   ventasCredito:true,
   api: {
     adm: '/adm/api/v1',
@@ -17,13 +17,13 @@ export const environment = {
   },
   whatsappUrl: 'https://api.whatsapp.com/send?phone=591',
   firebase: {
-    apiKey: "AIzaSyA1Gjace5sf3EDNs8eWbeEzYLJt_epbQWw",
-    authDomain: "notificaciones-piloto.firebaseapp.com",
-    projectId: "notificaciones-piloto",
-    storageBucket: "notificaciones-piloto.appspot.com",
-    messagingSenderId: "504852196800",
-    appId: "1:504852196800:web:ebaef769e33a9e81736c25",
-    measurementId: "G-9Y67STEG0S",
-    vapidKey: "BB5U1t0AKytE2dXlX35P9JbjzXqk02RN1MM6_3OroVsCR6M35KM1qJQXwVM3rtmmIoKzjoAk4mbAfaF0N9JDkjA"
+    apiKey: "AIzaSyDpb2pfiZvyM561-XJ3EKiXfD9t5RAvUZw",
+    authDomain: "notificaciones-produccio-63424.firebaseapp.com",
+    projectId: "notificaciones-produccio-63424",
+    storageBucket: "notificaciones-produccio-63424.appspot.com",
+    messagingSenderId: "393267250906",
+    appId: "1:393267250906:web:2dcbc064bcb5a4e6ee47e3",
+    measurementId: "G-635BR0KCBF",
+    vapidKey: "BN--mAT9EaaX7xIPqJbEkJ6uNHhN21I_wzulR0MgJFFsYNvL7HFBwbP9QjbyUxaAdr9DybPDkrKURe9Oy3N76uM"
   }
 };
