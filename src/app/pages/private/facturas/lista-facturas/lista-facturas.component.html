@@ -99,11 +99,25 @@
                 </div>
 
                 <div class="p-fluid p-formgrid grid">
-                    <div class="field col-12 md:col-2">
-                            <input formControlName="codigoCliente" type="text" pInputText id="codigoCliente" placeholder="Código Cliente" maxlength="20" #codigoCliente
+                    <div class="field col-12 md:col-6">
+                            <!-- <input formControlName="codigoCliente" type="text" pInputText id="codigoCliente" placeholder="Código Cliente" maxlength="20" #codigoCliente
                             [pKeyFilter]="blockSpace" uppercase onfocus="this.select();"
-                            />
-                            <small class="p-error block" *ngIf="clienteBusquedaForm.get('codigoCliente')?.hasError('required')">Dato requerido.</small>
+                            /> -->
+                            <label>Código o Nombre Cliente</label>
+                            <p-autoComplete formControlName="cliente" #cliente [suggestions]="listaClientesFiltrados"
+                            (completeMethod)="filtrarCliente($event)" [showEmptyMessage]="true" [maxlength]="25"
+                            emptyMessage="No existe" [forceSelection]="true"
+                            field="codigoCliente" [delay]=500 [showClear]="true" (onClear)="limpiarCliente()"
+                            placeholder="Introduzca el código o nombre del cliente" [autofocus]="true">
+                                <ng-template let-item pTemplate="item">
+                                    <div class="row">
+                                        <div class="text-wrap">
+                                            <b>{{ item.codigoCliente }}</b> - {{ item.nombre }}
+                                        </div>
+                                    </div>
+                                </ng-template>
+                            </p-autoComplete>
+                            <small class="p-error block" *ngIf="clienteBusquedaForm.get('cliente')?.hasError('required')">Dato requerido.</small>
                             <!-- <p-button icon="pi pi-search" (onClick)="loadDataCliente()" pTooltip="Buscar por Código Cliente"
                             tooltipPosition="top" styleClass="p-button" tabindex="-1"></p-button> -->
                     </div>

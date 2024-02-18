@@ -38,6 +38,9 @@ import { Estudiante } from 'src/app/shared/models/estudiante.model';
 import { EstudiantesService } from 'src/app/shared/services/estudiantes.service';
 import { BusquedaEstudiante } from 'src/app/shared/models/busqueda-estudiante.model';
 import { map } from 'rxjs/operators';
+import { BusquedaCliente } from 'src/app/shared/models/busqueda-cliente.model';
+import { Cliente } from 'src/app/shared/models/cliente.model';
+import { ClientesService } from 'src/app/shared/services/clientes.service';
 
 @Component({
     selector: 'app-lista-facturas',
@@ -85,6 +88,8 @@ export class ListaFacturasComponent implements OnInit, OnDestroy {
 
     listaEstudiantesFiltrados: Estudiante[] = [];
     listaEstudiantesSeleccionados: Estudiante[] = [];
+
+    listaClientesFiltrados: Cliente[] = [];
     constructor(
         private fb: FormBuilder,
         private facturasService: FacturasService,
@@ -99,7 +104,8 @@ export class ListaFacturasComponent implements OnInit, OnDestroy {
         private fileService:FilesService,
         private usuarioService: UsuariosService,
         private empresasService: EmpresasService,
-        private estudianteService: EstudiantesService
+        private estudianteService: EstudiantesService,
+        private clienteService: ClientesService
     ) {}
 
     ngOnInit(): void {
@@ -147,7 +153,7 @@ export class ListaFacturasComponent implements OnInit, OnDestroy {
         this.clienteBusquedaForm = this.fb.group({
             idEmpresa: this.idEmpresa ,
             nitEmisor: this.nitEmpresa ,
-            codigoCliente: [null, Validators.required],
+            cliente: [null, Validators.required],
         });
 
         this.estudianteBusquedaForm = this.fb.group({
@@ -729,6 +735,17 @@ export class ListaFacturasComponent implements OnInit, OnDestroy {
         return this.sessionService.isSuperAdmin();
     }
 
+    getTotalMontoTotalSujetoIva(): number {
+        if (this.items) {
+            const sum = this.items
+                .map((t) => t.montoTotalSujetoIva)
+                .reduce((acc, value) => acc + value, 0);
+            return this.helperService.round(sum,adm.NUMERO_DECIMALES);
+        }
+
+        return 0;
+    }
+
     cambioEmpresa(event: any) {
         const empresaAux = this.listaEmpresas.find(x=>x.id===event.value)!;
         this.nitEmpresa = empresaAux.nit;
@@ -743,17 +760,6 @@ export class ListaFacturasComponent implements OnInit, OnDestroy {
         this.criteriosBusquedaForm.controls['codigoDocumentoSector'].setValue(null);
         this.cargarSucursales();
         this.cargarUsuarios();
-    }
-
-    getTotalMontoTotalSujetoIva(): number {
-        if (this.items) {
-            const sum = this.items
-                .map((t) => t.montoTotalSujetoIva)
-                .reduce((acc, value) => acc + value, 0);
-            return this.helperService.round(sum,adm.NUMERO_DECIMALES);
-        }
-
-        return 0;
     }
 
     cambioEmpresa2(event: any) {
@@ -778,17 +784,19 @@ export class ListaFacturasComponent implements OnInit, OnDestroy {
             return;
         }
 
-        if (this.clienteBusquedaForm.controls['codigoCliente'].value.trim().length==0) {
-            this.informationService.showWarning('Debe introducir un dato válido');
-            return;
+        if (this.clienteBusquedaForm.controls['cliente'].value==null) {
+             this.informationService.showWarning('Debe introducir un cliente válido');
+             return;
         }
 
+        const cliente: Cliente = this.clienteBusquedaForm.controls['cliente'].value
         this.blockedPanel = true;
         const criterios: any = {
             idEmpresa: this.clienteBusquedaForm.controls['idEmpresa'].value,
             nitEmisor: this.clienteBusquedaForm.controls['nitEmisor'].value,
-            codigoCliente: this.clienteBusquedaForm.controls['codigoCliente'].value
+            codigoCliente: cliente.codigoCliente
         };
+
         this.facturasService
                 .get(criterios)
                 .subscribe({
@@ -860,7 +868,7 @@ export class ListaFacturasComponent implements OnInit, OnDestroy {
 
     buscarEstudiante(termino: string) {
         const criteriosBusqueda: BusquedaEstudiante = {
-            idEmpresa: this.sessionService.getSessionEmpresaId(),
+            idEmpresa: this.idEmpresa,
             termino: termino.trim(),
             cantidadRegistros: 10,
             resumen: true,
@@ -901,5 +909,43 @@ export class ListaFacturasComponent implements OnInit, OnDestroy {
 
     facturaEducativoAsignada(){
         return this.sessionService.getFacturaEducativoAsignada();
+    }
+
+    filtrarCliente(event: any) {
+        //in a real application, make a request to a remote url with the query and return filtered results, for demo we filter at client side
+        let query = event.query;
+        this.buscarCliente(query);
+    }
+
+    buscarCliente(termino: string) {
+        const criteriosBusqueda: BusquedaCliente = {
+            idEmpresa: this.idEmpresa,
+            termino: termino.trim(),
+            cantidadRegistros: 10,
+            resumen: true,
+        };
+
+        this.clienteService.get(criteriosBusqueda).subscribe({
+            next: (res) => {
+                if (res.content.length == 0) {
+                    this.listaClientesFiltrados = [];
+                    return;
+                }
+                this.listaClientesFiltrados = res.content;
+                console.log(this.listaClientesFiltrados);
+            },
+            error: (err) => {
+                this.informationService.showError(err.error.message);
+            },
+        });
+    }
+
+    seleccionarCliente(event: any) {
+        console.log(event);
+        //this.clienteBusquedaForm.patchValue({ codigoCliente: event?.codigoCliente });
+    }
+
+    limpiarCliente() {
+        this.clienteBusquedaForm.patchValue({ cliente: null });
     }
 }
