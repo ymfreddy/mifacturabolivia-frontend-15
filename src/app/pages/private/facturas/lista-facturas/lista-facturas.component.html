@@ -123,8 +123,8 @@
                     </div>
                 </div>
                  <!-- <p-divider type="dashed"></p-divider> -->
-                 <div class="flex justify-content-end flex-wrap">
-                    <p-button label="Buscar" icon="pi pi-search" (onClick)="loadDataCliente()" ></p-button>
+                <div class="flex justify-content-end flex-wrap">
+                    <p-splitButton label="Buscar" icon="pi pi-search" (onClick)="loadDataCliente(0)" [model]="opcionesClientes"></p-splitButton>
                 </div>
             </form>
         </p-tabPanel>

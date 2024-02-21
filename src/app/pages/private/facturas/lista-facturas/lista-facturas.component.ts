@@ -74,6 +74,7 @@ export class ListaFacturasComponent implements OnInit, OnDestroy {
     blockedPanel: boolean = false;
     opciones!: MenuItem[];
     opcionesEstudiantes!: MenuItem[];
+    opcionesClientes!: MenuItem[];
     asociaciones: MenuItem[] = [];
     facturaSeleccionada!: FacturaResumen;
     itemsMenuFactura!: MenuItem[];
@@ -662,6 +663,16 @@ export class ListaFacturasComponent implements OnInit, OnDestroy {
                 },
             }
         ];
+
+        this.opcionesClientes = [
+            {
+                label: 'Reporte Clientes',
+                icon: 'pi pi-file-pdf',
+                command: () => {
+                    this.reporteFacturasClientes();
+                },
+            }
+        ];
     }
 
     canbioSucursal(event: any) {
@@ -778,44 +789,12 @@ export class ListaFacturasComponent implements OnInit, OnDestroy {
         this.estudianteBusquedaForm.controls['idEmpresa'].setValue(empresaAux.id);
     }
 
-    loadDataCliente(): void {
-        if (!this.clienteBusquedaForm.valid) {
-            this.informationService.showWarning('Verifique los datos');
-            return;
-        }
-
-        if (this.clienteBusquedaForm.controls['cliente'].value==null) {
-             this.informationService.showWarning('Debe introducir un cliente válido');
-             return;
-        }
-
-        const cliente: Cliente = this.clienteBusquedaForm.controls['cliente'].value
-        this.blockedPanel = true;
-        const criterios: any = {
-            idEmpresa: this.clienteBusquedaForm.controls['idEmpresa'].value,
-            nitEmisor: this.clienteBusquedaForm.controls['nitEmisor'].value,
-            codigoCliente: cliente.codigoCliente
-        };
-
-        this.facturasService
-                .get(criterios)
-                .subscribe({
-                    next: (res) => {
-                        this.sessionService.setBusquedaFactura(criterios);
-                        this.items = res.content;
-                        this.informationService.showInfo(res.message);
-                        this.first = 0;
-                        this.blockedPanel = false;
-                    },
-                    error: (err) => {
-                        this.informationService.showError(err.error.message);
-                        this.blockedPanel = false;
-                    },
-                });
-    }
-
     reporteFacturasEstudiantes() {
         this.loadDataEstudiante(1);
+    }
+
+    reporteFacturasClientes() {
+        this.loadDataCliente(1);
     }
 
     loadDataEstudiante(reporte:number): void {
@@ -850,6 +829,50 @@ export class ListaFacturasComponent implements OnInit, OnDestroy {
                         this.first = 0;
                         this.items = res.content;
                         this.informationService.showInfo(res.message);
+                        this.blockedPanel = false;
+                    },
+                    error: (err) => {
+                        this.informationService.showError(err.error.message);
+                        this.blockedPanel = false;
+                    },
+                });
+        }
+    }
+
+    loadDataCliente(reporte:number): void {
+        if (!this.clienteBusquedaForm.valid) {
+            this.informationService.showWarning('Verifique los datos');
+            return;
+        }
+
+        if (this.clienteBusquedaForm.controls['cliente'].value==null) {
+             this.informationService.showWarning('Debe introducir un cliente válido');
+             return;
+        }
+
+        const cliente: Cliente = this.clienteBusquedaForm.controls['cliente'].value
+        this.blockedPanel = true;
+        const criterios: any = {
+            idEmpresa: this.clienteBusquedaForm.controls['idEmpresa'].value,
+            nitEmisor: this.clienteBusquedaForm.controls['nitEmisor'].value,
+            codigoCliente: cliente.codigoCliente
+        };
+
+        if (reporte>0) {
+            const fileName = `facturas-clientes-${this.nitEmpresa}.pdf`;
+            this.utilidadesService.getReporteFacturasClientes(criterios).pipe(delay(1000)).subscribe((blob: Blob): void => {
+                    this.fileService.printFile(blob, fileName, false);
+                    this.blockedPanel = false;
+                });
+        } else {
+        this.facturasService
+                .get(criterios)
+                .subscribe({
+                    next: (res) => {
+                        this.sessionService.setBusquedaFactura(criterios);
+                        this.items = res.content;
+                        this.informationService.showInfo(res.message);
+                        this.first = 0;
                         this.blockedPanel = false;
                     },
                     error: (err) => {
