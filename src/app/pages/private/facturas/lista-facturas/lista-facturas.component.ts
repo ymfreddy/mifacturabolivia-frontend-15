@@ -271,6 +271,7 @@ export class ListaFacturasComponent implements OnInit, OnDestroy {
             codigoDocumentoSector: this.criteriosBusquedaForm.controls['codigoDocumentoSector'].value,
             codigosEstados: (!estados || estados.length==0) ?'':estados.join(','),
             usuario: this.criteriosBusquedaForm.controls['usuario'].value,
+            educativo: this.facturaEducativoAsignada()
         };
         return criterios;
 
@@ -855,7 +856,8 @@ export class ListaFacturasComponent implements OnInit, OnDestroy {
         const criterios: any = {
             idEmpresa: this.clienteBusquedaForm.controls['idEmpresa'].value,
             nitEmisor: this.clienteBusquedaForm.controls['nitEmisor'].value,
-            codigoCliente: cliente.codigoCliente
+            codigoCliente: cliente.codigoCliente,
+            educativo: this.facturaEducativoAsignada()
         };
 
         if (reporte>0) {

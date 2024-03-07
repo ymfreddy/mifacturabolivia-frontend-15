@@ -12,5 +12,6 @@ export interface BusquedaFactura {
     fechaFin: string;
     cantidad?: number;
     usuario: string;
+    educativo: boolean;
 }
 
