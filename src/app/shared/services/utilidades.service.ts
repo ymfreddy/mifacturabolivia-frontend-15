@@ -88,6 +88,11 @@ export class UtilidadesService {
         return this.httpClient.get<any>(apiUrl, this.httpOptions);
     }
 
+    getCierreTurno(idTurno: number): Observable<any> {
+        const apiUrl = `${environment.api.util}/utilidades/pdfs/turnos/${idTurno}`;
+        return this.httpClient.get<any>(apiUrl, this.httpOptions);
+    }
+
     getReciboPago(idPago: number): Observable<any> {
         const apiUrl = `${environment.api.util}/utilidades/pdfs/ventas/pagos/${idPago}`;
         return this.httpClient.get<any>(apiUrl, this.httpOptions);

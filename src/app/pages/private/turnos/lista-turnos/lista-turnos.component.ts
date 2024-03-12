@@ -5,7 +5,7 @@ import { Turno } from 'src/app/shared/models/turno.model';
 import { TurnosService } from 'src/app/shared/services/turnos.service';
 import { SessionService } from 'src/app/shared/security/session.service';
 import { DialogService } from 'primeng/dynamicdialog';
-import { Subject } from 'rxjs';
+import { Subject, delay } from 'rxjs';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Parametrica } from 'src/app/shared/models/parametrica.model';
 import { ParametricasService } from 'src/app/shared/services/parametricas.service';
@@ -18,6 +18,9 @@ import { adm } from 'src/app/shared/constants/adm';
 import { Router } from '@angular/router';
 import { Empresa } from 'src/app/shared/models/empresa.model';
 import { EmpresasService } from 'src/app/shared/services/empresas.service';
+import { spv } from 'src/app/shared/constants/spv';
+import { UtilidadesService } from 'src/app/shared/services/utilidades.service';
+import { FilesService } from 'src/app/shared/helpers/files.service';
 
 @Component({
     selector: 'app-lista-turnos',
@@ -46,7 +49,9 @@ export class ListaTurnosComponent implements OnInit, OnDestroy {
         private parametricasService: ParametricasService,
         private sucursalesService: SucursalesService,
         private router: Router,
-        private empresasService: EmpresasService
+        private empresasService: EmpresasService,
+        private utilidadesService:UtilidadesService,
+        private fileService: FilesService
     ) {}
 
     ngOnInit(): void {
@@ -131,6 +136,22 @@ export class ListaTurnosComponent implements OnInit, OnDestroy {
                 this.loadData();
             }
         });
+    }
+
+    descargar(item: Turno) {
+        this.blockedPanel = true;
+        const fileName = `cierre-turno-${item.usuario}.pdf`;
+        this.utilidadesService
+            .getCierreTurno(item.id)
+            .pipe(delay(1000))
+            .subscribe((blob: Blob): void => {
+                this.fileService.printFile(blob, fileName, false);
+                this.blockedPanel = false;
+            });
+    }
+
+    esDescargable(idEstadoTurno:number){
+        return idEstadoTurno===spv.ESTADO_TURNO_CERRADO
     }
 
     open() {

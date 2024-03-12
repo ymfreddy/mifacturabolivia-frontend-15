@@ -113,6 +113,8 @@
             <td>{{item.observaciones}}</td>
             <td style="width:5rem; min-width:5rem;">
                 <div class="flex">
+                    <button pButton pRipple icon="pi pi-cloud-download" class="p-button-rounded p-button-primary mr-2"
+                            (click)="descargar(item)" [disabled]="!esDescargable(item.idEstadoTurno)"></button>
                     <button pButton pRipple icon="pi pi-money-bill" class="p-button-rounded p-button mr-2"
                         (click)="closeItem(item)" [disabled]="item.idEstadoTurno!=32"></button>
                 </div>

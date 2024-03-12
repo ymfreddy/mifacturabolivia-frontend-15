@@ -65,7 +65,7 @@
                         <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-primary mr-2"
                             (click)="editItem(item)"></button>
                         <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger"
-                            (click)="deleteItem(item)"></button>
+                            (click)="deleteItem(item)" [disabled]="!esSuperAdm()"></button>
                     </div>
                 </td>
             </tr>

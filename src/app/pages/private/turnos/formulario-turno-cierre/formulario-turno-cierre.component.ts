@@ -11,6 +11,9 @@ import { TurnosService } from 'src/app/shared/services/turnos.service';
 import { PagosService } from 'src/app/shared/services/pagos.service';
 import { ConfirmationService } from 'primeng/api';
 import { SessionService } from 'src/app/shared/security/session.service';
+import { delay } from 'rxjs';
+import { UtilidadesService } from 'src/app/shared/services/utilidades.service';
+import { FilesService } from 'src/app/shared/helpers/files.service';
 
 @Component({
     selector: 'app-formulario-turno-cierre',
@@ -32,7 +35,9 @@ export class FormularioTurnoCierreComponent implements OnInit {
         private pagoService: PagosService,
         private turnoService: TurnosService,
         private confirmationService: ConfirmationService,
-        private sessionService: SessionService
+        private sessionService: SessionService,
+        private utilidadesService: UtilidadesService,
+        private fileService :FilesService
     ) {}
 
     ngOnInit(): void {
@@ -45,9 +50,9 @@ export class FormularioTurnoCierreComponent implements OnInit {
                         idTurno: element.idTurno,
                         codigoTipoPago: element.codigoTipoPago,
                         tipoPago: element.tipoPago,
-                        montoTotalCaja: element.importe,
-                        montoTotalActual: 0,
-                        montoTotalDiferencia: element.importe,
+                        montoCaja: element.importe,
+                        montoActual: 0,
+                        montoDiferencia: element.importe,
                     };
                     this.items.push(detalle);
                 });
@@ -65,19 +70,19 @@ export class FormularioTurnoCierreComponent implements OnInit {
 
     calcularFilas() {
         this.items.forEach(row => {
-        if (!row.montoTotalActual) {
-            row.montoTotalActual = 0;
+        if (!row.montoActual) {
+            row.montoActual = 0;
         }
-        const diferencia = row.montoTotalCaja - row.montoTotalActual;
-        row.montoTotalActual = row.montoTotalActual;
-        row.montoTotalDiferencia = diferencia;
+        const diferencia = row.montoCaja - row.montoActual;
+        row.montoActual = row.montoActual;
+        row.montoDiferencia = diferencia;
       });
     }
 
     getTotalCaja(): number {
         if (this.items) {
             return this.items
-                .map((t) => t.montoTotalCaja)
+                .map((t) => t.montoCaja)
                 .reduce((acc, value) => acc + parseFloat(value.toString()), 0);
         }
 
@@ -87,7 +92,7 @@ export class FormularioTurnoCierreComponent implements OnInit {
     getTotalActual(): number {
         if (this.items) {
             return this.items
-                .map((t) => t.montoTotalActual)
+                .map((t) => t.montoActual)
                 .reduce((acc, value) => acc + parseFloat(value.toString()), 0);
         }
 
@@ -97,7 +102,7 @@ export class FormularioTurnoCierreComponent implements OnInit {
     getTotalDiferencia(): number {
         if (this.items) {
             return this.items
-                .map((t) => t.montoTotalDiferencia)
+                .map((t) => t.montoDiferencia)
                 .reduce((acc, value) => acc + parseFloat(value.toString()), 0);
         }
         return 0;
@@ -135,6 +140,8 @@ export class FormularioTurnoCierreComponent implements OnInit {
                             ) {
                                 this.sessionService.setTurno(0);
                             }
+                            // imprimir
+                            this.descargar();
 
                             this.dialogRef.close(turnoCierre);
                             this.submited = false;
@@ -160,5 +167,15 @@ export class FormularioTurnoCierreComponent implements OnInit {
 
     public onSave(): void {
         this.closeClicked = false;
+    }
+
+    descargar() {
+        const fileName = `cierre-turno-${this.item.usuario}.pdf`;
+        this.utilidadesService
+            .getCierreTurno(this.item.id)
+            .pipe(delay(1000))
+            .subscribe((blob: Blob): void => {
+                this.fileService.printFile(blob, fileName, false);
+            });
     }
 }

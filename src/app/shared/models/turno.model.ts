@@ -23,9 +23,9 @@ export interface TurnoDetalle {
     idTurno: number;
     codigoTipoPago: number;
     tipoPago: string;
-    montoTotalCaja: number;
-    montoTotalActual: number;
-    montoTotalDiferencia: number;
+    montoCaja: number;
+    montoActual: number;
+    montoDiferencia: number;
   }
 
   export interface TurnoCierre {

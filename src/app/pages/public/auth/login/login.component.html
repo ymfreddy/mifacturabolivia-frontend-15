@@ -8,12 +8,12 @@
             <div class="h-full w-full m-0 py-7 px-4" style="border-radius:53px; background: linear-gradient(180deg, var(--surface-50) 38.9%, var(--surface-0));">
                 <div class="text-center mb-5">
                     <img src="assets/informacion/logos/logo.png" alt="logo" height="50" class="mb-3">
-                    <div class="text-900 text-3xl font-medium mb-3">Login</div>
+                    <div class="text-900 text-3xl font-medium mb-3">Empezar Pruebas</div>
                     <span class="text-600 font-medium">Introduzca sus credenciales para ingresar</span>
                 </div>
                 <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
                     <div class="w-full md:w-10 mx-auto">
-                        <label for="username1" class="block text-900 text-xl font-medium mb-2">Usuario o CI</label>
+                        <label for="username1" class="block text-900 text-xl font-medium mb-2">Usuario</label>
                         <input id="username1" formControlName="username" type="text" placeholder="usuario" maxlength="20" pInputText
                             class="w-full mb-3" style="padding:1rem;">
                             <!-- <small class="p-error block" *ngIf="userForm.get('username')?.hasError('required')">Dato requerido.</small> -->

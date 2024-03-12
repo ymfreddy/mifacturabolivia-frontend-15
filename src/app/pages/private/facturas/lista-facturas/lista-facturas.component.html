@@ -216,13 +216,13 @@
                 </th>
                 <th pSortableColumn="puntoVenta">Punto Venta<p-sortIcon field="puntoVenta"></p-sortIcon>
                 </th>
-                <!-- <th pSortableColumn="codigoRecepcion">Código Recepcion<p-sortIcon field="codigoRecepcion"></p-sortIcon>
-                </th> -->
                 <th pSortableColumn="numeroFactura">Número Factura<p-sortIcon field="numeroFactura"></p-sortIcon>
                 </th>
                 <th pSortableColumn="codigoCliente">Código Cliente<p-sortIcon field="codigoCliente"></p-sortIcon>
                 </th>
                 <th pSortableColumn="nombreRazonSocial">Razon Social<p-sortIcon field="nombreRazonSocial"></p-sortIcon>
+                </th>
+                <th *ngIf="facturaEducativoAsignada()" pSortableColumn="nombreEstudiante">Estudiante<p-sortIcon field="nombreEstudiante"></p-sortIcon>
                 </th>
                 <th pSortableColumn="subtotal">Subtotal<p-sortIcon field="subtotal"></p-sortIcon>
                 </th>
@@ -251,10 +251,10 @@
                 <td>{{item.fechaEmision  | formatoFechaHora }}</td>
                 <td>{{item.sucursal}}</td>
                 <td>{{item.puntoVenta}}</td>
-                <!-- <td>{{item.codigoRecepcion}}</td> -->
                 <td>{{item.numeroFactura}}</td>
                 <td>{{item.codigoCliente}}</td>
                 <td>{{item.nombreRazonSocial}}</td>
+                <td *ngIf="facturaEducativoAsignada()">{{item.nombreEstudiante}}</td>
                 <td class="text-right">{{item.subtotal | formatoDecimal}}</td>
                 <td class="text-right">{{item.descuentoAdicional | formatoDecimal}}</td>
                 <td class="text-right">{{item.montoTotal | formatoDecimal}}</td>
@@ -280,7 +280,8 @@
         </ng-template>
         <ng-template pTemplate="footer">
             <tr>
-                <td colspan="11" class="text-right">TOTAL</td>
+                <td *ngIf="!facturaEducativoAsignada()" colspan="11" class="text-right">TOTAL</td>
+                <td *ngIf="facturaEducativoAsignada()" colspan="12" class="text-right">TOTAL</td>
                 <td class="text-right">{{getTotalMontoTotalSujetoIva() | formatoDecimal}}</td>
                 <td colspan="4" class="text-right"></td>
             </tr>
