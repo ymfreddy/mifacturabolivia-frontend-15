@@ -18,7 +18,7 @@ import { HelperService } from 'src/app/shared/helpers/helper.service';
 import { MenuItem } from 'primeng/api';
 import * as printJS from 'print-js';
 import { Router } from '@angular/router';
-import { BusquedaFactura } from 'src/app/shared/models/busqueda-factura.model';
+import { BusquedaFactura, BusquedaFacturaReporte } from 'src/app/shared/models/busqueda-factura.model';
 import { DatePipe } from '@angular/common';
 import { WhatsappFacturaComponent } from 'src/app/components/whatsapp-factura/whatsapp-factura.component';
 import { Asociacion } from 'src/app/shared/models/session-usuario.model';
@@ -91,6 +91,8 @@ export class ListaFacturasComponent implements OnInit, OnDestroy {
     listaEstudiantesSeleccionados: Estudiante[] = [];
 
     listaClientesFiltrados: Cliente[] = [];
+
+    verDescargaArchivo=false;
     constructor(
         private fb: FormBuilder,
         private facturasService: FacturasService,
@@ -170,11 +172,11 @@ export class ListaFacturasComponent implements OnInit, OnDestroy {
         }
 
         if (this.busquedaMemoria) {
-            this.loadData(0);
+            this.loadData(null);
         }
     }
 
-    loadData(reporte:number): void {
+    loadData(reporte:BusquedaFacturaReporte|null): void {
         if (!this.criteriosBusquedaForm.valid) {
             this.informationService.showWarning('Verifique los datos');
             return;
@@ -220,17 +222,22 @@ export class ListaFacturasComponent implements OnInit, OnDestroy {
 
         this.blockedPanel = true;
         const criterios = this.getBusquedaCriterios();
-        if (reporte>0) {
-            if (reporte==1){
-                const fileName = `facturas-${this.nitEmpresa}.pdf`;
-                this.utilidadesService.getReporteFacturas(criterios).pipe(delay(1000)).subscribe((blob: Blob): void => {
+        if (reporte) {
+            const criteriosReporte:any = {
+                ...criterios,
+                tipoReporte:reporte.tipoReporte,
+            }
+
+            if (reporte.numero==1){
+                const fileName = `facturas-${this.nitEmpresa}.${reporte.tipoReporte}`;
+                this.utilidadesService.getReporteFacturas(criteriosReporte).pipe(delay(1000)).subscribe((blob: Blob): void => {
                         this.fileService.printFile(blob, fileName, false);
                         this.blockedPanel = false;
                     });
             }
-            if (reporte==2){
-                const fileName = `facturas-metodos-pago-${this.nitEmpresa}.pdf`;
-                this.utilidadesService.getReporteFacturasMetodosPago(criterios).pipe(delay(1000)).subscribe((blob: Blob): void => {
+            if (reporte.numero==2){
+                const fileName = `facturas-metodos-pago-${this.nitEmpresa}.${reporte.tipoReporte}`;
+                this.utilidadesService.getReporteFacturasMetodosPago(criteriosReporte).pipe(delay(1000)).subscribe((blob: Blob): void => {
                         this.fileService.printFile(blob, fileName, false);
                         this.blockedPanel = false;
                     });
@@ -300,12 +307,20 @@ export class ListaFacturasComponent implements OnInit, OnDestroy {
         ref.onClose.subscribe((res) => {});
     }
 
-    reporteFacturas() {
-        this.loadData(1);
+    reporteFacturas(tipoArchivo:string) {
+        const reporte: BusquedaFacturaReporte = {
+            numero: 1,
+            tipoReporte: tipoArchivo
+        }
+        this.loadData(reporte);
     }
 
-    reporteFacturasMetodoPago() {
-        this.loadData(2);
+    reporteFacturasMetodoPago(tipoArchivo:string) {
+        const reporte: BusquedaFacturaReporte = {
+            numero: 2,
+            tipoReporte: tipoArchivo
+        }
+        this.loadData(reporte);
     }
 
     enviarContigencia() {
@@ -316,7 +331,7 @@ export class ListaFacturasComponent implements OnInit, OnDestroy {
         });
         ref.onClose.subscribe((res) => {
             if (res) {
-                this.loadData(0);
+                this.loadData(null);
             }
         });
     }
@@ -356,7 +371,7 @@ export class ListaFacturasComponent implements OnInit, OnDestroy {
             (res) => {
                 this.informationService.showSuccess(res.message);
                 this.blockedPanel = false;
-                this.loadData(0);
+                this.loadData(null);
             },
             (err) => {
                 this.informationService.showError(err.error.message);
@@ -407,7 +422,7 @@ export class ListaFacturasComponent implements OnInit, OnDestroy {
         });
         ref.onClose.subscribe((res) => {
             if (res) {
-                this.loadData(0);
+                this.loadData(null);
             }
         });
     }
@@ -502,13 +517,13 @@ export class ListaFacturasComponent implements OnInit, OnDestroy {
         });
         ref.onClose.subscribe((res) => {
             if (res) {
-                this.loadData(0);
+                this.loadData(null);
             }
         });
     }
 
     public onSubmit(): void {
-        this.loadData(0);
+        this.loadData(null);
     }
 
     onGlobalFilter(table: Table, event: Event) {
@@ -640,39 +655,76 @@ export class ListaFacturasComponent implements OnInit, OnDestroy {
 
         this.opciones = [
             {
-                label: 'Reporte General',
+                label: 'Reporte General Pdf',
                 icon: 'pi pi-file-pdf',
                 command: () => {
-                    this.reporteFacturas();
+                    this.reporteFacturas('pdf');
                 },
             },
             {
-                label: 'Reporte Por Métodos de Pago',
+                label: 'Reporte Por Métodos de Pago Pdf',
                 icon: 'pi pi-file-pdf',
                 command: () => {
-                    this.reporteFacturasMetodoPago();
+                    this.reporteFacturasMetodoPago('pdf');
+                },
+            },
+            {
+                separator:true
+            },
+            {
+                label: 'Reporte General Excel',
+                icon: 'pi pi-file-excel',
+                command: () => {
+                    this.reporteFacturas('xlsx');
+                },
+            },
+            {
+                label: 'Reporte Por Métodos de Pago Excel',
+                icon: 'pi pi-file-excel',
+                command: () => {
+                    this.reporteFacturasMetodoPago('xlsx');
                 },
             },
         ];
 
         this.opcionesEstudiantes = [
             {
-                label: 'Reporte Estudiantes',
+                label: 'Reporte Estudiantes Pdf',
                 icon: 'pi pi-file-pdf',
                 command: () => {
-                    this.reporteFacturasEstudiantes();
+                    this.reporteFacturasEstudiantes('pdf');
                 },
-            }
+            },
+            {
+                separator:true
+            },
+            {
+                label: 'Reporte Estudiantes Excel',
+                icon: 'pi pi-file-excel',
+                command: () => {
+                    this.reporteFacturasEstudiantes('xlsx');
+                },
+            },
         ];
 
         this.opcionesClientes = [
             {
-                label: 'Reporte Clientes',
+                label: 'Reporte Clientes Pdf',
                 icon: 'pi pi-file-pdf',
                 command: () => {
-                    this.reporteFacturasClientes();
+                    this.reporteFacturasClientes('pdf');
                 },
-            }
+            },
+            {
+                separator:true
+            },
+            {
+                label: 'Reporte Clientes Excel',
+                icon: 'pi pi-file-excel',
+                command: () => {
+                    this.reporteFacturasClientes('xlsx');
+                },
+            },
         ];
     }
 
@@ -790,15 +842,23 @@ export class ListaFacturasComponent implements OnInit, OnDestroy {
         this.estudianteBusquedaForm.controls['idEmpresa'].setValue(empresaAux.id);
     }
 
-    reporteFacturasEstudiantes() {
-        this.loadDataEstudiante(1);
+    reporteFacturasEstudiantes(tipoArchivo :string) {
+        const reporte: BusquedaFacturaReporte = {
+            numero: 1,
+            tipoReporte: tipoArchivo
+        }
+        this.loadDataEstudiante(reporte);
     }
 
-    reporteFacturasClientes() {
-        this.loadDataCliente(1);
+    reporteFacturasClientes(tipoArchivo :string) {
+        const reporte: BusquedaFacturaReporte = {
+            numero: 1,
+            tipoReporte: tipoArchivo
+        }
+        this.loadDataCliente(reporte);
     }
 
-    loadDataEstudiante(reporte:number): void {
+    loadDataEstudiante(reporte:BusquedaFacturaReporte|null): void {
         if (!this.estudianteBusquedaForm.valid) {
             this.informationService.showWarning('Verifique los datos');
             return;
@@ -814,10 +874,13 @@ export class ListaFacturasComponent implements OnInit, OnDestroy {
         };
 
         console.log(criterios);
-
-        if (reporte>0) {
-                const fileName = `facturas-estudiantes-${this.nitEmpresa}.pdf`;
-                this.utilidadesService.getReporteFacturasEstudiantes(criterios).pipe(delay(1000)).subscribe((blob: Blob): void => {
+        if (reporte) {
+            const criteriosReporte:any = {
+                ...criterios,
+                tipoReporte:reporte.tipoReporte,
+            }
+               const fileName = `facturas-estudiantes-${this.nitEmpresa}.${reporte.tipoReporte}`;
+                this.utilidadesService.getReporteFacturasEstudiantes(criteriosReporte).pipe(delay(1000)).subscribe((blob: Blob): void => {
                         this.fileService.printFile(blob, fileName, false);
                         this.blockedPanel = false;
                     });
@@ -840,7 +903,7 @@ export class ListaFacturasComponent implements OnInit, OnDestroy {
         }
     }
 
-    loadDataCliente(reporte:number): void {
+    loadDataCliente(reporte:BusquedaFacturaReporte|null): void {
         if (!this.clienteBusquedaForm.valid) {
             this.informationService.showWarning('Verifique los datos');
             return;
@@ -860,9 +923,13 @@ export class ListaFacturasComponent implements OnInit, OnDestroy {
             educativo: this.facturaEducativoAsignada()
         };
 
-        if (reporte>0) {
-            const fileName = `facturas-clientes-${this.nitEmpresa}.pdf`;
-            this.utilidadesService.getReporteFacturasClientes(criterios).pipe(delay(1000)).subscribe((blob: Blob): void => {
+        if (reporte) {
+            const criteriosReporte:any = {
+                ...criterios,
+                tipoReporte:reporte.tipoReporte,
+            }
+            const fileName = `facturas-clientes-${this.nitEmpresa}.${reporte.tipoReporte}`;
+            this.utilidadesService.getReporteFacturasClientes(criteriosReporte).pipe(delay(1000)).subscribe((blob: Blob): void => {
                     this.fileService.printFile(blob, fileName, false);
                     this.blockedPanel = false;
                 });
@@ -973,4 +1040,7 @@ export class ListaFacturasComponent implements OnInit, OnDestroy {
     limpiarCliente() {
         this.clienteBusquedaForm.patchValue({ cliente: null });
     }
+
+    decargarPdf(){}
+    decargarExcel(){}
 }

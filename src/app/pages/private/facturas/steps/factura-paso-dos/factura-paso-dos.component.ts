@@ -11,7 +11,7 @@ import { SessionService } from 'src/app/shared/security/session.service';
 import { FacturasService } from 'src/app/shared/services/facturas.service';
 import { ParametricasSfeService } from 'src/app/shared/services/parametricas-sfe.service';
 import { Cabecera, Factura, FacturaRecepcion } from 'src/app/shared/models/factura-recepcion.model';
-import { BusquedaCliente } from 'src/app/shared/models/busqueda-cliente.model';
+import { BusquedaCliente, BusquedaClienteEducativo } from 'src/app/shared/models/busqueda-cliente.model';
 import { ClientesService } from 'src/app/shared/services/clientes.service';
 import { FormularioClienteComponent } from '../../../clientes/formulario-cliente/formulario-cliente.component';
 import { DialogService } from 'primeng/dynamicdialog';
@@ -21,7 +21,6 @@ import { AutoComplete } from 'primeng/autocomplete';
 import { UtilidadesService } from 'src/app/shared/services/utilidades.service';
 import { FilesService } from 'src/app/shared/helpers/files.service';
 import { delay } from 'rxjs';
-import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-factura-paso-dos',
@@ -103,6 +102,19 @@ export class FacturaPasoDosComponent implements OnInit {
             cantidadMenores : [this.item?.factura?.cabecera?.cantidadMenores],
             fechaIngresoHospedaje : [this.item?.factura?.cabecera?.fechaIngresoHospedaje]
         });
+        // si es sector educativo cargar el ultimo cliente
+        if (this.esFacturaEducativo() && !this.item?.factura?.cabecera?.cliente){
+            const busqueda:BusquedaClienteEducativo={
+                idEmpresa:this.sessionService.getSessionEmpresaId(),
+                idEstudiante:this.item?.factura?.cabecera.idEstudiante!
+            }
+            this.clienteService.getUltimoClienteSectorEducativo(busqueda).subscribe({
+                next: (res) => {
+                    this.seleccionarCliente(res.content);
+                },
+                error: (err) => {},
+            });
+        }
     }
 
     ngAfterViewInit(): void {
@@ -352,6 +364,7 @@ export class FacturaPasoDosComponent implements OnInit {
     }
 
     seleccionarCliente(event: any) {
+        this.itemForm.patchValue({ cliente: event });
         this.itemForm.patchValue({ codigoCliente: event?.codigoCliente });
         this.itemForm.patchValue({ nombreCliente: event?.nombre });
         this.itemForm.patchValue({ emailCliente: event?.email });
@@ -417,6 +430,10 @@ export class FacturaPasoDosComponent implements OnInit {
 
     esFacturaAlquiler(){
         return this.item?.asociacion.codigoDocumentoSector===sfe.CODIGO_DOCUMENTO_SECTOR_ALQUILERES;
+    }
+
+    esFacturaEducativo(){
+        return this.item?.asociacion.codigoDocumentoSector===sfe.CODIGO_DOCUMENTO_SECTOR_EDUCATIVO;
     }
 
     imprimir(item: any) {

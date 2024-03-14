@@ -15,3 +15,8 @@ export interface BusquedaClientePaginado {
 	tipoOrden: number|1|-1;
     filtro?: string ;
 }
+
+export interface BusquedaClienteEducativo {
+    idEmpresa?: number;
+    idEstudiante?: number;
+}

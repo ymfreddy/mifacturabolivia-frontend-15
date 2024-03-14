@@ -5,7 +5,7 @@
         <div class="field col-12 md:col-4">
             <p-dropdown appendTo="body" [(ngModel)]="nitEmpresa" [ngModelOptions]="{standalone: true}" id="nitEmpresa"
                 [autofocus]="true" [options]="listaEmpresas" optionLabel="nombre" optionValue="nit"
-                (onChange)="cambioEmpresa($event)" placeholder="Seleccione una empresa"></p-dropdown>
+                (onChange)="cambioEmpresa($event)" placeholder="Seleccione una empresa" [filter]="true" filterBy="nombre"></p-dropdown>
         </div>
         <div class="field col-12 md:col-2">
             <button pButton pRipple label="Cambio Emision Global" icon="pi pi-directions" class="p-button-primary mr-2"

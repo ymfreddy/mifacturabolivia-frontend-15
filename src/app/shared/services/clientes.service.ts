@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Cliente } from '../models/cliente.model';
 import { HelperService } from 'src/app/shared/helpers/helper.service';
-import { BusquedaCliente } from '../models/busqueda-cliente.model';
+import { BusquedaCliente, BusquedaClienteEducativo } from '../models/busqueda-cliente.model';
 import { BusquedaPaginada } from '../models/busqueda-paginada.model';
 
 @Injectable({
@@ -29,6 +29,13 @@ export class ClientesService {
 
   getTelefonoByNitAndCodigoCliente(nitEmpresa: number, codigoCliente:string): Observable<any> {
     const apiUrl = `${environment.api.adm}/clientes/telefonos/${nitEmpresa}/${codigoCliente}`;
+    return this.httpClient.get<any>(apiUrl);
+  }
+
+  getUltimoClienteSectorEducativo(criteriosSearch:BusquedaClienteEducativo): Observable<any> {
+    const queryString = this.helperService.jsonToQueryStringSinfiltro(criteriosSearch);
+    console.log(queryString);
+    const apiUrl = `${environment.api.adm}/clientes/ultimo-cliente-factura-estudiante?${queryString}`;
     return this.httpClient.get<any>(apiUrl);
   }
 

@@ -15,3 +15,7 @@ export interface BusquedaFactura {
     educativo: boolean;
 }
 
+export interface BusquedaFacturaReporte {
+    numero: number;
+    tipoReporte: string;
+}
