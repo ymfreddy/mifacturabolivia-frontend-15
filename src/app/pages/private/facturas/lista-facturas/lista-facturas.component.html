@@ -183,7 +183,7 @@
 
 <p-panel header="FACTURAS" [toggleable]="true">
     <p-table #dt styleClass="p-datatable-sm" [value]="items" responsiveLayout="scroll" [rows]="10"
-      [globalFilterFields]="['codigoRecepcion','fechaEmision','codigoCliente','nombreRazonSocial','codigoEstado','subtotal','montoTotal','descuentoAdicional','montoTotalGiftCard','montoTotalSujetoIva','estado','cuf','numeroFactura','codigoVenta', 'usuario',
+      [globalFilterFields]="['codigoRecepcion','fechaEmision','codigoCliente','nombreRazonSocial','nombreEstudiante','periodoFacturado','codigoEstado','subtotal','montoTotal','descuentoAdicional','montoTotalGiftCard','montoTotalSujetoIva','estado','numeroFactura', 'usuario',
       'puntoVenta','sucursal']" [rows]="10" [paginator]="true" [rowsPerPageOptions]="[10,20,30]"
         [showCurrentPageReport]="true"
         currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros" [rowHover]="true"
@@ -224,6 +224,8 @@
                 </th>
                 <th *ngIf="facturaEducativoAsignada()" pSortableColumn="nombreEstudiante">Estudiante<p-sortIcon field="nombreEstudiante"></p-sortIcon>
                 </th>
+                <th *ngIf="facturaEducativoAsignada()" pSortableColumn="periodoFacturado">Periodo<p-sortIcon field="periodoFacturado"></p-sortIcon>
+                </th>
                 <th pSortableColumn="subtotal">Subtotal<p-sortIcon field="subtotal"></p-sortIcon>
                 </th>
                 <th pSortableColumn="descuentoAdicional">Descuento Adicional<p-sortIcon field="descuentoAdicional"></p-sortIcon>
@@ -255,6 +257,7 @@
                 <td>{{item.codigoCliente}}</td>
                 <td>{{item.nombreRazonSocial}}</td>
                 <td *ngIf="facturaEducativoAsignada()">{{item.nombreEstudiante}}</td>
+                <td *ngIf="facturaEducativoAsignada()">{{item.periodoFacturado}}</td>
                 <td class="text-right">{{item.subtotal | formatoDecimal}}</td>
                 <td class="text-right">{{item.descuentoAdicional | formatoDecimal}}</td>
                 <td class="text-right">{{item.montoTotal | formatoDecimal}}</td>
@@ -281,7 +284,7 @@
         <ng-template pTemplate="footer">
             <tr>
                 <td *ngIf="!facturaEducativoAsignada()" colspan="11" class="text-right">TOTAL</td>
-                <td *ngIf="facturaEducativoAsignada()" colspan="12" class="text-right">TOTAL</td>
+                <td *ngIf="facturaEducativoAsignada()" colspan="13" class="text-right">TOTAL</td>
                 <td class="text-right">{{getTotalMontoTotalSujetoIva() | formatoDecimal}}</td>
                 <td colspan="4" class="text-right"></td>
             </tr>
