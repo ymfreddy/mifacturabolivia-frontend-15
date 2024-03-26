@@ -10,6 +10,7 @@ import { User } from 'src/app/shared/models/user.model';
 import { AuthService } from 'src/app/shared/security/auth.service';
 import { SessionService } from 'src/app/shared/security/session.service';
 import { PushService } from 'src/app/shared/services/push.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
     selector: 'app-login',
@@ -43,6 +44,7 @@ export class LoginComponent {
     habilitado: Boolean = true;
     submited = false;
     cancelClicked = false;
+    login: string = environment.production ? "LOGIN":"PRUEBA";
 
     constructor(
         private router: Router,
