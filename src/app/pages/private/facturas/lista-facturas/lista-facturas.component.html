@@ -183,8 +183,8 @@
 
 <p-panel header="FACTURAS" [toggleable]="true">
     <p-table #dt styleClass="p-datatable-sm" [value]="items" responsiveLayout="scroll" [rows]="10"
-      [globalFilterFields]="['codigoRecepcion','fechaEmision','codigoCliente','nombreRazonSocial','nombreEstudiante','periodoFacturado','codigoEstado','subtotal','montoTotal','descuentoAdicional','montoTotalGiftCard','montoTotalSujetoIva','estado','numeroFactura', 'usuario',
-      'puntoVenta','sucursal']" [rows]="10" [paginator]="true" [rowsPerPageOptions]="[10,20,30]"
+      [globalFilterFields]="['codigoDocumentoSector','fechaEmision','puntoVenta','sucursal','numeroFactura','codigoCliente','nombreRazonSocial','nombreEstudiante',
+      'periodoFacturado','codigoEstado','subtotal','montoTotal','descuentoAdicional', 'montoTotalSujetoIva','estado', 'usuario']" [rows]="10" [paginator]="true" [rowsPerPageOptions]="[10,20,30]"
         [showCurrentPageReport]="true"
         currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros" [rowHover]="true"
         dataKey="id"
