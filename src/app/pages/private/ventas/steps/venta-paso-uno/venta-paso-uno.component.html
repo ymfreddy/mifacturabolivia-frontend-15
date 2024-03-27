@@ -12,7 +12,7 @@
         Elija el cliente y los productos/servicios
     </ng-template>
 
-    <form [formGroup]="itemForm" (ngSubmit)="onSubmit()" autocomplete="off">
+    <form [formGroup]="itemForm" (ngSubmit)="onSubmit()" autocomplete="off" (keydown.enter)="$event.preventDefault()">
         <div class="p-fluid p-formgrid grid">
             <div class="field col-12 md:col-10">
                 <div class="p-fluid p-formgrid grid">
@@ -59,7 +59,12 @@
                     <div class="field col-12 md:col-12">
                         <label>Producto/Servicio</label>
                         <div class="p-inputgroup">
-                            <p-autoComplete formControlName="producto" #producto [suggestions]="listaProductosFiltrados" styleClass="w-full"
+                            <!-- <p-toggleButton [onIcon]="iconoQr()" (onClick)="ventaRapida=!ventaRapida" offIcon="pi pi-search" [(ngModel)]="ventaRapida"  onLabel="" offLabel=""></p-toggleButton> -->
+                            <p-button label="" (onClick)="cambiarTipoBusqueda()" pTooltip="tipo de busqueda de producto"
+                                tooltipPosition="top" [icon]="iconoQr()" styleClass="p-button p-button-secondary" tabindex="-1"></p-button>
+                            <input #productoQr [hidden]="!ventaRapida" (keydown.enter)="buscarProductoQr($event)"
+                            placeholder="Lectura por código de barras" formControlName="producto"  type="text" pInputText id="qrCodigoProducto" autofocus maxlength="50" />
+                            <p-autoComplete [hidden]="ventaRapida" formControlName="producto" #producto [suggestions]="listaProductosFiltrados" styleClass="w-full"
                                 (completeMethod)="filtrarProducto($event)" [showEmptyMessage]="true" [maxlength]="50"
                                 emptyMessage="No existe" [forceSelection]="true" (onSelect)="seleccionarProducto($event)"
                                 field="nombre" [delay]=850 [minLength]="3"
@@ -100,6 +105,7 @@
                             </p-autoComplete>
                             <p-button label="+" (onClick)="adicionarNuevoProducto()" pTooltip="Crear producto"
                                 tooltipPosition="top" icon="pi pi-box" styleClass="p-button" tabindex="-1"></p-button>
+
                         </div>
                     </div>
                 </div>

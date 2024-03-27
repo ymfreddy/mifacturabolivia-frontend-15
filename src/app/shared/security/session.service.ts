@@ -232,5 +232,21 @@ export class SessionService {
     getFacturaEducativoAsignada():boolean{
         return this.getSessionUserData().facturaEducativo??false;
     }
+    // venta rapida
+    setVentaRapida(activo: boolean): void {
+        const datos = JSON.parse(sessionStorage.getItem('wx-user-data') ?? '');
+        datos.ventaRapida = activo;
+        sessionStorage.setItem('wx-user-data', JSON.stringify(datos));
+    }
 
+    getVentaRapida(): boolean {
+        if (sessionStorage.getItem('wx-user-data') == null) {
+            return false;
+        }
+        const data = JSON.parse(sessionStorage.getItem('wx-user-data') ?? '');
+        if (data) {
+            return data.ventaRapida ?? false;
+        }
+        return false;
+    }
 }

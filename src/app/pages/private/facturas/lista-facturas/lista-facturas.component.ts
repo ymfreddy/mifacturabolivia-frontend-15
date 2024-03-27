@@ -871,6 +871,7 @@ export class ListaFacturasComponent implements OnInit, OnDestroy {
             idEmpresa: this.estudianteBusquedaForm.controls['idEmpresa'].value,
             nitEmisor: this.estudianteBusquedaForm.controls['nitEmisor'].value,
             idsEstudiantes: (!estudiantes || estudiantes.length==0) ?'':estudiantes.map(x=>x.id).join(','),
+            educativo: this.facturaEducativoAsignada()
         };
 
         console.log(criterios);

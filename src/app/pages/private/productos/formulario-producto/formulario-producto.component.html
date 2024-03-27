@@ -1,5 +1,5 @@
 <p-blockUI [blocked]="submited"><app-bloqueo></app-bloqueo></p-blockUI>
-<form [formGroup]="itemForm" (ngSubmit)="onSubmit()" autocomplete="off">
+<form [formGroup]="itemForm" (ngSubmit)="onSubmit()" autocomplete="off" (keydown.enter)="$event.preventDefault()" >
     <div class="card">
         <div class="p-fluid p-formgrid grid">
             <div class="field col-12 md:col-4">

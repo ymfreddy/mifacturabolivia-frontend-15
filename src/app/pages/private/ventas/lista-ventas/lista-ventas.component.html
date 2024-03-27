@@ -83,6 +83,10 @@
                         class="w-full sm:w-auto" />
                 </span>
                 <div class="flex">
+                    <div class="field" style="margin-top: 10px;">
+                        <input id="remember-me" type="checkbox" (change)="cambioVentaRapida()" [(ngModel)]="ventaRapida" [ngModelOptions]="{standalone: true}">
+                        &nbsp;VENTA RAPIDA&nbsp;&nbsp;
+                    </div>
                     <button pButton pRipple label="Nuevo" icon="pi pi-plus" class="p-button-success mr-2"  (click)="newItem()"></button>
                 </div>
             </div>

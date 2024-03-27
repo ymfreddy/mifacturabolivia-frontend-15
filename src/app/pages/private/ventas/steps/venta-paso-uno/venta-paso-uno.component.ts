@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Venta, VentaDetalle } from 'src/app/shared/models/venta.model';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Asociacion } from 'src/app/shared/models/session-usuario.model';
@@ -38,6 +38,7 @@ import { EnviarCotizacionWhatsappComponent } from 'src/app/components/enviar-cot
 export class VentaPasoUnoComponent implements OnInit {
     @ViewChild('cliente') elmC?: AutoComplete;
     @ViewChild('producto') elmP?: AutoComplete;
+    @ViewChild('productoQr') elmPQr?: ElementRef;
 
     item?: Venta;
     itemForm!: FormGroup;
@@ -57,6 +58,8 @@ export class VentaPasoUnoComponent implements OnInit {
     itemsMenu: MenuItem[]=[];
     detalleSeleccionado?: VentaDetalle;
 
+    ventaRapida!:boolean;
+    qrCodigoProducto="";
     constructor(
         private fb: FormBuilder,
         private informationService: InformationService,
@@ -98,6 +101,7 @@ export class VentaPasoUnoComponent implements OnInit {
             };
         }
 
+        this.ventaRapida=this.sessionService.getVentaRapida();
         this.listaAsociacion = this.sessionService.getSessionAsociaciones();
         this.parametricasService
             .getParametricasByTipo(TipoParametrica.TIPO_VENTA)
@@ -154,6 +158,12 @@ export class VentaPasoUnoComponent implements OnInit {
         this.detalle = this.item?.detalle ?? [];
     }
 
+    ngAfterViewInit(): void {
+        setTimeout(() => {
+            this.elmC?.focusInput();
+        }, 500);
+    }
+
     changeDescuento(detalleSeleccionado: VentaDetalle): void {
         const cambio : CambioDescuento = {
             codigoProducto: detalleSeleccionado.codigoProducto!,
@@ -175,12 +185,6 @@ export class VentaPasoUnoComponent implements OnInit {
                 this.calcularFilas();
             }
         });
-    }
-
-    ngAfterViewInit(): void {
-        setTimeout(() => {
-            this.elmC?.focusInput();
-        }, 500);
     }
 
     keyInput(event: any, keyc: string) {
@@ -472,9 +476,10 @@ export class VentaPasoUnoComponent implements OnInit {
 
     // producto
     addItem(producto: ProductoResumen) {
-        const existeProducto = this.detalle.find(
-            (x) => x.codigoProducto === producto.codigoProducto && x.codigoStock===producto.saldo?.codigoStock
-        );
+        console.log(this.detalle);
+        const esConInventario = producto.idTipoProducto===spv.TIPO_PRODUCTO_CON_INVENTARIO;
+        const existeProducto = esConInventario ? this.detalle.find((x) => x.codigoProducto === producto.codigoProducto && x.codigoStock===producto.saldo?.codigoStock)
+                             :this.detalle.find((x) => x.codigoProducto === producto.codigoProducto);
         if (existeProducto) {
             this.informationService.showWarning(
                 'El producto ya está adicionado'
@@ -482,7 +487,6 @@ export class VentaPasoUnoComponent implements OnInit {
             this.itemForm.patchValue({ producto: null });
             return;
         }
-        const esConInventario = producto.idTipoProducto===spv.TIPO_PRODUCTO_CON_INVENTARIO;
 
         if (esConInventario && (!producto.saldo || producto.saldo.saldo!<=0)) {
             this.informationService.showWarning(
@@ -524,7 +528,7 @@ export class VentaPasoUnoComponent implements OnInit {
         };
         this.detalle.push(item);
         this.itemForm.patchValue({ producto: null });
-        this.elmP?.focusInput();
+        if (this.ventaRapida) this.elmPQr?.nativeElement.focus(); else this.elmP?.focusInput() ;
     }
 
     esDescuentoPorcentaje(idTipoDescuento:number){
@@ -564,6 +568,57 @@ export class VentaPasoUnoComponent implements OnInit {
 
     seleccionarProducto(event: any) {
         this.addItem(event);
+    }
+
+
+    buscarProductoQr(event:any) {
+        console.log("You entered: ", event.target.value);
+        this.qrCodigoProducto = event.target.value;
+        const criteriosBusqueda: BusquedaProducto = {
+            idEmpresa: this.sessionService.getSessionEmpresaId(),
+            idSucursal: this.sessionService.getSessionUserData().idSucursal,
+            codigoProducto: this.qrCodigoProducto,
+            resumen: true,
+            idsCategorias : this.sessionService.getSessionUserData().categorias
+        };
+
+        this.prodcutoService.get(criteriosBusqueda).subscribe({
+            next: (res) => {
+                console.log(res);
+                this.qrCodigoProducto = "";
+                if (res.content.length == 0) {
+                    this.itemForm.patchValue({ producto: null });
+                    this.elmPQr?.nativeElement.focus();
+                    this.informationService.showInfo("No existe el Producto");
+                    return;
+                }
+                const element = res.content[0];
+                if (element.saldos && element.saldos.length>0){
+                    element.saldos.forEach((saldo:any) => {
+                        const prod: ProductoResumen ={...element}
+                        const temp: SaldoProducto ={
+                            idProducto:saldo.idProducto,
+                            codigoStock:saldo.codigoStock,
+                            precioCompra:saldo.precioCompra,
+                            precioVenta:saldo.precioVenta,
+                            saldo:saldo.saldo
+                        }
+                        prod.saldo = temp;
+                        prod.codigoProductoStock = prod.codigoProducto+":"+prod.saldo?.codigoStock;
+                        this.addItem(prod);
+                    });
+                }
+                else{
+                    let prod: ProductoResumen ={...element}
+                    prod.codigoProductoStock = prod.codigoProducto;
+                    this.addItem(prod);
+                }
+            },
+            error: (err) => {
+                this.qrCodigoProducto = "";
+                this.informationService.showError(err.error.message);
+            },
+        });
     }
 
     buscarProducto(termino: string) {
@@ -702,7 +757,8 @@ export class VentaPasoUnoComponent implements OnInit {
         this.itemForm.patchValue({ codigoCliente: event?.codigoCliente });
         this.itemForm.patchValue({ nombreCliente: event?.nombre });
         this.itemForm.patchValue({ emailCliente: event?.email });
-        this.elmP?.focusInput();
+        if (this.ventaRapida) this.elmPQr?.nativeElement.focus();
+        else this.elmP?.focusInput() ;
     }
 
     limpiarCliente() {
@@ -712,6 +768,21 @@ export class VentaPasoUnoComponent implements OnInit {
         this.itemForm.patchValue({ nombreCliente: '' });
         this.itemForm.patchValue({ emailCliente: '' });
         this.elmC?.focusInput();
+    }
+
+    iconoQr():string{
+        return this.ventaRapida ? "pi pi-qrcode":"pi pi-search";
+    }
+
+    cambiarTipoBusqueda(){
+        this.ventaRapida=!this.ventaRapida;
+        if (this.ventaRapida) this.elmPQr?.nativeElement.focus();
+        else this.elmP?.focusInput() ;
+    }
+
+    keyInputQr(event: any) {
+        console.log(event);
+        this.qrCodigoProducto=event.target.value;
     }
 
     ngOnDestroy(): void {

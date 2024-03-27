@@ -36,7 +36,7 @@ export class VentaPasoDosComponent implements OnInit {
     listaTipoPago: ParametricaSfe[] = [];
 
     ventaConContigencia =false;
-
+    ventaRapida!:boolean;
     constructor(
         private router: Router,
         private fb: FormBuilder,
@@ -56,7 +56,7 @@ export class VentaPasoDosComponent implements OnInit {
         }else{
             this.router.navigate(['/adm/ventas']);
         }
-
+        this.ventaRapida=this.sessionService.getVentaRapida();
         this.listaAsociacion = this.sessionService.getSessionAsociaciones().sort((a, b) => (a.codigoDocumentoSector < b.codigoDocumentoSector ? -1 : 1));
         this.parametricasSfeService.getTipoMetodoPago().subscribe((data) => {
             this.listaTipoPago = data as unknown as ParametricaSfe[];
@@ -245,7 +245,7 @@ export class VentaPasoDosComponent implements OnInit {
                                     this.enviarFactura(factura);
                                 }
                                 else{
-                                    this.router.navigate(['/adm/ventas']);
+                                    this.ventaRapida ? this.router.navigate(['/adm/venta-por-pasos/venta-paso-uno']) :this.router.navigate(['/adm/ventas']);
                                 }
                         },
                         error: (err) => {
@@ -294,11 +294,11 @@ export class VentaPasoDosComponent implements OnInit {
                 next: (res) => {
                     this.facturasService.verificarPaquetes();
                     this.informationService.showSuccess(res.message +"\n"+this.helperService.jsonToString(res.content));
-                    this.router.navigate(['/adm/ventas']);
+                    this.ventaRapida ? this.router.navigate(['/adm/venta-por-pasos/venta-paso-uno']) :this.router.navigate(['/adm/ventas']);
                 },
                 error: (err) => {
                     this.informationService.showError(err.error.message +"\n"+this.helperService.jsonToString(err.error.content));
-                    this.router.navigate(['/adm/ventas']);
+                    this.ventaRapida ? this.router.navigate(['/adm/venta-por-pasos/venta-paso-uno']) :this.router.navigate(['/adm/ventas']);
                 },
             });
         }
@@ -307,11 +307,11 @@ export class VentaPasoDosComponent implements OnInit {
                 next: (res) => {
                     this.facturasService.verificarPaquetes();
                     this.informationService.showSuccess(res.message +"\n"+this.helperService.jsonToString(res.content));
-                    this.router.navigate(['/adm/ventas']);
+                    this.ventaRapida ? this.router.navigate(['/adm/venta-por-pasos/venta-paso-uno']) :this.router.navigate(['/adm/ventas']);
                 },
                 error: (err) => {
                     this.informationService.showError(err.error.message +"\n"+this.helperService.jsonToString(err.error.content));
-                    this.router.navigate(['/adm/ventas']);
+                    this.ventaRapida ? this.router.navigate(['/adm/venta-por-pasos/venta-paso-uno']) :this.router.navigate(['/adm/ventas']);
                 },
             });
 

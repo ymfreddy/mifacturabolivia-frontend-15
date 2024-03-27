@@ -60,6 +60,8 @@ export class ListaVentasComponent implements OnInit, OnDestroy {
     listaEmpresas: Empresa[] = [];
     nitEmpresa!:number;
     idEmpresa!:number;
+    ventaRapida!:boolean;
+
 
     constructor(
         private fb: FormBuilder,
@@ -79,6 +81,8 @@ export class ListaVentasComponent implements OnInit, OnDestroy {
         private empresasService: EmpresasService,
     ) {}
 
+
+
     ngOnInit(): void {
         if (!this.sessionService.verifyUrl(this.router.url)) {
             this.router.navigate(['/auth/access']);
@@ -87,6 +91,8 @@ export class ListaVentasComponent implements OnInit, OnDestroy {
         if (this.sessionService.getBusquedaVenta() != null) {
             this.busquedaMemoria = this.sessionService.getBusquedaVenta();
         }
+
+        this.ventaRapida=this.sessionService.getVentaRapida();
 
         this.idEmpresa = this.busquedaMemoria?.idEmpresa ?? this.sessionService.getSessionEmpresaId();
         this.nitEmpresa = this.busquedaMemoria?.nitEmpresa ?? this.sessionService.getSessionEmpresaNit();
@@ -685,5 +691,9 @@ export class ListaVentasComponent implements OnInit, OnDestroy {
         this.criteriosBusquedaForm.controls['usuario'].setValue(null);
         this.cargarSucursales();
         this.cargarUsuarios();
+    }
+
+    cambioVentaRapida(){
+        this.sessionService.setVentaRapida(this.ventaRapida);
     }
 }
