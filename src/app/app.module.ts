@@ -167,8 +167,8 @@ initializeApp(environment.firebase);
     ],
     providers: [
         { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
-        //{ provide: LocationStrategy, useClass: HashLocationStrategy },
-        { provide: LocationStrategy, useClass: PathLocationStrategy },
+        { provide: LocationStrategy, useClass: HashLocationStrategy },
+        //{ provide: LocationStrategy, useClass: PathLocationStrategy },
         ConfirmationService,
         DatePipe,
         DialogService,
